@@ -1,13 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
 import { PrismaService } from 'src/modules/prisma/services/prisma.service';
 import { LoginDto } from '../dtos/login.dto';
 import { Tokens } from '../types/tokens.types';
+import { UserService } from 'src/modules/user/services/user/user.service';
+import { ERROR_MESSAGES } from 'src/utils/error-messages';
 
 @Injectable()
 export class AuthenticationService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
+  ) {}
 
   async register({
     password,
@@ -15,18 +24,43 @@ export class AuthenticationService {
     email,
     fullName,
     phoneNumber,
-  }: RegisterDto) {
-    // check if user exist.
-    // error if exist.
-    // hash password
-    // return token
+    id,
+  }: RegisterDto & { id: string }) {
+    const user = await this.userService.findOneById({ id });
+
+    if (user) throw new ConflictException(ERROR_MESSAGES.fa);
+
+    const hashedPassword = this.hashData(password);
+    // save password in db.
+
+    const tokens = this.createTokens({ userId: id });
+    return tokens;
   }
 
-  async login({ password, username, email, fullName, phoneNumber }: LoginDto) {
-    // check if user exist.
-    // error if exist.
-    // check password
-    // return token
+  async login({
+    id,
+    password,
+    username,
+    email,
+    fullName,
+    phoneNumber,
+  }: LoginDto & { id: string }) {
+    const existUser = await this.userService.findOneById(id);
+    if (!existUser) {
+      throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
+    }
+
+    const decryptedPassword = await bcrypt.compare(
+      existUser.password,
+      password,
+    );
+
+    if (!decryptedPassword)
+      throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
+
+    const tokens = await this.createTokens({ userId: id });
+
+    return tokens;
   }
 
   private async createTokens({ userId }: { userId: string }): Promise<Tokens> {

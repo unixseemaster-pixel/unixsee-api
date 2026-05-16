@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './modules/authentication/authentication.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { AtGuard } from './common/guards/at-guard';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AtGuard } from './common/guards/at-guard';
     }),
     AuthModule,
     PrismaModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [
