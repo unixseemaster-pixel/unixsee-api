@@ -4,7 +4,7 @@ import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './modules/authentication/authentication.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { AtGuard } from './common/guards/at-guard';
 import { UserModule } from './modules/user/user.module';

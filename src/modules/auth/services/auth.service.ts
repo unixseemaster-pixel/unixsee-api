@@ -10,9 +10,10 @@ import { LoginDto } from '../dtos/login.dto';
 import { Tokens } from '../types/tokens.types';
 import { UserService } from 'src/modules/user/services/user/user.service';
 import { ERROR_MESSAGES } from 'src/utils/error-messages';
+import { RegisterDto } from '../dtos/register.dto';
 
 @Injectable()
-export class AuthenticationService {
+export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
@@ -24,9 +25,8 @@ export class AuthenticationService {
     email,
     fullName,
     phoneNumber,
-    id,
-  }: RegisterDto & { id: string }) {
-    const user = await this.userService.findOneById({ id });
+  }: RegisterDto) {
+    const user = await this.userService.findOneByUsername({ username });
 
     if (user) throw new ConflictException(ERROR_MESSAGES.fa);
 
@@ -37,15 +37,8 @@ export class AuthenticationService {
     return tokens;
   }
 
-  async login({
-    id,
-    password,
-    username,
-    email,
-    fullName,
-    phoneNumber,
-  }: LoginDto & { id: string }) {
-    const existUser = await this.userService.findOneById(id);
+  async login({ password, username, email, fullName, phoneNumber }: LoginDto) {
+    const existUser = await this.userService.findOneByUsername({ username });
     if (!existUser) {
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
     }
@@ -58,7 +51,7 @@ export class AuthenticationService {
     if (!decryptedPassword)
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
 
-    const tokens = await this.createTokens({ userId: id });
+    const tokens = await this.createTokens({ userId: existUser.id });
 
     return tokens;
   }

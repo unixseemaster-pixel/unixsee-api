@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { PrismaService } from '../prisma/services/prisma.service';
+import { ERROR_MESSAGES } from 'src/utils/error-messages';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
@@ -34,7 +35,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     // });
 
     if (!user.hashedRt)
-      throw Response.unauthorized(null, 'توکن معتبر نیست، لطفا ثبت نام کنید');
+      new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
 
     return {
       ...payload,
