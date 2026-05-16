@@ -5,12 +5,12 @@ datasource db {
 
 model User {
     id    String @id @default(uuid())
-    email          String?
-    username       String
+    email          String?   @unique
+    username       String    @unique
     password       String
-    fullName       String?
-    phoneNumber    String?
-    hashedRt       String?
+    fullName       String?   @map("full_name")
+    phoneNumber    String?   @map("phone_number")
+    hashedRt       String?   @map("hashed_rt")
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
