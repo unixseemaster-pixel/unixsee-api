@@ -1,0 +1,19 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+    id    String @id @default(uuid())
+    email          String?
+    username       String
+    password       String
+    fullName       String?
+    phoneNumber    String?
+    hashedRt       String?
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("users")
+}
