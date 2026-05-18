@@ -1,86 +1,64 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
-    id    String @id @default(uuid())
-    email          String?   @unique
-    username       String    @unique
-    password       String
-    fullName       String?   @map("full_name")
-    phoneNumber    String?   @map("phone_number")
-    hashedRt       String?   @map("hashed_rt")
+  id          String  @id @default(uuid()) @db.Uuid
+  email       String? @unique
+  username    String  @unique
+  password    String
+  fullName    String? @map("full_name")
+  phoneNumber String? @map("phone_number")
+  hashedRt    String? @map("hashed_rt")
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  websites  Website[]
 
-    @@map("users")
+  @@map("users")
 }
 
 model Website {
-  id          String     @id @default(cuid())
-  userId      String
-  serverId    String
+  id     String @id @default(cuid()) @db.Uuid
+  userId String @map("user_id")
 
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  server      Server     @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  name        String
-  domain      String     @unique
-  appType     AppType
-  framework   String?    // wordpress, woocommerce, laravel, nodejs, nextjs, static, custom
-  rootPath    String?
-  port        Int?
-  isActive    Boolean    @default(true)
+  name     String
+  domain   String  @unique
+  port     Int?
+  isActive Boolean @default(true) @map("is_active")
 
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  metrics     WebsiteMetric[]
-  ssl         SSLCertificate?
+  metrics WebsiteMetric[]
+  ssl     SSLCertificate?
+
+  @@map("websites")
 }
 
 model WebsiteMetric {
-  id          BigInt     @id @default(autoincrement())
-  websiteId   String
-  website     Website    @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  id        String  @id @default(uuid()) @db.Uuid
+  websiteId String  @map("website_id")
+  website   Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
-  timestamp   DateTime   @index
-  metricName  String     @index
-  metricValue Float
-  unit        String?
-
-  @@index([websiteId, metricName, timestamp])
-}
-
-model ServerMetric {
-  id          BigInt     @id @default(autoincrement())
-  serverId    String
-  server      Server     @relation(fields: [serverId], references: [id], onDelete: Cascade)
-
-  timestamp   DateTime   @index
-  metricName  String     @index
-  metricValue Float
-  unit        String?
-
-  @@index([serverId, metricName, timestamp])
+  @@map("website_metrics")
 }
 
 model SSLCertificate {
-  id            String   @id @default(cuid())
-  websiteId     String   @unique
-  website       Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  id        String  @id @default(uuid()) @db.Uuid
+  websiteId String  @unique @map("website_id")
+  website   Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
-  issuer        String?
-  subject       String?
-  validFrom     DateTime?
-  validTo       DateTime?
-  daysRemaining Int?
-  isValid       Boolean  @default(true)
+  issuer    String?
+  subject   String?
+  validFrom DateTime? @map("valid_from")
+  validTo   DateTime? @map("valid_to")
+  isValid   Boolean   @default(true) @map("is_valid")
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  
+  @@map("ssl_certificates")
 }
