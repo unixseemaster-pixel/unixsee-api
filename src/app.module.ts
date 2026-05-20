@@ -1,6 +1,8 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
+
 import appConfig from './utils/config/app.config.js';
 import { validateEnv } from './utils/config/env.validation.js';
 import { AuthModule } from './modules/auth/auth.module.js';
@@ -19,9 +21,10 @@ import { AtGuard } from './common/guards/at-guard.js';
       expandVariables: true, // Supports ${VAR} interpolation in .env
       cache: true, // Cache config lookups for performance
     }),
-    AuthModule,
     PrismaModule,
+    AuthModule,
     UserModule,
+    JwtModule,
   ],
   controllers: [AppController],
   providers: [

@@ -5,7 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import type { Request } from 'express';
 
 import type { AppConfigType } from '#/utils/config/app.config.js';
-import type { PrismaService } from '../prisma/services/prisma.service.js';
+import type { PrismaService } from '../../modules/prisma/services/prisma.service.js';
 import { ERROR_MESSAGES } from '#/utils/error-messages.js';
 
 @Injectable()

@@ -4,7 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 
 import type { AppConfigType } from '#/utils/config/app.config.js';
-import type { PrismaService } from '../prisma/services/prisma.service.js';
+import type { PrismaService } from '../../modules/prisma/services/prisma.service.js';
 
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {

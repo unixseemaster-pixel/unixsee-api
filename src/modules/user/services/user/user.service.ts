@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import type { PrismaService } from '#/modules/prisma/services/prisma.service.js';
+import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import type { UserCreateInput } from '#/generated/prisma/models.js';
 
 @Injectable()

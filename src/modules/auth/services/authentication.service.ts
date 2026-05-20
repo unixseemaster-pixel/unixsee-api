@@ -4,11 +4,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import type { JwtService } from '@nestjs/jwt';
-import type { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
-import type { PrismaService } from '#/modules/prisma/services/prisma.service.js';
-import type { UserService } from '#/modules/user/services/user/user.service.js';
+import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
+import { UserService } from '#/modules/user/services/user/user.service.js';
 import type { AppConfigType } from '#/utils/config/app.config.js';
 import { ERROR_MESSAGES } from '#/utils/error-messages.js';
 import type { LoginDto } from '../dtos/login.dto.js';
@@ -16,7 +16,7 @@ import type { Tokens } from '../types/tokens.types.js';
 import type { RegisterDto } from '../dtos/register.dto.js';
 
 @Injectable()
-export class AuthService {
+export class AuthenticationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
