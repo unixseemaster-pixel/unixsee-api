@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { Env, envSchema } from './env.schema';
+import { envSchema } from './env.schema.js';
 
 const appConfig = registerAs('app', () => {
   const result = envSchema.safeParse(process.env);

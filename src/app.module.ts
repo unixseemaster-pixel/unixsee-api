@@ -1,15 +1,14 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
-
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './modules/auth/auth.module';
-import { PrismaModule } from './modules/prisma/prisma.module';
-import { AtGuard } from './common/guards/at-guard';
-import { UserModule } from './modules/user/user.module';
-import appConfig from './utils/config/app.config';
-import { validateEnv } from './utils/config/env.validation';
+import appConfig from './utils/config/app.config.js';
+import { validateEnv } from './utils/config/env.validation.js';
+import { AuthModule } from './modules/auth/auth.module.js';
+import { PrismaModule } from './modules/prisma/prisma.module.js';
+import { UserModule } from './modules/user/user.module.js';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { AtGuard } from './common/guards/at-guard.js';
 
 @Module({
   imports: [

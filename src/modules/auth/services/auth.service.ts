@@ -4,19 +4,24 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
+import type { JwtService } from '@nestjs/jwt';
+import type { ConfigService } from '@nestjs/config';
 
-import { PrismaService } from 'src/modules/prisma/services/prisma.service';
-import { LoginDto } from '../dtos/login.dto';
-import { Tokens } from '../types/tokens.types';
-import { UserService } from 'src/modules/user/services/user/user.service';
-import { ERROR_MESSAGES } from 'src/utils/error-messages';
-import { RegisterDto } from '../dtos/register.dto';
+import type { PrismaService } from '#/modules/prisma/services/prisma.service.js';
+import type { UserService } from '#/modules/user/services/user/user.service.js';
+import type { AppConfigType } from '#/utils/config/app.config.js';
+import { ERROR_MESSAGES } from '#/utils/error-messages.js';
+import type { LoginDto } from '../dtos/login.dto.js';
+import type { Tokens } from '../types/tokens.types.js';
+import type { RegisterDto } from '../dtos/register.dto.js';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly config: ConfigService<AppConfigType, true>,
   ) {}
 
   async register({
@@ -30,10 +35,17 @@ export class AuthService {
 
     if (user) throw new ConflictException(ERROR_MESSAGES.fa);
 
-    const hashedPassword = this.hashData(password);
-    // save password in db.
+    const hashedPassword = await this.hashData(password);
 
-    const tokens = this.createTokens({ userId: id });
+    const createdUser = await this.userService.create({
+      username,
+      password: hashedPassword,
+      email,
+      fullName,
+      phoneNumber,
+    });
+
+    const tokens = this.createTokens({ userId: createdUser.id });
     return tokens;
   }
 
@@ -62,7 +74,7 @@ export class AuthService {
         sub: userId,
       },
       {
-        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_KEY'),
+        secret: this.config.get('app', { infer: true }).jwt.accessSecret,
         expiresIn: 60 * 60, // 60 minutes
       },
     );
@@ -72,7 +84,7 @@ export class AuthService {
         sub: userId,
       },
       {
-        secret: this.configService.get<string>('JWT_REFRESH_TOKEN_KEY'),
+        secret: this.config.get('app', { infer: true }).jwt.refreshSecret,
         expiresIn: 60 * 60 * 24 * 7, // a week
       },
     );

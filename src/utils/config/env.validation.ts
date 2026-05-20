@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { Env, envSchema } from './env.schema';
+import { envSchema, type Env } from './env.schema.js';
 
 const logger = new Logger('ConfigValidation');
 

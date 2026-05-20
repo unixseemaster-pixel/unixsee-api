@@ -1,12 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import type { Request } from 'express';
 
-import { PrismaService } from '../prisma/services/prisma.service';
-import { ERROR_MESSAGES } from 'src/utils/error-messages';
-import { AppConfigType } from 'src/utils/config/app.config';
+import type { AppConfigType } from '#/utils/config/app.config.js';
+import type { PrismaService } from '../prisma/services/prisma.service.js';
+import { ERROR_MESSAGES } from '#/utils/error-messages.js';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(

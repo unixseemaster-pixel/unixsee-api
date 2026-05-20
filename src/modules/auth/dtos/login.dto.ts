@@ -1,3 +1,4 @@
+import { VALIDATE_PHONE_NUMBER_REGEX } from '#/utils/constants.js';
 import {
   IsEmail,
   IsNumber,
@@ -7,8 +8,6 @@ import {
   MinLength,
 } from 'class-validator';
 
-import { VALIDATE_PHONE_NUMBER_REGEX } from 'src/utils/constants';
-
 export class LoginDto {
   @IsEmail()
   @IsOptional()
@@ -16,11 +15,11 @@ export class LoginDto {
 
   @IsString()
   @MinLength(8)
-  username: string;
+  username!: string;
 
   @IsString()
   @MinLength(8)
-  password: string;
+  password!: string;
 
   @IsOptional()
   fullName?: string;

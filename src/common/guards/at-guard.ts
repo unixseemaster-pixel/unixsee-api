@@ -1,10 +1,10 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { Injectable, type ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
-import { PrismaService } from 'src/modules/prisma/services/prisma.service';
-// import { User, UserRole } from '@prisma/client';
+
+import type { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 
 @Injectable()
 export class AtGuard extends AuthGuard('jwt') {
