@@ -27,16 +27,22 @@ export type AggregateWebsiteMetric = {
 export type WebsiteMetricMinAggregateOutputType = {
   id: string | null
   websiteId: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type WebsiteMetricMaxAggregateOutputType = {
   id: string | null
   websiteId: string | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type WebsiteMetricCountAggregateOutputType = {
   id: number
   websiteId: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -44,16 +50,22 @@ export type WebsiteMetricCountAggregateOutputType = {
 export type WebsiteMetricMinAggregateInputType = {
   id?: true
   websiteId?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type WebsiteMetricMaxAggregateInputType = {
   id?: true
   websiteId?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type WebsiteMetricCountAggregateInputType = {
   id?: true
   websiteId?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -132,6 +144,8 @@ export type WebsiteMetricGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
 export type WebsiteMetricGroupByOutputType = {
   id: string
   websiteId: string
+  createdAt: Date
+  updatedAt: Date
   _count: WebsiteMetricCountAggregateOutputType | null
   _min: WebsiteMetricMinAggregateOutputType | null
   _max: WebsiteMetricMaxAggregateOutputType | null
@@ -158,12 +172,16 @@ export type WebsiteMetricWhereInput = {
   NOT?: Prisma.WebsiteMetricWhereInput | Prisma.WebsiteMetricWhereInput[]
   id?: Prisma.UuidFilter<"WebsiteMetric"> | string
   websiteId?: Prisma.StringFilter<"WebsiteMetric"> | string
+  createdAt?: Prisma.DateTimeFilter<"WebsiteMetric"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"WebsiteMetric"> | Date | string
   website?: Prisma.XOR<Prisma.WebsiteScalarRelationFilter, Prisma.WebsiteWhereInput>
 }
 
 export type WebsiteMetricOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   website?: Prisma.WebsiteOrderByWithRelationInput
 }
 
@@ -173,12 +191,16 @@ export type WebsiteMetricWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.WebsiteMetricWhereInput[]
   NOT?: Prisma.WebsiteMetricWhereInput | Prisma.WebsiteMetricWhereInput[]
   websiteId?: Prisma.StringFilter<"WebsiteMetric"> | string
+  createdAt?: Prisma.DateTimeFilter<"WebsiteMetric"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"WebsiteMetric"> | Date | string
   website?: Prisma.XOR<Prisma.WebsiteScalarRelationFilter, Prisma.WebsiteWhereInput>
 }, "id">
 
 export type WebsiteMetricOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.WebsiteMetricCountOrderByAggregateInput
   _max?: Prisma.WebsiteMetricMaxOrderByAggregateInput
   _min?: Prisma.WebsiteMetricMinOrderByAggregateInput
@@ -190,40 +212,56 @@ export type WebsiteMetricScalarWhereWithAggregatesInput = {
   NOT?: Prisma.WebsiteMetricScalarWhereWithAggregatesInput | Prisma.WebsiteMetricScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"WebsiteMetric"> | string
   websiteId?: Prisma.StringWithAggregatesFilter<"WebsiteMetric"> | string
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"WebsiteMetric"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"WebsiteMetric"> | Date | string
 }
 
 export type WebsiteMetricCreateInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
   website: Prisma.WebsiteCreateNestedOneWithoutMetricsInput
 }
 
 export type WebsiteMetricUncheckedCreateInput = {
   id?: string
   websiteId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type WebsiteMetricUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   website?: Prisma.WebsiteUpdateOneRequiredWithoutMetricsNestedInput
 }
 
 export type WebsiteMetricUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   websiteId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebsiteMetricCreateManyInput = {
   id?: string
   websiteId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type WebsiteMetricUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebsiteMetricUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   websiteId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebsiteMetricListRelationFilter = {
@@ -239,16 +277,22 @@ export type WebsiteMetricOrderByRelationAggregateInput = {
 export type WebsiteMetricCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type WebsiteMetricMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type WebsiteMetricMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type WebsiteMetricCreateNestedManyWithoutWebsiteInput = {
@@ -295,10 +339,14 @@ export type WebsiteMetricUncheckedUpdateManyWithoutWebsiteNestedInput = {
 
 export type WebsiteMetricCreateWithoutWebsiteInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type WebsiteMetricUncheckedCreateWithoutWebsiteInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type WebsiteMetricCreateOrConnectWithoutWebsiteInput = {
@@ -333,22 +381,32 @@ export type WebsiteMetricScalarWhereInput = {
   NOT?: Prisma.WebsiteMetricScalarWhereInput | Prisma.WebsiteMetricScalarWhereInput[]
   id?: Prisma.UuidFilter<"WebsiteMetric"> | string
   websiteId?: Prisma.StringFilter<"WebsiteMetric"> | string
+  createdAt?: Prisma.DateTimeFilter<"WebsiteMetric"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"WebsiteMetric"> | Date | string
 }
 
 export type WebsiteMetricCreateManyWebsiteInput = {
   id?: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type WebsiteMetricUpdateWithoutWebsiteInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebsiteMetricUncheckedUpdateWithoutWebsiteInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebsiteMetricUncheckedUpdateManyWithoutWebsiteInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -356,27 +414,35 @@ export type WebsiteMetricUncheckedUpdateManyWithoutWebsiteInput = {
 export type WebsiteMetricSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   websiteId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["websiteMetric"]>
 
 export type WebsiteMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   websiteId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["websiteMetric"]>
 
 export type WebsiteMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   websiteId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["websiteMetric"]>
 
 export type WebsiteMetricSelectScalar = {
   id?: boolean
   websiteId?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type WebsiteMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "websiteId", ExtArgs["result"]["websiteMetric"]>
+export type WebsiteMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "websiteId" | "createdAt" | "updatedAt", ExtArgs["result"]["websiteMetric"]>
 export type WebsiteMetricInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }
@@ -395,6 +461,8 @@ export type $WebsiteMetricPayload<ExtArgs extends runtime.Types.Extensions.Inter
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     websiteId: string
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["websiteMetric"]>
   composites: {}
 }
@@ -821,6 +889,8 @@ export interface Prisma__WebsiteMetricClient<T, Null = never, ExtArgs extends ru
 export interface WebsiteMetricFieldRefs {
   readonly id: Prisma.FieldRef<"WebsiteMetric", 'String'>
   readonly websiteId: Prisma.FieldRef<"WebsiteMetric", 'String'>
+  readonly createdAt: Prisma.FieldRef<"WebsiteMetric", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"WebsiteMetric", 'DateTime'>
 }
     
 

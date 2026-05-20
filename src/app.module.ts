@@ -11,6 +11,8 @@ import { UserModule } from './modules/user/user.module.js';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { AtGuard } from './common/guards/at-guard.js';
+import { SiteMonitoringModule } from './modules/site-monitoring/site-monitoring.module.js';
+import { AdminModule } from './modules/admin/admin.module.js';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { AtGuard } from './common/guards/at-guard.js';
     AuthModule,
     UserModule,
     JwtModule,
+    SiteMonitoringModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

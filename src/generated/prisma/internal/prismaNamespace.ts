@@ -773,7 +773,9 @@ export type WebsiteScalarFieldEnum = (typeof WebsiteScalarFieldEnum)[keyof typeo
 
 export const WebsiteMetricScalarFieldEnum = {
   id: 'id',
-  websiteId: 'websiteId'
+  websiteId: 'websiteId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type WebsiteMetricScalarFieldEnum = (typeof WebsiteMetricScalarFieldEnum)[keyof typeof WebsiteMetricScalarFieldEnum]
