@@ -102,3 +102,75 @@ Data visibility and presentation constraints are handled via strict role-based a
 
 - **Access Scope:** Strictly bound to their specific tenant space using relational database row filtering.
 - **Data Resolution:** Simplified, business-oriented metrics. They see high-level website traffic volumes, uptime statuses, simple visual warnings (e.g., "High Traffic Detected"), and storage utilization. Complex infrastructure jargon is completely hidden behind user-friendly abstractions.
+
+---
+
+## 7. Incident Alerting Architecture
+
+The alerting module is split into two layers: **Evaluation** (detecting the problem) and **Dispatching** (sending the notification). By decoupling these layers using NestJS events, you can scale the system up later without rewriting your business logic.
+
+```
+[ Edge Agent ] ───( HTTPS POST )───► [ Core Backend Ingestion ]
+                                                │
+                                                ▼ (1. Saves to DB)
+                                           PostgreSQL
+                                                │
+                                                ▼ (2. Emits Natively)
+                                         Local Event Bus ──────► [ Alert Evaluation Engine ]
+                                                                             │
+                                                                             ▼ (If Breach Confirmed)
+                                                                      [ Alert Dispatch Service ] ──► [ SMS / Email ]
+
+```
+
+---
+
+### Phase 1: Current Scale Implementation (100–200 VPSs)
+
+At your current size, we want to evaluate alerts instantly in-memory without running heavy background cron jobs that constantly stress your database.
+
+#### 1. Evaluation Layer (Core Backend Memory)
+
+- **The Mechanism:** The edge agent sends the metrics payload to the core backend via HTTPS POST. The core backend saves this data to PostgreSQL. **Immediately after the save succeeds**, the backend throws that payload onto the native NestJS EventEmitter and responds 201 Created to the agent.
+- **The Evaluator:** A dedicated AlertEvaluationService inside the backend listens for this internal memory event. It matches the metrics against the specific threshold rules for that VPS (stored in a fast cache/memory map on startup).
+- **State Tracking:** To prevent spamming users during a 5-second CPU spike, the service tracks the lifecycle state of the alert in the backend server's memory:
+
+$$\text{Inactive} \longrightarrow \text{Pending (Breached but waiting)} \longrightarrow \text{Firing} \longrightarrow \text{Resolved}$$
+
+#### 2. Dispatching Layer (Asynchronous Tasks)
+
+- **The Mechanism:** If the evaluation service decides an alert has crossed the threshold for too long, it calls the AlertDispatchService.
+- **Execution:** The backend triggers the third-party SMS or Email API asynchronously. Because it runs on a background event loop separate from the main controller, external network delays from your SMS provider will never slow down your core application.
+
+---
+
+### Phase 2: Future Scaled Implementation (1,000+ VPSs)
+
+When you scale horizontally—meaning you run **multiple instances** of your core backend behind a load balancer—inline memory evaluation will fail because instance A won't know what instance B is doing, and the sheer volume of alerts will threaten system performance.
+
+```
+[ Edge Agent ] ───( HTTPS POST )───► [ Core Backend Instance A or B ]
+                                                │
+                                                ▼ (Saves to DB)
+                                          TimescaleDB ◄─── (Computes 5m Averages Automatically)
+                                                ▲
+                                                │ (Queries database every 1m)
+                                      [ Background Worker Pool ]
+                                                │
+                                                ▼ (If Breach Confirmed)
+                                           Redis / BullMQ ───► [ Dedicated Dispatch Workers ] ──► [ SMS / Email ]
+
+```
+
+#### 1. Decoupled Evaluation Layer (Database & Worker Pool)
+
+- **The Shift:** Instead of evaluating metrics the microsecond they arrive at the backend API, the system moves to a **Pull-Based Evaluation Engine** running on dedicated background worker processes.
+- **The Mechanism:** The core backend simply receives the agent's HTTPS POST data and drops it straight into TimescaleDB.
+- **The Query:** Isolated background workers query TimescaleDB **Continuous Aggregates** (automatic background calculations) every 60 seconds to find sustained issues (e.g., _Which VPSs have averaged >90% CPU for the last 5 minutes?_).
+- **State Tracking:** Because you have multiple backend instances, alert states (Pending, Firing, Resolved) are moved out of local server memory and saved into a dedicated PostgreSQL table (alert_states) so all instances share the exact same state.
+
+#### 2. Distributed Dispatching Layer (Redis / BullMQ)
+
+- **The Shift:** At scale, sending thousands of simultaneous alerts will hit API rate limits or cause timeouts.
+- **The Mechanism:** When a background worker detects a valid alert, it pushes a small JSON job into **Redis using BullMQ**.
+- **Queue Control:** BullMQ workers gracefully throttle outbound notifications, retry failed API requests if an SMS provider goes down, and handle deduplication to ensure website owners are never spammed.
