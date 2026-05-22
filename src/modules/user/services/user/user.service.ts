@@ -21,13 +21,15 @@ export class UserService {
     phoneNumber,
     password,
   }: UserCreateInput) {
-    const userToCreate = {
+    const userToCreate: UserCreateInput = {
       username,
       password,
+
       ...(email && { email }),
       ...(fullName && { fullName }),
       ...(phoneNumber && { phoneNumber }),
     };
+
     return this.prisma.user.create({
       data: userToCreate,
     });

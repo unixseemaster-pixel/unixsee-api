@@ -21,7 +21,7 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
-    "verbatimModuleSyntax": true,
+    // "verbatimModuleSyntax": true,
 
     "paths": {
       "#/*": ["./src/*"]
