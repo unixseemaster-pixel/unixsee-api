@@ -33,6 +33,7 @@ export class AgentController {
       isFirstProvisioningCycle,
       clientIp,
     );
+
     return {
       status: 'success',
       ...(result.assignedSecretKey && {
