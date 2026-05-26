@@ -18,8 +18,8 @@ export class AtGuard extends AuthGuard('jwt') {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // if (this.isPublic(context)) return true;
-
+    if (this.isPublic(context)) return true;
+    // return true;
     const canActivate = (await super.canActivate(context)) as boolean;
     if (!canActivate) return false;
 
@@ -31,10 +31,10 @@ export class AtGuard extends AuthGuard('jwt') {
     return true;
   }
 
-  //   private isPublic(context: ExecutionContext): boolean {
-  //     return this.reflector.getAllAndOverride('isPublic', [
-  //       context.getHandler(),
-  //       context.getClass(),
-  //     ]);
-  //   }
+  private isPublic(context: ExecutionContext): boolean {
+    return this.reflector.getAllAndOverride('isPublic', [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+  }
 }

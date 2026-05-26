@@ -12,6 +12,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AgentSignatureGuard } from './guards/agent-signature.guard.js';
 import { IngestAgentMetricsDto } from './dto/ingest-agent-metrics.dto.js';
 import { AgentService } from './agent.service.js';
+import { Public } from '../auth/decorators/public.decorator.js';
 
 @Controller('api/v1/agent')
 export class AgentController {
@@ -21,6 +22,7 @@ export class AgentController {
     private readonly agentService: AgentService,
   ) {}
 
+  @Public()
   @Post('ingest')
   @UseGuards(AgentSignatureGuard)
   @HttpCode(HttpStatus.CREATED)
