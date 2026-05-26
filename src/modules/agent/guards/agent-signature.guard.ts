@@ -1,23 +1,53 @@
+import { createHmac, timingSafeEqual } from 'crypto';
 import {
   Injectable,
-  CanActivate,
-  ExecutionContext,
+  type CanActivate,
+  type ExecutionContext,
   UnauthorizedException,
   BadRequestException,
 } from '@nestjs/common';
-import { createHmac, timingSafeEqual } from 'node:crypto';
-
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 
 @Injectable()
 export class AgentSignatureGuard implements CanActivate {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-
     const timestamp = request.headers['x-agent-timestamp'];
     const incomingSignature = request.headers['x-agent-signature'];
+    const activationToken = request.headers['x-activation-token'];
+
+    const requestBody = request.body;
+    if (!requestBody?.batch?.[0]?.machineId) {
+      throw new BadRequestException(
+        'Invalid payload topology or missing machineId.',
+      );
+    }
+
+    const machineId = requestBody.batch[0].machineId;
+
+    if (activationToken && !incomingSignature) {
+      const configuredActivationToken = this.configService.get<string>(
+        'AGENT_ACTIVATION_TOKEN',
+      );
+      if (
+        !configuredActivationToken ||
+        activationToken !== configuredActivationToken
+      ) {
+        throw new UnauthorizedException(
+          'Invalid or expired infrastructure activation token.',
+        );
+      }
+
+      request.vpsMachineId = machineId;
+      request.isFirstProvisioningCycle = true;
+      return true;
+    }
 
     if (!timestamp || !incomingSignature) {
       throw new UnauthorizedException(
@@ -25,34 +55,12 @@ export class AgentSignatureGuard implements CanActivate {
       );
     }
 
-    const requestBody = request.body;
-    if (
-      !requestBody ||
-      !requestBody.batch ||
-      !Array.isArray(requestBody.batch) ||
-      requestBody.batch.length === 0
-    ) {
-      throw new BadRequestException('Invalid payload topology.');
-    }
-
-    const machineId = requestBody.batch[0].machineId;
-    if (!machineId) {
-      throw new BadRequestException(
-        'Unable to resolve agent machineId fingerprint.',
-      );
-    }
-
     const requestTime = new Date(timestamp as string).getTime();
-    const currentTime = Date.now();
-    const maxAllowedDriftMs = 5 * 60 * 1000;
-
     if (
       isNaN(requestTime) ||
-      Math.abs(currentTime - requestTime) > maxAllowedDriftMs
+      Math.abs(Date.now() - requestTime) > 5 * 60 * 1000
     ) {
-      throw new UnauthorizedException(
-        'Security timestamp drift detected. Request rejected.',
-      );
+      throw new UnauthorizedException('Security timestamp drift detected.');
     }
 
     const vpsNode = await this.prisma.vpsNode.findUnique({
@@ -60,31 +68,27 @@ export class AgentSignatureGuard implements CanActivate {
       select: { secretKey: true },
     });
 
-    if (!vpsNode || !vpsNode.secretKey) {
+    if (!vpsNode?.secretKey) {
       throw new UnauthorizedException('Unrecognized host identity signature.');
     }
 
     const rawPayloadString = JSON.stringify(requestBody);
     const dataToSign = `${timestamp}.${rawPayloadString}`;
-
     const computedSignature = createHmac('sha256', vpsNode.secretKey)
       .update(dataToSign)
       .digest('hex');
 
-    const incomingSignatureBuffer = Buffer.from(
-      incomingSignature as string,
-      'hex',
-    );
-    const computedSignatureBuffer = Buffer.from(computedSignature, 'hex');
-
     if (
-      incomingSignatureBuffer.length !== computedSignatureBuffer.length ||
-      !timingSafeEqual(incomingSignatureBuffer, computedSignatureBuffer)
+      !timingSafeEqual(
+        Buffer.from(incomingSignature as string, 'hex'),
+        Buffer.from(computedSignature, 'hex'),
+      )
     ) {
       throw new UnauthorizedException('Invalid cryptographic signature match.');
     }
 
     request.vpsMachineId = machineId;
+    request.isFirstProvisioningCycle = false;
     return true;
   }
 }

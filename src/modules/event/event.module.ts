@@ -4,5 +4,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Module({
   providers: [EventDispatcherService, EventEmitter2],
+  exports: [EventDispatcherService],
 })
 export class EventModule {}

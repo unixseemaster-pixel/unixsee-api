@@ -7,9 +7,7 @@ export const envSchema = z.object({
 
   PORT: z.coerce.number().int().positive().default(4000),
 
-  DATABASE_URL: z
-    .string({ error: 'DATABASE_URL is required' })
-    .url('DATABASE_URL must be a valid URL'),
+  DATABASE_URL: z.url('DATABASE_URL must be a valid URL'),
 
   JWT_ACCESS_SECRET: z
     .string({ error: 'JWT_ACCESS_SECRET is required' })

@@ -13,6 +13,8 @@ import { AppService } from './app.service.js';
 import { AtGuard } from './modules/auth/guards/at-guard.js';
 import { RealtimeModule } from './modules/realtime/realtime.module.js';
 import { EventModule } from './modules/event/event.module.js';
+import { AgentController } from './modules/agent/agent.controller.js';
+import { AgentModule } from './modules/agent/agent.module.js';
 
 @Module({
   imports: [
@@ -29,6 +31,7 @@ import { EventModule } from './modules/event/event.module.js';
     JwtModule,
     RealtimeModule,
     EventModule,
+    AgentModule,
   ],
   controllers: [AppController],
   providers: [
