@@ -323,7 +323,7 @@ export type VpsMetricWhereInput = {
   NOT?: Prisma.VpsMetricWhereInput | Prisma.VpsMetricWhereInput[]
   recordedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   VpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
-  cpuUsagePercent?: Prisma.IntFilter<"VpsMetric"> | number
+  cpuUsagePercent?: Prisma.FloatFilter<"VpsMetric"> | number
   memoryTotalMB?: Prisma.IntFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntFilter<"VpsMetric"> | number
   liteSpeedConnections?: Prisma.IntFilter<"VpsMetric"> | number
@@ -336,7 +336,7 @@ export type VpsMetricWhereInput = {
   networkTxBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
   createdAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
-  vps?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
+  vpsNode?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
 }
 
 export type VpsMetricOrderByWithRelationInput = {
@@ -355,7 +355,7 @@ export type VpsMetricOrderByWithRelationInput = {
   networkTxBytesPerSecond?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  vps?: Prisma.VpsNodeOrderByWithRelationInput
+  vpsNode?: Prisma.VpsNodeOrderByWithRelationInput
 }
 
 export type VpsMetricWhereUniqueInput = Prisma.AtLeast<{
@@ -365,7 +365,7 @@ export type VpsMetricWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.VpsMetricWhereInput | Prisma.VpsMetricWhereInput[]
   recordedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   VpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
-  cpuUsagePercent?: Prisma.IntFilter<"VpsMetric"> | number
+  cpuUsagePercent?: Prisma.FloatFilter<"VpsMetric"> | number
   memoryTotalMB?: Prisma.IntFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntFilter<"VpsMetric"> | number
   liteSpeedConnections?: Prisma.IntFilter<"VpsMetric"> | number
@@ -378,7 +378,7 @@ export type VpsMetricWhereUniqueInput = Prisma.AtLeast<{
   networkTxBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
   createdAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
-  vps?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
+  vpsNode?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
 }, "recordedAt_VpsNodeId">
 
 export type VpsMetricOrderByWithAggregationInput = {
@@ -410,7 +410,7 @@ export type VpsMetricScalarWhereWithAggregatesInput = {
   NOT?: Prisma.VpsMetricScalarWhereWithAggregatesInput | Prisma.VpsMetricScalarWhereWithAggregatesInput[]
   recordedAt?: Prisma.DateTimeWithAggregatesFilter<"VpsMetric"> | Date | string
   VpsNodeId?: Prisma.UuidWithAggregatesFilter<"VpsMetric"> | string
-  cpuUsagePercent?: Prisma.IntWithAggregatesFilter<"VpsMetric"> | number
+  cpuUsagePercent?: Prisma.FloatWithAggregatesFilter<"VpsMetric"> | number
   memoryTotalMB?: Prisma.IntWithAggregatesFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntWithAggregatesFilter<"VpsMetric"> | number
   liteSpeedConnections?: Prisma.IntWithAggregatesFilter<"VpsMetric"> | number
@@ -440,7 +440,7 @@ export type VpsMetricCreateInput = {
   networkTxBytesPerSecond: bigint | number
   createdAt?: Date | string
   updatedAt?: Date | string
-  vps: Prisma.VpsNodeCreateNestedOneWithoutVpsMetricsInput
+  vpsNode: Prisma.VpsNodeCreateNestedOneWithoutVpsMetricsInput
 }
 
 export type VpsMetricUncheckedCreateInput = {
@@ -463,7 +463,7 @@ export type VpsMetricUncheckedCreateInput = {
 
 export type VpsMetricUpdateInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  cpuUsagePercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
@@ -476,13 +476,13 @@ export type VpsMetricUpdateInput = {
   networkTxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vps?: Prisma.VpsNodeUpdateOneRequiredWithoutVpsMetricsNestedInput
+  vpsNode?: Prisma.VpsNodeUpdateOneRequiredWithoutVpsMetricsNestedInput
 }
 
 export type VpsMetricUncheckedUpdateInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   VpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
-  cpuUsagePercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
@@ -517,7 +517,7 @@ export type VpsMetricCreateManyInput = {
 
 export type VpsMetricUpdateManyMutationInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  cpuUsagePercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
@@ -535,7 +535,7 @@ export type VpsMetricUpdateManyMutationInput = {
 export type VpsMetricUncheckedUpdateManyInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   VpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
-  cpuUsagePercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
@@ -647,46 +647,54 @@ export type VpsMetricSumOrderByAggregateInput = {
   networkTxBytesPerSecond?: Prisma.SortOrder
 }
 
-export type VpsMetricCreateNestedManyWithoutVpsInput = {
-  create?: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsInput, Prisma.VpsMetricUncheckedCreateWithoutVpsInput> | Prisma.VpsMetricCreateWithoutVpsInput[] | Prisma.VpsMetricUncheckedCreateWithoutVpsInput[]
-  connectOrCreate?: Prisma.VpsMetricCreateOrConnectWithoutVpsInput | Prisma.VpsMetricCreateOrConnectWithoutVpsInput[]
-  createMany?: Prisma.VpsMetricCreateManyVpsInputEnvelope
+export type VpsMetricCreateNestedManyWithoutVpsNodeInput = {
+  create?: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsNodeInput, Prisma.VpsMetricUncheckedCreateWithoutVpsNodeInput> | Prisma.VpsMetricCreateWithoutVpsNodeInput[] | Prisma.VpsMetricUncheckedCreateWithoutVpsNodeInput[]
+  connectOrCreate?: Prisma.VpsMetricCreateOrConnectWithoutVpsNodeInput | Prisma.VpsMetricCreateOrConnectWithoutVpsNodeInput[]
+  createMany?: Prisma.VpsMetricCreateManyVpsNodeInputEnvelope
   connect?: Prisma.VpsMetricWhereUniqueInput | Prisma.VpsMetricWhereUniqueInput[]
 }
 
-export type VpsMetricUncheckedCreateNestedManyWithoutVpsInput = {
-  create?: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsInput, Prisma.VpsMetricUncheckedCreateWithoutVpsInput> | Prisma.VpsMetricCreateWithoutVpsInput[] | Prisma.VpsMetricUncheckedCreateWithoutVpsInput[]
-  connectOrCreate?: Prisma.VpsMetricCreateOrConnectWithoutVpsInput | Prisma.VpsMetricCreateOrConnectWithoutVpsInput[]
-  createMany?: Prisma.VpsMetricCreateManyVpsInputEnvelope
+export type VpsMetricUncheckedCreateNestedManyWithoutVpsNodeInput = {
+  create?: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsNodeInput, Prisma.VpsMetricUncheckedCreateWithoutVpsNodeInput> | Prisma.VpsMetricCreateWithoutVpsNodeInput[] | Prisma.VpsMetricUncheckedCreateWithoutVpsNodeInput[]
+  connectOrCreate?: Prisma.VpsMetricCreateOrConnectWithoutVpsNodeInput | Prisma.VpsMetricCreateOrConnectWithoutVpsNodeInput[]
+  createMany?: Prisma.VpsMetricCreateManyVpsNodeInputEnvelope
   connect?: Prisma.VpsMetricWhereUniqueInput | Prisma.VpsMetricWhereUniqueInput[]
 }
 
-export type VpsMetricUpdateManyWithoutVpsNestedInput = {
-  create?: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsInput, Prisma.VpsMetricUncheckedCreateWithoutVpsInput> | Prisma.VpsMetricCreateWithoutVpsInput[] | Prisma.VpsMetricUncheckedCreateWithoutVpsInput[]
-  connectOrCreate?: Prisma.VpsMetricCreateOrConnectWithoutVpsInput | Prisma.VpsMetricCreateOrConnectWithoutVpsInput[]
-  upsert?: Prisma.VpsMetricUpsertWithWhereUniqueWithoutVpsInput | Prisma.VpsMetricUpsertWithWhereUniqueWithoutVpsInput[]
-  createMany?: Prisma.VpsMetricCreateManyVpsInputEnvelope
+export type VpsMetricUpdateManyWithoutVpsNodeNestedInput = {
+  create?: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsNodeInput, Prisma.VpsMetricUncheckedCreateWithoutVpsNodeInput> | Prisma.VpsMetricCreateWithoutVpsNodeInput[] | Prisma.VpsMetricUncheckedCreateWithoutVpsNodeInput[]
+  connectOrCreate?: Prisma.VpsMetricCreateOrConnectWithoutVpsNodeInput | Prisma.VpsMetricCreateOrConnectWithoutVpsNodeInput[]
+  upsert?: Prisma.VpsMetricUpsertWithWhereUniqueWithoutVpsNodeInput | Prisma.VpsMetricUpsertWithWhereUniqueWithoutVpsNodeInput[]
+  createMany?: Prisma.VpsMetricCreateManyVpsNodeInputEnvelope
   set?: Prisma.VpsMetricWhereUniqueInput | Prisma.VpsMetricWhereUniqueInput[]
   disconnect?: Prisma.VpsMetricWhereUniqueInput | Prisma.VpsMetricWhereUniqueInput[]
   delete?: Prisma.VpsMetricWhereUniqueInput | Prisma.VpsMetricWhereUniqueInput[]
   connect?: Prisma.VpsMetricWhereUniqueInput | Prisma.VpsMetricWhereUniqueInput[]
-  update?: Prisma.VpsMetricUpdateWithWhereUniqueWithoutVpsInput | Prisma.VpsMetricUpdateWithWhereUniqueWithoutVpsInput[]
-  updateMany?: Prisma.VpsMetricUpdateManyWithWhereWithoutVpsInput | Prisma.VpsMetricUpdateManyWithWhereWithoutVpsInput[]
+  update?: Prisma.VpsMetricUpdateWithWhereUniqueWithoutVpsNodeInput | Prisma.VpsMetricUpdateWithWhereUniqueWithoutVpsNodeInput[]
+  updateMany?: Prisma.VpsMetricUpdateManyWithWhereWithoutVpsNodeInput | Prisma.VpsMetricUpdateManyWithWhereWithoutVpsNodeInput[]
   deleteMany?: Prisma.VpsMetricScalarWhereInput | Prisma.VpsMetricScalarWhereInput[]
 }
 
-export type VpsMetricUncheckedUpdateManyWithoutVpsNestedInput = {
-  create?: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsInput, Prisma.VpsMetricUncheckedCreateWithoutVpsInput> | Prisma.VpsMetricCreateWithoutVpsInput[] | Prisma.VpsMetricUncheckedCreateWithoutVpsInput[]
-  connectOrCreate?: Prisma.VpsMetricCreateOrConnectWithoutVpsInput | Prisma.VpsMetricCreateOrConnectWithoutVpsInput[]
-  upsert?: Prisma.VpsMetricUpsertWithWhereUniqueWithoutVpsInput | Prisma.VpsMetricUpsertWithWhereUniqueWithoutVpsInput[]
-  createMany?: Prisma.VpsMetricCreateManyVpsInputEnvelope
+export type VpsMetricUncheckedUpdateManyWithoutVpsNodeNestedInput = {
+  create?: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsNodeInput, Prisma.VpsMetricUncheckedCreateWithoutVpsNodeInput> | Prisma.VpsMetricCreateWithoutVpsNodeInput[] | Prisma.VpsMetricUncheckedCreateWithoutVpsNodeInput[]
+  connectOrCreate?: Prisma.VpsMetricCreateOrConnectWithoutVpsNodeInput | Prisma.VpsMetricCreateOrConnectWithoutVpsNodeInput[]
+  upsert?: Prisma.VpsMetricUpsertWithWhereUniqueWithoutVpsNodeInput | Prisma.VpsMetricUpsertWithWhereUniqueWithoutVpsNodeInput[]
+  createMany?: Prisma.VpsMetricCreateManyVpsNodeInputEnvelope
   set?: Prisma.VpsMetricWhereUniqueInput | Prisma.VpsMetricWhereUniqueInput[]
   disconnect?: Prisma.VpsMetricWhereUniqueInput | Prisma.VpsMetricWhereUniqueInput[]
   delete?: Prisma.VpsMetricWhereUniqueInput | Prisma.VpsMetricWhereUniqueInput[]
   connect?: Prisma.VpsMetricWhereUniqueInput | Prisma.VpsMetricWhereUniqueInput[]
-  update?: Prisma.VpsMetricUpdateWithWhereUniqueWithoutVpsInput | Prisma.VpsMetricUpdateWithWhereUniqueWithoutVpsInput[]
-  updateMany?: Prisma.VpsMetricUpdateManyWithWhereWithoutVpsInput | Prisma.VpsMetricUpdateManyWithWhereWithoutVpsInput[]
+  update?: Prisma.VpsMetricUpdateWithWhereUniqueWithoutVpsNodeInput | Prisma.VpsMetricUpdateWithWhereUniqueWithoutVpsNodeInput[]
+  updateMany?: Prisma.VpsMetricUpdateManyWithWhereWithoutVpsNodeInput | Prisma.VpsMetricUpdateManyWithWhereWithoutVpsNodeInput[]
   deleteMany?: Prisma.VpsMetricScalarWhereInput | Prisma.VpsMetricScalarWhereInput[]
+}
+
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -705,7 +713,7 @@ export type BigIntFieldUpdateOperationsInput = {
   divide?: bigint | number
 }
 
-export type VpsMetricCreateWithoutVpsInput = {
+export type VpsMetricCreateWithoutVpsNodeInput = {
   recordedAt?: Date | string
   cpuUsagePercent: number
   memoryTotalMB: number
@@ -722,7 +730,7 @@ export type VpsMetricCreateWithoutVpsInput = {
   updatedAt?: Date | string
 }
 
-export type VpsMetricUncheckedCreateWithoutVpsInput = {
+export type VpsMetricUncheckedCreateWithoutVpsNodeInput = {
   recordedAt?: Date | string
   cpuUsagePercent: number
   memoryTotalMB: number
@@ -739,30 +747,30 @@ export type VpsMetricUncheckedCreateWithoutVpsInput = {
   updatedAt?: Date | string
 }
 
-export type VpsMetricCreateOrConnectWithoutVpsInput = {
+export type VpsMetricCreateOrConnectWithoutVpsNodeInput = {
   where: Prisma.VpsMetricWhereUniqueInput
-  create: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsInput, Prisma.VpsMetricUncheckedCreateWithoutVpsInput>
+  create: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsNodeInput, Prisma.VpsMetricUncheckedCreateWithoutVpsNodeInput>
 }
 
-export type VpsMetricCreateManyVpsInputEnvelope = {
-  data: Prisma.VpsMetricCreateManyVpsInput | Prisma.VpsMetricCreateManyVpsInput[]
+export type VpsMetricCreateManyVpsNodeInputEnvelope = {
+  data: Prisma.VpsMetricCreateManyVpsNodeInput | Prisma.VpsMetricCreateManyVpsNodeInput[]
   skipDuplicates?: boolean
 }
 
-export type VpsMetricUpsertWithWhereUniqueWithoutVpsInput = {
+export type VpsMetricUpsertWithWhereUniqueWithoutVpsNodeInput = {
   where: Prisma.VpsMetricWhereUniqueInput
-  update: Prisma.XOR<Prisma.VpsMetricUpdateWithoutVpsInput, Prisma.VpsMetricUncheckedUpdateWithoutVpsInput>
-  create: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsInput, Prisma.VpsMetricUncheckedCreateWithoutVpsInput>
+  update: Prisma.XOR<Prisma.VpsMetricUpdateWithoutVpsNodeInput, Prisma.VpsMetricUncheckedUpdateWithoutVpsNodeInput>
+  create: Prisma.XOR<Prisma.VpsMetricCreateWithoutVpsNodeInput, Prisma.VpsMetricUncheckedCreateWithoutVpsNodeInput>
 }
 
-export type VpsMetricUpdateWithWhereUniqueWithoutVpsInput = {
+export type VpsMetricUpdateWithWhereUniqueWithoutVpsNodeInput = {
   where: Prisma.VpsMetricWhereUniqueInput
-  data: Prisma.XOR<Prisma.VpsMetricUpdateWithoutVpsInput, Prisma.VpsMetricUncheckedUpdateWithoutVpsInput>
+  data: Prisma.XOR<Prisma.VpsMetricUpdateWithoutVpsNodeInput, Prisma.VpsMetricUncheckedUpdateWithoutVpsNodeInput>
 }
 
-export type VpsMetricUpdateManyWithWhereWithoutVpsInput = {
+export type VpsMetricUpdateManyWithWhereWithoutVpsNodeInput = {
   where: Prisma.VpsMetricScalarWhereInput
-  data: Prisma.XOR<Prisma.VpsMetricUpdateManyMutationInput, Prisma.VpsMetricUncheckedUpdateManyWithoutVpsInput>
+  data: Prisma.XOR<Prisma.VpsMetricUpdateManyMutationInput, Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNodeInput>
 }
 
 export type VpsMetricScalarWhereInput = {
@@ -771,7 +779,7 @@ export type VpsMetricScalarWhereInput = {
   NOT?: Prisma.VpsMetricScalarWhereInput | Prisma.VpsMetricScalarWhereInput[]
   recordedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   VpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
-  cpuUsagePercent?: Prisma.IntFilter<"VpsMetric"> | number
+  cpuUsagePercent?: Prisma.FloatFilter<"VpsMetric"> | number
   memoryTotalMB?: Prisma.IntFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntFilter<"VpsMetric"> | number
   liteSpeedConnections?: Prisma.IntFilter<"VpsMetric"> | number
@@ -786,7 +794,7 @@ export type VpsMetricScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
 }
 
-export type VpsMetricCreateManyVpsInput = {
+export type VpsMetricCreateManyVpsNodeInput = {
   recordedAt?: Date | string
   cpuUsagePercent: number
   memoryTotalMB: number
@@ -803,9 +811,9 @@ export type VpsMetricCreateManyVpsInput = {
   updatedAt?: Date | string
 }
 
-export type VpsMetricUpdateWithoutVpsInput = {
+export type VpsMetricUpdateWithoutVpsNodeInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  cpuUsagePercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
@@ -820,9 +828,9 @@ export type VpsMetricUpdateWithoutVpsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type VpsMetricUncheckedUpdateWithoutVpsInput = {
+export type VpsMetricUncheckedUpdateWithoutVpsNodeInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  cpuUsagePercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
@@ -837,9 +845,9 @@ export type VpsMetricUncheckedUpdateWithoutVpsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type VpsMetricUncheckedUpdateManyWithoutVpsInput = {
+export type VpsMetricUncheckedUpdateManyWithoutVpsNodeInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  cpuUsagePercent?: Prisma.IntFieldUpdateOperationsInput | number
+  cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
@@ -872,7 +880,7 @@ export type VpsMetricSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   networkTxBytesPerSecond?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vpsMetric"]>
 
 export type VpsMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -891,7 +899,7 @@ export type VpsMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   networkTxBytesPerSecond?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vpsMetric"]>
 
 export type VpsMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -910,7 +918,7 @@ export type VpsMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   networkTxBytesPerSecond?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vpsMetric"]>
 
 export type VpsMetricSelectScalar = {
@@ -933,19 +941,19 @@ export type VpsMetricSelectScalar = {
 
 export type VpsMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"recordedAt" | "VpsNodeId" | "cpuUsagePercent" | "memoryTotalMB" | "memoryUsedMB" | "liteSpeedConnections" | "diskReadBytesPerSecond" | "diskWriteBytesPerSecond" | "diskIops" | "storageTotalMB" | "storageAvailableMB" | "networkRxBytesPerSecond" | "networkTxBytesPerSecond" | "createdAt" | "updatedAt", ExtArgs["result"]["vpsMetric"]>
 export type VpsMetricInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }
 export type VpsMetricIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }
 export type VpsMetricIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }
 
 export type $VpsMetricPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "VpsMetric"
   objects: {
-    vps: Prisma.$VpsNodePayload<ExtArgs>
+    vpsNode: Prisma.$VpsNodePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     recordedAt: Date
@@ -1357,7 +1365,7 @@ readonly fields: VpsMetricFieldRefs;
  */
 export interface Prisma__VpsMetricClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  vps<T extends Prisma.VpsNodeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VpsNodeDefaultArgs<ExtArgs>>): Prisma.Prisma__VpsNodeClient<runtime.Types.Result.GetResult<Prisma.$VpsNodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  vpsNode<T extends Prisma.VpsNodeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VpsNodeDefaultArgs<ExtArgs>>): Prisma.Prisma__VpsNodeClient<runtime.Types.Result.GetResult<Prisma.$VpsNodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1389,7 +1397,7 @@ export interface Prisma__VpsMetricClient<T, Null = never, ExtArgs extends runtim
 export interface VpsMetricFieldRefs {
   readonly recordedAt: Prisma.FieldRef<"VpsMetric", 'DateTime'>
   readonly VpsNodeId: Prisma.FieldRef<"VpsMetric", 'String'>
-  readonly cpuUsagePercent: Prisma.FieldRef<"VpsMetric", 'Int'>
+  readonly cpuUsagePercent: Prisma.FieldRef<"VpsMetric", 'Float'>
   readonly memoryTotalMB: Prisma.FieldRef<"VpsMetric", 'Int'>
   readonly memoryUsedMB: Prisma.FieldRef<"VpsMetric", 'Int'>
   readonly liteSpeedConnections: Prisma.FieldRef<"VpsMetric", 'Int'>

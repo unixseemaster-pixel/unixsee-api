@@ -286,8 +286,8 @@ export type VpsNodeCreateInput = {
   server: Prisma.ServerCreateNestedOneWithoutVpsNodesInput
   user?: Prisma.UserCreateNestedOneWithoutVpsNodesInput
   websites?: Prisma.WebsiteCreateNestedManyWithoutVpsInput
-  vpsMetrics?: Prisma.VpsMetricCreateNestedManyWithoutVpsInput
-  webMetrics?: Prisma.WebMetricCreateNestedManyWithoutVpsInput
+  vpsMetrics?: Prisma.VpsMetricCreateNestedManyWithoutVpsNodeInput
+  webMetrics?: Prisma.WebMetricCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeUncheckedCreateInput = {
@@ -300,8 +300,8 @@ export type VpsNodeUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   websites?: Prisma.WebsiteUncheckedCreateNestedManyWithoutVpsInput
-  vpsMetrics?: Prisma.VpsMetricUncheckedCreateNestedManyWithoutVpsInput
-  webMetrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutVpsInput
+  vpsMetrics?: Prisma.VpsMetricUncheckedCreateNestedManyWithoutVpsNodeInput
+  webMetrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeUpdateInput = {
@@ -314,8 +314,8 @@ export type VpsNodeUpdateInput = {
   server?: Prisma.ServerUpdateOneRequiredWithoutVpsNodesNestedInput
   user?: Prisma.UserUpdateOneWithoutVpsNodesNestedInput
   websites?: Prisma.WebsiteUpdateManyWithoutVpsNestedInput
-  vpsMetrics?: Prisma.VpsMetricUpdateManyWithoutVpsNestedInput
-  webMetrics?: Prisma.WebMetricUpdateManyWithoutVpsNestedInput
+  vpsMetrics?: Prisma.VpsMetricUpdateManyWithoutVpsNodeNestedInput
+  webMetrics?: Prisma.WebMetricUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeUncheckedUpdateInput = {
@@ -328,8 +328,8 @@ export type VpsNodeUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   websites?: Prisma.WebsiteUncheckedUpdateManyWithoutVpsNestedInput
-  vpsMetrics?: Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNestedInput
-  webMetrics?: Prisma.WebMetricUncheckedUpdateManyWithoutVpsNestedInput
+  vpsMetrics?: Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNodeNestedInput
+  webMetrics?: Prisma.WebMetricUncheckedUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeCreateManyInput = {
@@ -546,8 +546,8 @@ export type VpsNodeCreateWithoutUserInput = {
   updatedAt?: Date | string
   server: Prisma.ServerCreateNestedOneWithoutVpsNodesInput
   websites?: Prisma.WebsiteCreateNestedManyWithoutVpsInput
-  vpsMetrics?: Prisma.VpsMetricCreateNestedManyWithoutVpsInput
-  webMetrics?: Prisma.WebMetricCreateNestedManyWithoutVpsInput
+  vpsMetrics?: Prisma.VpsMetricCreateNestedManyWithoutVpsNodeInput
+  webMetrics?: Prisma.WebMetricCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeUncheckedCreateWithoutUserInput = {
@@ -559,8 +559,8 @@ export type VpsNodeUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   websites?: Prisma.WebsiteUncheckedCreateNestedManyWithoutVpsInput
-  vpsMetrics?: Prisma.VpsMetricUncheckedCreateNestedManyWithoutVpsInput
-  webMetrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutVpsInput
+  vpsMetrics?: Prisma.VpsMetricUncheckedCreateNestedManyWithoutVpsNodeInput
+  webMetrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeCreateOrConnectWithoutUserInput = {
@@ -612,8 +612,8 @@ export type VpsNodeCreateWithoutServerInput = {
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutVpsNodesInput
   websites?: Prisma.WebsiteCreateNestedManyWithoutVpsInput
-  vpsMetrics?: Prisma.VpsMetricCreateNestedManyWithoutVpsInput
-  webMetrics?: Prisma.WebMetricCreateNestedManyWithoutVpsInput
+  vpsMetrics?: Prisma.VpsMetricCreateNestedManyWithoutVpsNodeInput
+  webMetrics?: Prisma.WebMetricCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeUncheckedCreateWithoutServerInput = {
@@ -625,8 +625,8 @@ export type VpsNodeUncheckedCreateWithoutServerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   websites?: Prisma.WebsiteUncheckedCreateNestedManyWithoutVpsInput
-  vpsMetrics?: Prisma.VpsMetricUncheckedCreateNestedManyWithoutVpsInput
-  webMetrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutVpsInput
+  vpsMetrics?: Prisma.VpsMetricUncheckedCreateNestedManyWithoutVpsNodeInput
+  webMetrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeCreateOrConnectWithoutServerInput = {
@@ -665,7 +665,7 @@ export type VpsNodeCreateWithoutVpsMetricsInput = {
   server: Prisma.ServerCreateNestedOneWithoutVpsNodesInput
   user?: Prisma.UserCreateNestedOneWithoutVpsNodesInput
   websites?: Prisma.WebsiteCreateNestedManyWithoutVpsInput
-  webMetrics?: Prisma.WebMetricCreateNestedManyWithoutVpsInput
+  webMetrics?: Prisma.WebMetricCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeUncheckedCreateWithoutVpsMetricsInput = {
@@ -678,7 +678,7 @@ export type VpsNodeUncheckedCreateWithoutVpsMetricsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   websites?: Prisma.WebsiteUncheckedCreateNestedManyWithoutVpsInput
-  webMetrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutVpsInput
+  webMetrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeCreateOrConnectWithoutVpsMetricsInput = {
@@ -707,7 +707,7 @@ export type VpsNodeUpdateWithoutVpsMetricsInput = {
   server?: Prisma.ServerUpdateOneRequiredWithoutVpsNodesNestedInput
   user?: Prisma.UserUpdateOneWithoutVpsNodesNestedInput
   websites?: Prisma.WebsiteUpdateManyWithoutVpsNestedInput
-  webMetrics?: Prisma.WebMetricUpdateManyWithoutVpsNestedInput
+  webMetrics?: Prisma.WebMetricUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeUncheckedUpdateWithoutVpsMetricsInput = {
@@ -720,7 +720,7 @@ export type VpsNodeUncheckedUpdateWithoutVpsMetricsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   websites?: Prisma.WebsiteUncheckedUpdateManyWithoutVpsNestedInput
-  webMetrics?: Prisma.WebMetricUncheckedUpdateManyWithoutVpsNestedInput
+  webMetrics?: Prisma.WebMetricUncheckedUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeCreateWithoutWebsitesInput = {
@@ -732,8 +732,8 @@ export type VpsNodeCreateWithoutWebsitesInput = {
   updatedAt?: Date | string
   server: Prisma.ServerCreateNestedOneWithoutVpsNodesInput
   user?: Prisma.UserCreateNestedOneWithoutVpsNodesInput
-  vpsMetrics?: Prisma.VpsMetricCreateNestedManyWithoutVpsInput
-  webMetrics?: Prisma.WebMetricCreateNestedManyWithoutVpsInput
+  vpsMetrics?: Prisma.VpsMetricCreateNestedManyWithoutVpsNodeInput
+  webMetrics?: Prisma.WebMetricCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeUncheckedCreateWithoutWebsitesInput = {
@@ -745,8 +745,8 @@ export type VpsNodeUncheckedCreateWithoutWebsitesInput = {
   secretKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  vpsMetrics?: Prisma.VpsMetricUncheckedCreateNestedManyWithoutVpsInput
-  webMetrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutVpsInput
+  vpsMetrics?: Prisma.VpsMetricUncheckedCreateNestedManyWithoutVpsNodeInput
+  webMetrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeCreateOrConnectWithoutWebsitesInput = {
@@ -774,8 +774,8 @@ export type VpsNodeUpdateWithoutWebsitesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   server?: Prisma.ServerUpdateOneRequiredWithoutVpsNodesNestedInput
   user?: Prisma.UserUpdateOneWithoutVpsNodesNestedInput
-  vpsMetrics?: Prisma.VpsMetricUpdateManyWithoutVpsNestedInput
-  webMetrics?: Prisma.WebMetricUpdateManyWithoutVpsNestedInput
+  vpsMetrics?: Prisma.VpsMetricUpdateManyWithoutVpsNodeNestedInput
+  webMetrics?: Prisma.WebMetricUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeUncheckedUpdateWithoutWebsitesInput = {
@@ -787,8 +787,8 @@ export type VpsNodeUncheckedUpdateWithoutWebsitesInput = {
   secretKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vpsMetrics?: Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNestedInput
-  webMetrics?: Prisma.WebMetricUncheckedUpdateManyWithoutVpsNestedInput
+  vpsMetrics?: Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNodeNestedInput
+  webMetrics?: Prisma.WebMetricUncheckedUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeCreateWithoutWebMetricsInput = {
@@ -801,7 +801,7 @@ export type VpsNodeCreateWithoutWebMetricsInput = {
   server: Prisma.ServerCreateNestedOneWithoutVpsNodesInput
   user?: Prisma.UserCreateNestedOneWithoutVpsNodesInput
   websites?: Prisma.WebsiteCreateNestedManyWithoutVpsInput
-  vpsMetrics?: Prisma.VpsMetricCreateNestedManyWithoutVpsInput
+  vpsMetrics?: Prisma.VpsMetricCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeUncheckedCreateWithoutWebMetricsInput = {
@@ -814,7 +814,7 @@ export type VpsNodeUncheckedCreateWithoutWebMetricsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   websites?: Prisma.WebsiteUncheckedCreateNestedManyWithoutVpsInput
-  vpsMetrics?: Prisma.VpsMetricUncheckedCreateNestedManyWithoutVpsInput
+  vpsMetrics?: Prisma.VpsMetricUncheckedCreateNestedManyWithoutVpsNodeInput
 }
 
 export type VpsNodeCreateOrConnectWithoutWebMetricsInput = {
@@ -843,7 +843,7 @@ export type VpsNodeUpdateWithoutWebMetricsInput = {
   server?: Prisma.ServerUpdateOneRequiredWithoutVpsNodesNestedInput
   user?: Prisma.UserUpdateOneWithoutVpsNodesNestedInput
   websites?: Prisma.WebsiteUpdateManyWithoutVpsNestedInput
-  vpsMetrics?: Prisma.VpsMetricUpdateManyWithoutVpsNestedInput
+  vpsMetrics?: Prisma.VpsMetricUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeUncheckedUpdateWithoutWebMetricsInput = {
@@ -856,7 +856,7 @@ export type VpsNodeUncheckedUpdateWithoutWebMetricsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   websites?: Prisma.WebsiteUncheckedUpdateManyWithoutVpsNestedInput
-  vpsMetrics?: Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNestedInput
+  vpsMetrics?: Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeCreateManyUserInput = {
@@ -878,8 +878,8 @@ export type VpsNodeUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   server?: Prisma.ServerUpdateOneRequiredWithoutVpsNodesNestedInput
   websites?: Prisma.WebsiteUpdateManyWithoutVpsNestedInput
-  vpsMetrics?: Prisma.VpsMetricUpdateManyWithoutVpsNestedInput
-  webMetrics?: Prisma.WebMetricUpdateManyWithoutVpsNestedInput
+  vpsMetrics?: Prisma.VpsMetricUpdateManyWithoutVpsNodeNestedInput
+  webMetrics?: Prisma.WebMetricUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeUncheckedUpdateWithoutUserInput = {
@@ -891,8 +891,8 @@ export type VpsNodeUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   websites?: Prisma.WebsiteUncheckedUpdateManyWithoutVpsNestedInput
-  vpsMetrics?: Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNestedInput
-  webMetrics?: Prisma.WebMetricUncheckedUpdateManyWithoutVpsNestedInput
+  vpsMetrics?: Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNodeNestedInput
+  webMetrics?: Prisma.WebMetricUncheckedUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeUncheckedUpdateManyWithoutUserInput = {
@@ -924,8 +924,8 @@ export type VpsNodeUpdateWithoutServerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutVpsNodesNestedInput
   websites?: Prisma.WebsiteUpdateManyWithoutVpsNestedInput
-  vpsMetrics?: Prisma.VpsMetricUpdateManyWithoutVpsNestedInput
-  webMetrics?: Prisma.WebMetricUpdateManyWithoutVpsNestedInput
+  vpsMetrics?: Prisma.VpsMetricUpdateManyWithoutVpsNodeNestedInput
+  webMetrics?: Prisma.WebMetricUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeUncheckedUpdateWithoutServerInput = {
@@ -937,8 +937,8 @@ export type VpsNodeUncheckedUpdateWithoutServerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   websites?: Prisma.WebsiteUncheckedUpdateManyWithoutVpsNestedInput
-  vpsMetrics?: Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNestedInput
-  webMetrics?: Prisma.WebMetricUncheckedUpdateManyWithoutVpsNestedInput
+  vpsMetrics?: Prisma.VpsMetricUncheckedUpdateManyWithoutVpsNodeNestedInput
+  webMetrics?: Prisma.WebMetricUncheckedUpdateManyWithoutVpsNodeNestedInput
 }
 
 export type VpsNodeUncheckedUpdateManyWithoutServerInput = {

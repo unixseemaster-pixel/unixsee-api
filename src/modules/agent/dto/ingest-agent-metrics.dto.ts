@@ -8,10 +8,11 @@ import {
   ValidateNested,
   IsInt,
   Min,
+  ArrayMinSize,
 } from 'class-validator';
 
 export class MetricPayloadDto {
-  @IsNumber()
+  @IsNumber({ allowNaN: false, allowInfinity: false })
   @Min(0)
   cpuMean!: number;
 
@@ -80,13 +81,14 @@ export class TelemetryBatchEntryDto {
   metrics!: MetricPayloadDto;
 
   @IsArray()
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => WebsitePayloadDto)
   websites!: WebsitePayloadDto[];
 }
 
 export class IngestAgentMetricsDto {
   @IsArray()
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => TelemetryBatchEntryDto)
   @IsNotEmpty()

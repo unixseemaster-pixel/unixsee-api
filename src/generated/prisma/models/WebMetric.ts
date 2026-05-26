@@ -236,7 +236,7 @@ export type WebMetricWhereInput = {
   requestRate?: Prisma.IntFilter<"WebMetric"> | number
   createdAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
-  vps?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
+  vpsNode?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
   website?: Prisma.XOR<Prisma.WebsiteScalarRelationFilter, Prisma.WebsiteWhereInput>
 }
 
@@ -248,7 +248,7 @@ export type WebMetricOrderByWithRelationInput = {
   requestRate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  vps?: Prisma.VpsNodeOrderByWithRelationInput
+  vpsNode?: Prisma.VpsNodeOrderByWithRelationInput
   website?: Prisma.WebsiteOrderByWithRelationInput
 }
 
@@ -264,7 +264,7 @@ export type WebMetricWhereUniqueInput = Prisma.AtLeast<{
   requestRate?: Prisma.IntFilter<"WebMetric"> | number
   createdAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
-  vps?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
+  vpsNode?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
   website?: Prisma.XOR<Prisma.WebsiteScalarRelationFilter, Prisma.WebsiteWhereInput>
 }, "recordedAt_websiteId">
 
@@ -302,7 +302,7 @@ export type WebMetricCreateInput = {
   requestRate?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  vps: Prisma.VpsNodeCreateNestedOneWithoutWebMetricsInput
+  vpsNode: Prisma.VpsNodeCreateNestedOneWithoutWebMetricsInput
   website: Prisma.WebsiteCreateNestedOneWithoutMetricsInput
 }
 
@@ -322,7 +322,7 @@ export type WebMetricUpdateInput = {
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vps?: Prisma.VpsNodeUpdateOneRequiredWithoutWebMetricsNestedInput
+  vpsNode?: Prisma.VpsNodeUpdateOneRequiredWithoutWebMetricsNestedInput
   website?: Prisma.WebsiteUpdateOneRequiredWithoutMetricsNestedInput
 }
 
@@ -419,45 +419,45 @@ export type WebMetricSumOrderByAggregateInput = {
   requestRate?: Prisma.SortOrder
 }
 
-export type WebMetricCreateNestedManyWithoutVpsInput = {
-  create?: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsInput, Prisma.WebMetricUncheckedCreateWithoutVpsInput> | Prisma.WebMetricCreateWithoutVpsInput[] | Prisma.WebMetricUncheckedCreateWithoutVpsInput[]
-  connectOrCreate?: Prisma.WebMetricCreateOrConnectWithoutVpsInput | Prisma.WebMetricCreateOrConnectWithoutVpsInput[]
-  createMany?: Prisma.WebMetricCreateManyVpsInputEnvelope
+export type WebMetricCreateNestedManyWithoutVpsNodeInput = {
+  create?: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsNodeInput, Prisma.WebMetricUncheckedCreateWithoutVpsNodeInput> | Prisma.WebMetricCreateWithoutVpsNodeInput[] | Prisma.WebMetricUncheckedCreateWithoutVpsNodeInput[]
+  connectOrCreate?: Prisma.WebMetricCreateOrConnectWithoutVpsNodeInput | Prisma.WebMetricCreateOrConnectWithoutVpsNodeInput[]
+  createMany?: Prisma.WebMetricCreateManyVpsNodeInputEnvelope
   connect?: Prisma.WebMetricWhereUniqueInput | Prisma.WebMetricWhereUniqueInput[]
 }
 
-export type WebMetricUncheckedCreateNestedManyWithoutVpsInput = {
-  create?: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsInput, Prisma.WebMetricUncheckedCreateWithoutVpsInput> | Prisma.WebMetricCreateWithoutVpsInput[] | Prisma.WebMetricUncheckedCreateWithoutVpsInput[]
-  connectOrCreate?: Prisma.WebMetricCreateOrConnectWithoutVpsInput | Prisma.WebMetricCreateOrConnectWithoutVpsInput[]
-  createMany?: Prisma.WebMetricCreateManyVpsInputEnvelope
+export type WebMetricUncheckedCreateNestedManyWithoutVpsNodeInput = {
+  create?: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsNodeInput, Prisma.WebMetricUncheckedCreateWithoutVpsNodeInput> | Prisma.WebMetricCreateWithoutVpsNodeInput[] | Prisma.WebMetricUncheckedCreateWithoutVpsNodeInput[]
+  connectOrCreate?: Prisma.WebMetricCreateOrConnectWithoutVpsNodeInput | Prisma.WebMetricCreateOrConnectWithoutVpsNodeInput[]
+  createMany?: Prisma.WebMetricCreateManyVpsNodeInputEnvelope
   connect?: Prisma.WebMetricWhereUniqueInput | Prisma.WebMetricWhereUniqueInput[]
 }
 
-export type WebMetricUpdateManyWithoutVpsNestedInput = {
-  create?: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsInput, Prisma.WebMetricUncheckedCreateWithoutVpsInput> | Prisma.WebMetricCreateWithoutVpsInput[] | Prisma.WebMetricUncheckedCreateWithoutVpsInput[]
-  connectOrCreate?: Prisma.WebMetricCreateOrConnectWithoutVpsInput | Prisma.WebMetricCreateOrConnectWithoutVpsInput[]
-  upsert?: Prisma.WebMetricUpsertWithWhereUniqueWithoutVpsInput | Prisma.WebMetricUpsertWithWhereUniqueWithoutVpsInput[]
-  createMany?: Prisma.WebMetricCreateManyVpsInputEnvelope
+export type WebMetricUpdateManyWithoutVpsNodeNestedInput = {
+  create?: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsNodeInput, Prisma.WebMetricUncheckedCreateWithoutVpsNodeInput> | Prisma.WebMetricCreateWithoutVpsNodeInput[] | Prisma.WebMetricUncheckedCreateWithoutVpsNodeInput[]
+  connectOrCreate?: Prisma.WebMetricCreateOrConnectWithoutVpsNodeInput | Prisma.WebMetricCreateOrConnectWithoutVpsNodeInput[]
+  upsert?: Prisma.WebMetricUpsertWithWhereUniqueWithoutVpsNodeInput | Prisma.WebMetricUpsertWithWhereUniqueWithoutVpsNodeInput[]
+  createMany?: Prisma.WebMetricCreateManyVpsNodeInputEnvelope
   set?: Prisma.WebMetricWhereUniqueInput | Prisma.WebMetricWhereUniqueInput[]
   disconnect?: Prisma.WebMetricWhereUniqueInput | Prisma.WebMetricWhereUniqueInput[]
   delete?: Prisma.WebMetricWhereUniqueInput | Prisma.WebMetricWhereUniqueInput[]
   connect?: Prisma.WebMetricWhereUniqueInput | Prisma.WebMetricWhereUniqueInput[]
-  update?: Prisma.WebMetricUpdateWithWhereUniqueWithoutVpsInput | Prisma.WebMetricUpdateWithWhereUniqueWithoutVpsInput[]
-  updateMany?: Prisma.WebMetricUpdateManyWithWhereWithoutVpsInput | Prisma.WebMetricUpdateManyWithWhereWithoutVpsInput[]
+  update?: Prisma.WebMetricUpdateWithWhereUniqueWithoutVpsNodeInput | Prisma.WebMetricUpdateWithWhereUniqueWithoutVpsNodeInput[]
+  updateMany?: Prisma.WebMetricUpdateManyWithWhereWithoutVpsNodeInput | Prisma.WebMetricUpdateManyWithWhereWithoutVpsNodeInput[]
   deleteMany?: Prisma.WebMetricScalarWhereInput | Prisma.WebMetricScalarWhereInput[]
 }
 
-export type WebMetricUncheckedUpdateManyWithoutVpsNestedInput = {
-  create?: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsInput, Prisma.WebMetricUncheckedCreateWithoutVpsInput> | Prisma.WebMetricCreateWithoutVpsInput[] | Prisma.WebMetricUncheckedCreateWithoutVpsInput[]
-  connectOrCreate?: Prisma.WebMetricCreateOrConnectWithoutVpsInput | Prisma.WebMetricCreateOrConnectWithoutVpsInput[]
-  upsert?: Prisma.WebMetricUpsertWithWhereUniqueWithoutVpsInput | Prisma.WebMetricUpsertWithWhereUniqueWithoutVpsInput[]
-  createMany?: Prisma.WebMetricCreateManyVpsInputEnvelope
+export type WebMetricUncheckedUpdateManyWithoutVpsNodeNestedInput = {
+  create?: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsNodeInput, Prisma.WebMetricUncheckedCreateWithoutVpsNodeInput> | Prisma.WebMetricCreateWithoutVpsNodeInput[] | Prisma.WebMetricUncheckedCreateWithoutVpsNodeInput[]
+  connectOrCreate?: Prisma.WebMetricCreateOrConnectWithoutVpsNodeInput | Prisma.WebMetricCreateOrConnectWithoutVpsNodeInput[]
+  upsert?: Prisma.WebMetricUpsertWithWhereUniqueWithoutVpsNodeInput | Prisma.WebMetricUpsertWithWhereUniqueWithoutVpsNodeInput[]
+  createMany?: Prisma.WebMetricCreateManyVpsNodeInputEnvelope
   set?: Prisma.WebMetricWhereUniqueInput | Prisma.WebMetricWhereUniqueInput[]
   disconnect?: Prisma.WebMetricWhereUniqueInput | Prisma.WebMetricWhereUniqueInput[]
   delete?: Prisma.WebMetricWhereUniqueInput | Prisma.WebMetricWhereUniqueInput[]
   connect?: Prisma.WebMetricWhereUniqueInput | Prisma.WebMetricWhereUniqueInput[]
-  update?: Prisma.WebMetricUpdateWithWhereUniqueWithoutVpsInput | Prisma.WebMetricUpdateWithWhereUniqueWithoutVpsInput[]
-  updateMany?: Prisma.WebMetricUpdateManyWithWhereWithoutVpsInput | Prisma.WebMetricUpdateManyWithWhereWithoutVpsInput[]
+  update?: Prisma.WebMetricUpdateWithWhereUniqueWithoutVpsNodeInput | Prisma.WebMetricUpdateWithWhereUniqueWithoutVpsNodeInput[]
+  updateMany?: Prisma.WebMetricUpdateManyWithWhereWithoutVpsNodeInput | Prisma.WebMetricUpdateManyWithWhereWithoutVpsNodeInput[]
   deleteMany?: Prisma.WebMetricScalarWhereInput | Prisma.WebMetricScalarWhereInput[]
 }
 
@@ -503,7 +503,7 @@ export type WebMetricUncheckedUpdateManyWithoutWebsiteNestedInput = {
   deleteMany?: Prisma.WebMetricScalarWhereInput | Prisma.WebMetricScalarWhereInput[]
 }
 
-export type WebMetricCreateWithoutVpsInput = {
+export type WebMetricCreateWithoutVpsNodeInput = {
   recordedAt?: Date | string
   concurrentRequests: number
   requestRate?: number
@@ -512,7 +512,7 @@ export type WebMetricCreateWithoutVpsInput = {
   website: Prisma.WebsiteCreateNestedOneWithoutMetricsInput
 }
 
-export type WebMetricUncheckedCreateWithoutVpsInput = {
+export type WebMetricUncheckedCreateWithoutVpsNodeInput = {
   recordedAt?: Date | string
   websiteId: string
   concurrentRequests: number
@@ -521,30 +521,30 @@ export type WebMetricUncheckedCreateWithoutVpsInput = {
   updatedAt?: Date | string
 }
 
-export type WebMetricCreateOrConnectWithoutVpsInput = {
+export type WebMetricCreateOrConnectWithoutVpsNodeInput = {
   where: Prisma.WebMetricWhereUniqueInput
-  create: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsInput, Prisma.WebMetricUncheckedCreateWithoutVpsInput>
+  create: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsNodeInput, Prisma.WebMetricUncheckedCreateWithoutVpsNodeInput>
 }
 
-export type WebMetricCreateManyVpsInputEnvelope = {
-  data: Prisma.WebMetricCreateManyVpsInput | Prisma.WebMetricCreateManyVpsInput[]
+export type WebMetricCreateManyVpsNodeInputEnvelope = {
+  data: Prisma.WebMetricCreateManyVpsNodeInput | Prisma.WebMetricCreateManyVpsNodeInput[]
   skipDuplicates?: boolean
 }
 
-export type WebMetricUpsertWithWhereUniqueWithoutVpsInput = {
+export type WebMetricUpsertWithWhereUniqueWithoutVpsNodeInput = {
   where: Prisma.WebMetricWhereUniqueInput
-  update: Prisma.XOR<Prisma.WebMetricUpdateWithoutVpsInput, Prisma.WebMetricUncheckedUpdateWithoutVpsInput>
-  create: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsInput, Prisma.WebMetricUncheckedCreateWithoutVpsInput>
+  update: Prisma.XOR<Prisma.WebMetricUpdateWithoutVpsNodeInput, Prisma.WebMetricUncheckedUpdateWithoutVpsNodeInput>
+  create: Prisma.XOR<Prisma.WebMetricCreateWithoutVpsNodeInput, Prisma.WebMetricUncheckedCreateWithoutVpsNodeInput>
 }
 
-export type WebMetricUpdateWithWhereUniqueWithoutVpsInput = {
+export type WebMetricUpdateWithWhereUniqueWithoutVpsNodeInput = {
   where: Prisma.WebMetricWhereUniqueInput
-  data: Prisma.XOR<Prisma.WebMetricUpdateWithoutVpsInput, Prisma.WebMetricUncheckedUpdateWithoutVpsInput>
+  data: Prisma.XOR<Prisma.WebMetricUpdateWithoutVpsNodeInput, Prisma.WebMetricUncheckedUpdateWithoutVpsNodeInput>
 }
 
-export type WebMetricUpdateManyWithWhereWithoutVpsInput = {
+export type WebMetricUpdateManyWithWhereWithoutVpsNodeInput = {
   where: Prisma.WebMetricScalarWhereInput
-  data: Prisma.XOR<Prisma.WebMetricUpdateManyMutationInput, Prisma.WebMetricUncheckedUpdateManyWithoutVpsInput>
+  data: Prisma.XOR<Prisma.WebMetricUpdateManyMutationInput, Prisma.WebMetricUncheckedUpdateManyWithoutVpsNodeInput>
 }
 
 export type WebMetricScalarWhereInput = {
@@ -566,7 +566,7 @@ export type WebMetricCreateWithoutWebsiteInput = {
   requestRate?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  vps: Prisma.VpsNodeCreateNestedOneWithoutWebMetricsInput
+  vpsNode: Prisma.VpsNodeCreateNestedOneWithoutWebMetricsInput
 }
 
 export type WebMetricUncheckedCreateWithoutWebsiteInput = {
@@ -604,7 +604,7 @@ export type WebMetricUpdateManyWithWhereWithoutWebsiteInput = {
   data: Prisma.XOR<Prisma.WebMetricUpdateManyMutationInput, Prisma.WebMetricUncheckedUpdateManyWithoutWebsiteInput>
 }
 
-export type WebMetricCreateManyVpsInput = {
+export type WebMetricCreateManyVpsNodeInput = {
   recordedAt?: Date | string
   websiteId: string
   concurrentRequests: number
@@ -613,7 +613,7 @@ export type WebMetricCreateManyVpsInput = {
   updatedAt?: Date | string
 }
 
-export type WebMetricUpdateWithoutVpsInput = {
+export type WebMetricUpdateWithoutVpsNodeInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
@@ -622,7 +622,7 @@ export type WebMetricUpdateWithoutVpsInput = {
   website?: Prisma.WebsiteUpdateOneRequiredWithoutMetricsNestedInput
 }
 
-export type WebMetricUncheckedUpdateWithoutVpsInput = {
+export type WebMetricUncheckedUpdateWithoutVpsNodeInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   websiteId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -631,7 +631,7 @@ export type WebMetricUncheckedUpdateWithoutVpsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type WebMetricUncheckedUpdateManyWithoutVpsInput = {
+export type WebMetricUncheckedUpdateManyWithoutVpsNodeInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   websiteId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
@@ -655,7 +655,7 @@ export type WebMetricUpdateWithoutWebsiteInput = {
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vps?: Prisma.VpsNodeUpdateOneRequiredWithoutWebMetricsNestedInput
+  vpsNode?: Prisma.VpsNodeUpdateOneRequiredWithoutWebMetricsNestedInput
 }
 
 export type WebMetricUncheckedUpdateWithoutWebsiteInput = {
@@ -686,7 +686,7 @@ export type WebMetricSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   requestRate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["webMetric"]>
 
@@ -698,7 +698,7 @@ export type WebMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   requestRate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["webMetric"]>
 
@@ -710,7 +710,7 @@ export type WebMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   requestRate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["webMetric"]>
 
@@ -726,22 +726,22 @@ export type WebMetricSelectScalar = {
 
 export type WebMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"recordedAt" | "VpsNodeId" | "websiteId" | "concurrentRequests" | "requestRate" | "createdAt" | "updatedAt", ExtArgs["result"]["webMetric"]>
 export type WebMetricInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }
 export type WebMetricIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }
 export type WebMetricIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
+  vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }
 
 export type $WebMetricPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "WebMetric"
   objects: {
-    vps: Prisma.$VpsNodePayload<ExtArgs>
+    vpsNode: Prisma.$VpsNodePayload<ExtArgs>
     website: Prisma.$WebsitePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1146,7 +1146,7 @@ readonly fields: WebMetricFieldRefs;
  */
 export interface Prisma__WebMetricClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  vps<T extends Prisma.VpsNodeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VpsNodeDefaultArgs<ExtArgs>>): Prisma.Prisma__VpsNodeClient<runtime.Types.Result.GetResult<Prisma.$VpsNodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  vpsNode<T extends Prisma.VpsNodeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VpsNodeDefaultArgs<ExtArgs>>): Prisma.Prisma__VpsNodeClient<runtime.Types.Result.GetResult<Prisma.$VpsNodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   website<T extends Prisma.WebsiteDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WebsiteDefaultArgs<ExtArgs>>): Prisma.Prisma__WebsiteClient<runtime.Types.Result.GetResult<Prisma.$WebsitePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.

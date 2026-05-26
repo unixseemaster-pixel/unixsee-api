@@ -69,7 +69,7 @@ model VpsNode {
 model VpsMetric {
   recordedAt              DateTime @default(now()) @map("recorded_at") @db.Timestamptz
   VpsNodeId               String   @map("vps_nodes_id") @db.Uuid
-  cpuUsagePercent         Int      @map("cpu_usage_percent")
+  cpuUsagePercent         Float    @map("cpu_usage_percent")
   memoryTotalMB           Int      @map("memory_total_mb")
   memoryUsedMB            Int      @map("memory_used_mb")
   liteSpeedConnections    Int      @map("litespeed_connections") // Global server load telemetry
@@ -81,7 +81,7 @@ model VpsMetric {
   networkRxBytesPerSecond BigInt   @map("network_rx_bytes_per_second")
   networkTxBytesPerSecond BigInt   @map("network_tx_bytes_per_second")
 
-  vps VpsNode @relation(fields: [VpsNodeId], references: [id], onDelete: Cascade)
+  vpsNode VpsNode @relation(fields: [VpsNodeId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -116,7 +116,7 @@ model WebMetric {
   concurrentRequests Int      @map("concurrent_requests") // Scraped live from LiteSpeed virtual host reports
   requestRate        Int      @default(0) @map("request_rate")
 
-  vps     VpsNode @relation(fields: [VpsNodeId], references: [id], onDelete: Cascade)
+  vpsNode VpsNode @relation(fields: [VpsNodeId], references: [id], onDelete: Cascade)
   website Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
