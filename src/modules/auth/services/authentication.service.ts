@@ -11,9 +11,9 @@ import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { UserService } from '#/modules/user/services/user/user.service.js';
 import type { AppConfigType } from '#/utils/config/app.config.js';
 import { ERROR_MESSAGES } from '#/utils/error-messages.js';
-import type { LoginDto } from '../dtos/login.dto.js';
+import type { LoginDto } from '../dto/login.dto.js';
 import type { Tokens } from '../types/tokens.types.js';
-import type { RegisterDto } from '../dtos/register.dto.js';
+import type { RegisterDto } from '../dto/register.dto.js';
 
 @Injectable()
 export class AuthenticationService {

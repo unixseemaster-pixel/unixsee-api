@@ -31,6 +31,7 @@ export type UserMinAggregateOutputType = {
   password: string | null
   fullName: string | null
   phoneNumber: string | null
+  role: $Enums.Role | null
   hashedRt: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -43,6 +44,7 @@ export type UserMaxAggregateOutputType = {
   password: string | null
   fullName: string | null
   phoneNumber: string | null
+  role: $Enums.Role | null
   hashedRt: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -55,6 +57,7 @@ export type UserCountAggregateOutputType = {
   password: number
   fullName: number
   phoneNumber: number
+  role: number
   hashedRt: number
   createdAt: number
   updatedAt: number
@@ -69,6 +72,7 @@ export type UserMinAggregateInputType = {
   password?: true
   fullName?: true
   phoneNumber?: true
+  role?: true
   hashedRt?: true
   createdAt?: true
   updatedAt?: true
@@ -81,6 +85,7 @@ export type UserMaxAggregateInputType = {
   password?: true
   fullName?: true
   phoneNumber?: true
+  role?: true
   hashedRt?: true
   createdAt?: true
   updatedAt?: true
@@ -93,6 +98,7 @@ export type UserCountAggregateInputType = {
   password?: true
   fullName?: true
   phoneNumber?: true
+  role?: true
   hashedRt?: true
   createdAt?: true
   updatedAt?: true
@@ -178,6 +184,7 @@ export type UserGroupByOutputType = {
   password: string
   fullName: string | null
   phoneNumber: string | null
+  role: $Enums.Role
   hashedRt: string | null
   createdAt: Date
   updatedAt: Date
@@ -211,10 +218,12 @@ export type UserWhereInput = {
   password?: Prisma.StringFilter<"User"> | string
   fullName?: Prisma.StringNullableFilter<"User"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"User"> | string | null
+  role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   hashedRt?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   websites?: Prisma.WebsiteListRelationFilter
+  vpsNodes?: Prisma.VpsNodeListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -224,10 +233,12 @@ export type UserOrderByWithRelationInput = {
   password?: Prisma.SortOrder
   fullName?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  role?: Prisma.SortOrder
   hashedRt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   websites?: Prisma.WebsiteOrderByRelationAggregateInput
+  vpsNodes?: Prisma.VpsNodeOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -240,10 +251,12 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringFilter<"User"> | string
   fullName?: Prisma.StringNullableFilter<"User"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"User"> | string | null
+  role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   hashedRt?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   websites?: Prisma.WebsiteListRelationFilter
+  vpsNodes?: Prisma.VpsNodeListRelationFilter
 }, "id" | "email" | "username">
 
 export type UserOrderByWithAggregationInput = {
@@ -253,6 +266,7 @@ export type UserOrderByWithAggregationInput = {
   password?: Prisma.SortOrder
   fullName?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  role?: Prisma.SortOrder
   hashedRt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -271,6 +285,7 @@ export type UserScalarWhereWithAggregatesInput = {
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
   fullName?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   hashedRt?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -283,10 +298,12 @@ export type UserCreateInput = {
   password: string
   fullName?: string | null
   phoneNumber?: string | null
+  role?: $Enums.Role
   hashedRt?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   websites?: Prisma.WebsiteCreateNestedManyWithoutUserInput
+  vpsNodes?: Prisma.VpsNodeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -296,10 +313,12 @@ export type UserUncheckedCreateInput = {
   password: string
   fullName?: string | null
   phoneNumber?: string | null
+  role?: $Enums.Role
   hashedRt?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   websites?: Prisma.WebsiteUncheckedCreateNestedManyWithoutUserInput
+  vpsNodes?: Prisma.VpsNodeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -309,10 +328,12 @@ export type UserUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   websites?: Prisma.WebsiteUpdateManyWithoutUserNestedInput
+  vpsNodes?: Prisma.VpsNodeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -322,10 +343,12 @@ export type UserUncheckedUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   websites?: Prisma.WebsiteUncheckedUpdateManyWithoutUserNestedInput
+  vpsNodes?: Prisma.VpsNodeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -335,6 +358,7 @@ export type UserCreateManyInput = {
   password: string
   fullName?: string | null
   phoneNumber?: string | null
+  role?: $Enums.Role
   hashedRt?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -347,6 +371,7 @@ export type UserUpdateManyMutationInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -359,6 +384,7 @@ export type UserUncheckedUpdateManyInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -371,6 +397,7 @@ export type UserCountOrderByAggregateInput = {
   password?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   hashedRt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -383,6 +410,7 @@ export type UserMaxOrderByAggregateInput = {
   password?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   hashedRt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -395,9 +423,15 @@ export type UserMinOrderByAggregateInput = {
   password?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   hashedRt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
 }
 
 export type UserScalarRelationFilter = {
@@ -413,8 +447,28 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
+export type EnumRoleFieldUpdateOperationsInput = {
+  set?: $Enums.Role
+}
+
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type UserCreateNestedOneWithoutVpsNodesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVpsNodesInput, Prisma.UserUncheckedCreateWithoutVpsNodesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVpsNodesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutVpsNodesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVpsNodesInput, Prisma.UserUncheckedCreateWithoutVpsNodesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVpsNodesInput
+  upsert?: Prisma.UserUpsertWithoutVpsNodesInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutVpsNodesInput, Prisma.UserUpdateWithoutVpsNodesInput>, Prisma.UserUncheckedUpdateWithoutVpsNodesInput>
 }
 
 export type UserCreateNestedOneWithoutWebsitesInput = {
@@ -431,6 +485,78 @@ export type UserUpdateOneRequiredWithoutWebsitesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWebsitesInput, Prisma.UserUpdateWithoutWebsitesInput>, Prisma.UserUncheckedUpdateWithoutWebsitesInput>
 }
 
+export type UserCreateWithoutVpsNodesInput = {
+  id?: string
+  email?: string | null
+  username: string
+  password: string
+  fullName?: string | null
+  phoneNumber?: string | null
+  role?: $Enums.Role
+  hashedRt?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  websites?: Prisma.WebsiteCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutVpsNodesInput = {
+  id?: string
+  email?: string | null
+  username: string
+  password: string
+  fullName?: string | null
+  phoneNumber?: string | null
+  role?: $Enums.Role
+  hashedRt?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  websites?: Prisma.WebsiteUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutVpsNodesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutVpsNodesInput, Prisma.UserUncheckedCreateWithoutVpsNodesInput>
+}
+
+export type UserUpsertWithoutVpsNodesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutVpsNodesInput, Prisma.UserUncheckedUpdateWithoutVpsNodesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutVpsNodesInput, Prisma.UserUncheckedCreateWithoutVpsNodesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutVpsNodesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutVpsNodesInput, Prisma.UserUncheckedUpdateWithoutVpsNodesInput>
+}
+
+export type UserUpdateWithoutVpsNodesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  websites?: Prisma.WebsiteUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutVpsNodesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  websites?: Prisma.WebsiteUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutWebsitesInput = {
   id?: string
   email?: string | null
@@ -438,9 +564,11 @@ export type UserCreateWithoutWebsitesInput = {
   password: string
   fullName?: string | null
   phoneNumber?: string | null
+  role?: $Enums.Role
   hashedRt?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  vpsNodes?: Prisma.VpsNodeCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWebsitesInput = {
@@ -450,9 +578,11 @@ export type UserUncheckedCreateWithoutWebsitesInput = {
   password: string
   fullName?: string | null
   phoneNumber?: string | null
+  role?: $Enums.Role
   hashedRt?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  vpsNodes?: Prisma.VpsNodeUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWebsitesInput = {
@@ -478,9 +608,11 @@ export type UserUpdateWithoutWebsitesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vpsNodes?: Prisma.VpsNodeUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWebsitesInput = {
@@ -490,9 +622,11 @@ export type UserUncheckedUpdateWithoutWebsitesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vpsNodes?: Prisma.VpsNodeUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -502,10 +636,12 @@ export type UserUncheckedUpdateWithoutWebsitesInput = {
 
 export type UserCountOutputType = {
   websites: number
+  vpsNodes: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   websites?: boolean | UserCountOutputTypeCountWebsitesArgs
+  vpsNodes?: boolean | UserCountOutputTypeCountVpsNodesArgs
 }
 
 /**
@@ -525,6 +661,13 @@ export type UserCountOutputTypeCountWebsitesArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.WebsiteWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountVpsNodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VpsNodeWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -533,10 +676,12 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   password?: boolean
   fullName?: boolean
   phoneNumber?: boolean
+  role?: boolean
   hashedRt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   websites?: boolean | Prisma.User$websitesArgs<ExtArgs>
+  vpsNodes?: boolean | Prisma.User$vpsNodesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -547,6 +692,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   fullName?: boolean
   phoneNumber?: boolean
+  role?: boolean
   hashedRt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -559,6 +705,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   fullName?: boolean
   phoneNumber?: boolean
+  role?: boolean
   hashedRt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -571,14 +718,16 @@ export type UserSelectScalar = {
   password?: boolean
   fullName?: boolean
   phoneNumber?: boolean
+  role?: boolean
   hashedRt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "password" | "fullName" | "phoneNumber" | "hashedRt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "password" | "fullName" | "phoneNumber" | "role" | "hashedRt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   websites?: boolean | Prisma.User$websitesArgs<ExtArgs>
+  vpsNodes?: boolean | Prisma.User$vpsNodesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -588,6 +737,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     websites: Prisma.$WebsitePayload<ExtArgs>[]
+    vpsNodes: Prisma.$VpsNodePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -596,6 +746,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     password: string
     fullName: string | null
     phoneNumber: string | null
+    role: $Enums.Role
     hashedRt: string | null
     createdAt: Date
     updatedAt: Date
@@ -994,6 +1145,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   websites<T extends Prisma.User$websitesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$websitesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebsitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  vpsNodes<T extends Prisma.User$vpsNodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$vpsNodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VpsNodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1029,6 +1181,7 @@ export interface UserFieldRefs {
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly fullName: Prisma.FieldRef<"User", 'String'>
   readonly phoneNumber: Prisma.FieldRef<"User", 'String'>
+  readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly hashedRt: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
@@ -1446,6 +1599,30 @@ export type User$websitesArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.WebsiteScalarFieldEnum | Prisma.WebsiteScalarFieldEnum[]
+}
+
+/**
+ * User.vpsNodes
+ */
+export type User$vpsNodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the VpsNode
+   */
+  select?: Prisma.VpsNodeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the VpsNode
+   */
+  omit?: Prisma.VpsNodeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VpsNodeInclude<ExtArgs> | null
+  where?: Prisma.VpsNodeWhereInput
+  orderBy?: Prisma.VpsNodeOrderByWithRelationInput | Prisma.VpsNodeOrderByWithRelationInput[]
+  cursor?: Prisma.VpsNodeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.VpsNodeScalarFieldEnum | Prisma.VpsNodeScalarFieldEnum[]
 }
 
 /**

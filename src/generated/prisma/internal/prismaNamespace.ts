@@ -385,8 +385,11 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  Server: 'Server',
+  VpsNode: 'VpsNode',
+  VpsMetric: 'VpsMetric',
   Website: 'Website',
-  WebsiteMetric: 'WebsiteMetric',
+  WebMetric: 'WebMetric',
   SSLCertificate: 'SSLCertificate'
 } as const
 
@@ -403,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "website" | "websiteMetric" | "sSLCertificate"
+    modelProps: "user" | "server" | "vpsNode" | "vpsMetric" | "website" | "webMetric" | "sSLCertificate"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -481,6 +484,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Server: {
+      payload: Prisma.$ServerPayload<ExtArgs>
+      fields: Prisma.ServerFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ServerFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ServerFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload>
+        }
+        findFirst: {
+          args: Prisma.ServerFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ServerFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload>
+        }
+        findMany: {
+          args: Prisma.ServerFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload>[]
+        }
+        create: {
+          args: Prisma.ServerCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload>
+        }
+        createMany: {
+          args: Prisma.ServerCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ServerCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload>[]
+        }
+        delete: {
+          args: Prisma.ServerDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload>
+        }
+        update: {
+          args: Prisma.ServerUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload>
+        }
+        deleteMany: {
+          args: Prisma.ServerDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ServerUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ServerUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload>[]
+        }
+        upsert: {
+          args: Prisma.ServerUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServerPayload>
+        }
+        aggregate: {
+          args: Prisma.ServerAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateServer>
+        }
+        groupBy: {
+          args: Prisma.ServerGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ServerGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ServerCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ServerCountAggregateOutputType> | number
+        }
+      }
+    }
+    VpsNode: {
+      payload: Prisma.$VpsNodePayload<ExtArgs>
+      fields: Prisma.VpsNodeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.VpsNodeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.VpsNodeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload>
+        }
+        findFirst: {
+          args: Prisma.VpsNodeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.VpsNodeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload>
+        }
+        findMany: {
+          args: Prisma.VpsNodeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload>[]
+        }
+        create: {
+          args: Prisma.VpsNodeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload>
+        }
+        createMany: {
+          args: Prisma.VpsNodeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.VpsNodeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload>[]
+        }
+        delete: {
+          args: Prisma.VpsNodeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload>
+        }
+        update: {
+          args: Prisma.VpsNodeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload>
+        }
+        deleteMany: {
+          args: Prisma.VpsNodeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.VpsNodeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.VpsNodeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload>[]
+        }
+        upsert: {
+          args: Prisma.VpsNodeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsNodePayload>
+        }
+        aggregate: {
+          args: Prisma.VpsNodeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateVpsNode>
+        }
+        groupBy: {
+          args: Prisma.VpsNodeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VpsNodeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.VpsNodeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VpsNodeCountAggregateOutputType> | number
+        }
+      }
+    }
+    VpsMetric: {
+      payload: Prisma.$VpsMetricPayload<ExtArgs>
+      fields: Prisma.VpsMetricFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.VpsMetricFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.VpsMetricFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload>
+        }
+        findFirst: {
+          args: Prisma.VpsMetricFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.VpsMetricFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload>
+        }
+        findMany: {
+          args: Prisma.VpsMetricFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload>[]
+        }
+        create: {
+          args: Prisma.VpsMetricCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload>
+        }
+        createMany: {
+          args: Prisma.VpsMetricCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.VpsMetricCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload>[]
+        }
+        delete: {
+          args: Prisma.VpsMetricDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload>
+        }
+        update: {
+          args: Prisma.VpsMetricUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload>
+        }
+        deleteMany: {
+          args: Prisma.VpsMetricDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.VpsMetricUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.VpsMetricUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload>[]
+        }
+        upsert: {
+          args: Prisma.VpsMetricUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VpsMetricPayload>
+        }
+        aggregate: {
+          args: Prisma.VpsMetricAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateVpsMetric>
+        }
+        groupBy: {
+          args: Prisma.VpsMetricGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VpsMetricGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.VpsMetricCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VpsMetricCountAggregateOutputType> | number
+        }
+      }
+    }
     Website: {
       payload: Prisma.$WebsitePayload<ExtArgs>
       fields: Prisma.WebsiteFieldRefs
@@ -555,77 +780,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    WebsiteMetric: {
-      payload: Prisma.$WebsiteMetricPayload<ExtArgs>
-      fields: Prisma.WebsiteMetricFieldRefs
+    WebMetric: {
+      payload: Prisma.$WebMetricPayload<ExtArgs>
+      fields: Prisma.WebMetricFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.WebsiteMetricFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload> | null
+          args: Prisma.WebMetricFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.WebsiteMetricFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload>
+          args: Prisma.WebMetricFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload>
         }
         findFirst: {
-          args: Prisma.WebsiteMetricFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload> | null
+          args: Prisma.WebMetricFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.WebsiteMetricFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload>
+          args: Prisma.WebMetricFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload>
         }
         findMany: {
-          args: Prisma.WebsiteMetricFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload>[]
+          args: Prisma.WebMetricFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload>[]
         }
         create: {
-          args: Prisma.WebsiteMetricCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload>
+          args: Prisma.WebMetricCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload>
         }
         createMany: {
-          args: Prisma.WebsiteMetricCreateManyArgs<ExtArgs>
+          args: Prisma.WebMetricCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.WebsiteMetricCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload>[]
+          args: Prisma.WebMetricCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload>[]
         }
         delete: {
-          args: Prisma.WebsiteMetricDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload>
+          args: Prisma.WebMetricDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload>
         }
         update: {
-          args: Prisma.WebsiteMetricUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload>
+          args: Prisma.WebMetricUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload>
         }
         deleteMany: {
-          args: Prisma.WebsiteMetricDeleteManyArgs<ExtArgs>
+          args: Prisma.WebMetricDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.WebsiteMetricUpdateManyArgs<ExtArgs>
+          args: Prisma.WebMetricUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.WebsiteMetricUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload>[]
+          args: Prisma.WebMetricUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload>[]
         }
         upsert: {
-          args: Prisma.WebsiteMetricUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebsiteMetricPayload>
+          args: Prisma.WebMetricUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebMetricPayload>
         }
         aggregate: {
-          args: Prisma.WebsiteMetricAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateWebsiteMetric>
+          args: Prisma.WebMetricAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWebMetric>
         }
         groupBy: {
-          args: Prisma.WebsiteMetricGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.WebsiteMetricGroupByOutputType>[]
+          args: Prisma.WebMetricGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebMetricGroupByOutputType>[]
         }
         count: {
-          args: Prisma.WebsiteMetricCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.WebsiteMetricCountAggregateOutputType> | number
+          args: Prisma.WebMetricCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebMetricCountAggregateOutputType> | number
         }
       }
     }
@@ -749,6 +974,7 @@ export const UserScalarFieldEnum = {
   password: 'password',
   fullName: 'fullName',
   phoneNumber: 'phoneNumber',
+  role: 'role',
   hashedRt: 'hashedRt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -757,12 +983,57 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const ServerScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  ipAddress: 'ipAddress',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServerScalarFieldEnum = (typeof ServerScalarFieldEnum)[keyof typeof ServerScalarFieldEnum]
+
+
+export const VpsNodeScalarFieldEnum = {
+  id: 'id',
+  serverId: 'serverId',
+  userId: 'userId',
+  machineId: 'machineId',
+  name: 'name',
+  secretKey: 'secretKey',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VpsNodeScalarFieldEnum = (typeof VpsNodeScalarFieldEnum)[keyof typeof VpsNodeScalarFieldEnum]
+
+
+export const VpsMetricScalarFieldEnum = {
+  recordedAt: 'recordedAt',
+  VpsNodeId: 'VpsNodeId',
+  cpuUsagePercent: 'cpuUsagePercent',
+  memoryTotalMB: 'memoryTotalMB',
+  memoryUsedMB: 'memoryUsedMB',
+  liteSpeedConnections: 'liteSpeedConnections',
+  diskReadBytesPerSecond: 'diskReadBytesPerSecond',
+  diskWriteBytesPerSecond: 'diskWriteBytesPerSecond',
+  diskIops: 'diskIops',
+  storageTotalMB: 'storageTotalMB',
+  storageAvailableMB: 'storageAvailableMB',
+  networkRxBytesPerSecond: 'networkRxBytesPerSecond',
+  networkTxBytesPerSecond: 'networkTxBytesPerSecond',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VpsMetricScalarFieldEnum = (typeof VpsMetricScalarFieldEnum)[keyof typeof VpsMetricScalarFieldEnum]
+
+
 export const WebsiteScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  name: 'name',
+  vpsNodeId: 'vpsNodeId',
   domain: 'domain',
-  port: 'port',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -771,14 +1042,17 @@ export const WebsiteScalarFieldEnum = {
 export type WebsiteScalarFieldEnum = (typeof WebsiteScalarFieldEnum)[keyof typeof WebsiteScalarFieldEnum]
 
 
-export const WebsiteMetricScalarFieldEnum = {
-  id: 'id',
+export const WebMetricScalarFieldEnum = {
+  recordedAt: 'recordedAt',
+  VpsNodeId: 'VpsNodeId',
   websiteId: 'websiteId',
+  concurrentRequests: 'concurrentRequests',
+  requestRate: 'requestRate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type WebsiteMetricScalarFieldEnum = (typeof WebsiteMetricScalarFieldEnum)[keyof typeof WebsiteMetricScalarFieldEnum]
+export type WebMetricScalarFieldEnum = (typeof WebMetricScalarFieldEnum)[keyof typeof WebMetricScalarFieldEnum]
 
 
 export const SSLCertificateScalarFieldEnum = {
@@ -789,6 +1063,9 @@ export const SSLCertificateScalarFieldEnum = {
   validFrom: 'validFrom',
   validTo: 'validTo',
   isValid: 'isValid',
+  serialNumber: 'serialNumber',
+  isAutoRenewable: 'isAutoRenewable',
+  statusMessage: 'statusMessage',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -841,6 +1118,20 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
+ * Reference to a field of type 'Role'
+ */
+export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+    
+
+
+/**
+ * Reference to a field of type 'Role[]'
+ */
+export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
+    
+
+
+/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -865,6 +1156,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt'
+ */
+export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt[]'
+ */
+export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
     
 
 
@@ -999,8 +1304,11 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  server?: Prisma.ServerOmit
+  vpsNode?: Prisma.VpsNodeOmit
+  vpsMetric?: Prisma.VpsMetricOmit
   website?: Prisma.WebsiteOmit
-  websiteMetric?: Prisma.WebsiteMetricOmit
+  webMetric?: Prisma.WebMetricOmit
   sSLCertificate?: Prisma.SSLCertificateOmit
 }
 

@@ -32,6 +32,9 @@ export type SSLCertificateMinAggregateOutputType = {
   validFrom: Date | null
   validTo: Date | null
   isValid: boolean | null
+  serialNumber: string | null
+  isAutoRenewable: boolean | null
+  statusMessage: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +47,9 @@ export type SSLCertificateMaxAggregateOutputType = {
   validFrom: Date | null
   validTo: Date | null
   isValid: boolean | null
+  serialNumber: string | null
+  isAutoRenewable: boolean | null
+  statusMessage: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +62,9 @@ export type SSLCertificateCountAggregateOutputType = {
   validFrom: number
   validTo: number
   isValid: number
+  serialNumber: number
+  isAutoRenewable: number
+  statusMessage: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -70,6 +79,9 @@ export type SSLCertificateMinAggregateInputType = {
   validFrom?: true
   validTo?: true
   isValid?: true
+  serialNumber?: true
+  isAutoRenewable?: true
+  statusMessage?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +94,9 @@ export type SSLCertificateMaxAggregateInputType = {
   validFrom?: true
   validTo?: true
   isValid?: true
+  serialNumber?: true
+  isAutoRenewable?: true
+  statusMessage?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -94,6 +109,9 @@ export type SSLCertificateCountAggregateInputType = {
   validFrom?: true
   validTo?: true
   isValid?: true
+  serialNumber?: true
+  isAutoRenewable?: true
+  statusMessage?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -179,6 +197,9 @@ export type SSLCertificateGroupByOutputType = {
   validFrom: Date | null
   validTo: Date | null
   isValid: boolean
+  serialNumber: string | null
+  isAutoRenewable: boolean
+  statusMessage: string | null
   createdAt: Date
   updatedAt: Date
   _count: SSLCertificateCountAggregateOutputType | null
@@ -206,12 +227,15 @@ export type SSLCertificateWhereInput = {
   OR?: Prisma.SSLCertificateWhereInput[]
   NOT?: Prisma.SSLCertificateWhereInput | Prisma.SSLCertificateWhereInput[]
   id?: Prisma.UuidFilter<"SSLCertificate"> | string
-  websiteId?: Prisma.StringFilter<"SSLCertificate"> | string
+  websiteId?: Prisma.UuidFilter<"SSLCertificate"> | string
   issuer?: Prisma.StringNullableFilter<"SSLCertificate"> | string | null
   subject?: Prisma.StringNullableFilter<"SSLCertificate"> | string | null
   validFrom?: Prisma.DateTimeNullableFilter<"SSLCertificate"> | Date | string | null
   validTo?: Prisma.DateTimeNullableFilter<"SSLCertificate"> | Date | string | null
   isValid?: Prisma.BoolFilter<"SSLCertificate"> | boolean
+  serialNumber?: Prisma.StringNullableFilter<"SSLCertificate"> | string | null
+  isAutoRenewable?: Prisma.BoolFilter<"SSLCertificate"> | boolean
+  statusMessage?: Prisma.StringNullableFilter<"SSLCertificate"> | string | null
   createdAt?: Prisma.DateTimeFilter<"SSLCertificate"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SSLCertificate"> | Date | string
   website?: Prisma.XOR<Prisma.WebsiteScalarRelationFilter, Prisma.WebsiteWhereInput>
@@ -225,6 +249,9 @@ export type SSLCertificateOrderByWithRelationInput = {
   validFrom?: Prisma.SortOrderInput | Prisma.SortOrder
   validTo?: Prisma.SortOrderInput | Prisma.SortOrder
   isValid?: Prisma.SortOrder
+  serialNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  isAutoRenewable?: Prisma.SortOrder
+  statusMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   website?: Prisma.WebsiteOrderByWithRelationInput
@@ -241,6 +268,9 @@ export type SSLCertificateWhereUniqueInput = Prisma.AtLeast<{
   validFrom?: Prisma.DateTimeNullableFilter<"SSLCertificate"> | Date | string | null
   validTo?: Prisma.DateTimeNullableFilter<"SSLCertificate"> | Date | string | null
   isValid?: Prisma.BoolFilter<"SSLCertificate"> | boolean
+  serialNumber?: Prisma.StringNullableFilter<"SSLCertificate"> | string | null
+  isAutoRenewable?: Prisma.BoolFilter<"SSLCertificate"> | boolean
+  statusMessage?: Prisma.StringNullableFilter<"SSLCertificate"> | string | null
   createdAt?: Prisma.DateTimeFilter<"SSLCertificate"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SSLCertificate"> | Date | string
   website?: Prisma.XOR<Prisma.WebsiteScalarRelationFilter, Prisma.WebsiteWhereInput>
@@ -254,6 +284,9 @@ export type SSLCertificateOrderByWithAggregationInput = {
   validFrom?: Prisma.SortOrderInput | Prisma.SortOrder
   validTo?: Prisma.SortOrderInput | Prisma.SortOrder
   isValid?: Prisma.SortOrder
+  serialNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  isAutoRenewable?: Prisma.SortOrder
+  statusMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SSLCertificateCountOrderByAggregateInput
@@ -266,12 +299,15 @@ export type SSLCertificateScalarWhereWithAggregatesInput = {
   OR?: Prisma.SSLCertificateScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SSLCertificateScalarWhereWithAggregatesInput | Prisma.SSLCertificateScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"SSLCertificate"> | string
-  websiteId?: Prisma.StringWithAggregatesFilter<"SSLCertificate"> | string
+  websiteId?: Prisma.UuidWithAggregatesFilter<"SSLCertificate"> | string
   issuer?: Prisma.StringNullableWithAggregatesFilter<"SSLCertificate"> | string | null
   subject?: Prisma.StringNullableWithAggregatesFilter<"SSLCertificate"> | string | null
   validFrom?: Prisma.DateTimeNullableWithAggregatesFilter<"SSLCertificate"> | Date | string | null
   validTo?: Prisma.DateTimeNullableWithAggregatesFilter<"SSLCertificate"> | Date | string | null
   isValid?: Prisma.BoolWithAggregatesFilter<"SSLCertificate"> | boolean
+  serialNumber?: Prisma.StringNullableWithAggregatesFilter<"SSLCertificate"> | string | null
+  isAutoRenewable?: Prisma.BoolWithAggregatesFilter<"SSLCertificate"> | boolean
+  statusMessage?: Prisma.StringNullableWithAggregatesFilter<"SSLCertificate"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"SSLCertificate"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"SSLCertificate"> | Date | string
 }
@@ -283,6 +319,9 @@ export type SSLCertificateCreateInput = {
   validFrom?: Date | string | null
   validTo?: Date | string | null
   isValid?: boolean
+  serialNumber?: string | null
+  isAutoRenewable?: boolean
+  statusMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   website: Prisma.WebsiteCreateNestedOneWithoutSslInput
@@ -296,6 +335,9 @@ export type SSLCertificateUncheckedCreateInput = {
   validFrom?: Date | string | null
   validTo?: Date | string | null
   isValid?: boolean
+  serialNumber?: string | null
+  isAutoRenewable?: boolean
+  statusMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -307,6 +349,9 @@ export type SSLCertificateUpdateInput = {
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isValid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAutoRenewable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  statusMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   website?: Prisma.WebsiteUpdateOneRequiredWithoutSslNestedInput
@@ -320,6 +365,9 @@ export type SSLCertificateUncheckedUpdateInput = {
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isValid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAutoRenewable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  statusMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -332,6 +380,9 @@ export type SSLCertificateCreateManyInput = {
   validFrom?: Date | string | null
   validTo?: Date | string | null
   isValid?: boolean
+  serialNumber?: string | null
+  isAutoRenewable?: boolean
+  statusMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -343,6 +394,9 @@ export type SSLCertificateUpdateManyMutationInput = {
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isValid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAutoRenewable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  statusMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -355,6 +409,9 @@ export type SSLCertificateUncheckedUpdateManyInput = {
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isValid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAutoRenewable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  statusMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -372,6 +429,9 @@ export type SSLCertificateCountOrderByAggregateInput = {
   validFrom?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isValid?: Prisma.SortOrder
+  serialNumber?: Prisma.SortOrder
+  isAutoRenewable?: Prisma.SortOrder
+  statusMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -384,6 +444,9 @@ export type SSLCertificateMaxOrderByAggregateInput = {
   validFrom?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isValid?: Prisma.SortOrder
+  serialNumber?: Prisma.SortOrder
+  isAutoRenewable?: Prisma.SortOrder
+  statusMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -396,6 +459,9 @@ export type SSLCertificateMinOrderByAggregateInput = {
   validFrom?: Prisma.SortOrder
   validTo?: Prisma.SortOrder
   isValid?: Prisma.SortOrder
+  serialNumber?: Prisma.SortOrder
+  isAutoRenewable?: Prisma.SortOrder
+  statusMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -443,6 +509,9 @@ export type SSLCertificateCreateWithoutWebsiteInput = {
   validFrom?: Date | string | null
   validTo?: Date | string | null
   isValid?: boolean
+  serialNumber?: string | null
+  isAutoRenewable?: boolean
+  statusMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -454,6 +523,9 @@ export type SSLCertificateUncheckedCreateWithoutWebsiteInput = {
   validFrom?: Date | string | null
   validTo?: Date | string | null
   isValid?: boolean
+  serialNumber?: string | null
+  isAutoRenewable?: boolean
+  statusMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -481,6 +553,9 @@ export type SSLCertificateUpdateWithoutWebsiteInput = {
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isValid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAutoRenewable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  statusMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -492,6 +567,9 @@ export type SSLCertificateUncheckedUpdateWithoutWebsiteInput = {
   validFrom?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validTo?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isValid?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isAutoRenewable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  statusMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -506,6 +584,9 @@ export type SSLCertificateSelect<ExtArgs extends runtime.Types.Extensions.Intern
   validFrom?: boolean
   validTo?: boolean
   isValid?: boolean
+  serialNumber?: boolean
+  isAutoRenewable?: boolean
+  statusMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
@@ -519,6 +600,9 @@ export type SSLCertificateSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   validFrom?: boolean
   validTo?: boolean
   isValid?: boolean
+  serialNumber?: boolean
+  isAutoRenewable?: boolean
+  statusMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
@@ -532,6 +616,9 @@ export type SSLCertificateSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   validFrom?: boolean
   validTo?: boolean
   isValid?: boolean
+  serialNumber?: boolean
+  isAutoRenewable?: boolean
+  statusMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
@@ -545,11 +632,14 @@ export type SSLCertificateSelectScalar = {
   validFrom?: boolean
   validTo?: boolean
   isValid?: boolean
+  serialNumber?: boolean
+  isAutoRenewable?: boolean
+  statusMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SSLCertificateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "websiteId" | "issuer" | "subject" | "validFrom" | "validTo" | "isValid" | "createdAt" | "updatedAt", ExtArgs["result"]["sSLCertificate"]>
+export type SSLCertificateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "websiteId" | "issuer" | "subject" | "validFrom" | "validTo" | "isValid" | "serialNumber" | "isAutoRenewable" | "statusMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["sSLCertificate"]>
 export type SSLCertificateInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }
@@ -573,6 +663,9 @@ export type $SSLCertificatePayload<ExtArgs extends runtime.Types.Extensions.Inte
     validFrom: Date | null
     validTo: Date | null
     isValid: boolean
+    serialNumber: string | null
+    isAutoRenewable: boolean
+    statusMessage: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["sSLCertificate"]>
@@ -1006,6 +1099,9 @@ export interface SSLCertificateFieldRefs {
   readonly validFrom: Prisma.FieldRef<"SSLCertificate", 'DateTime'>
   readonly validTo: Prisma.FieldRef<"SSLCertificate", 'DateTime'>
   readonly isValid: Prisma.FieldRef<"SSLCertificate", 'Boolean'>
+  readonly serialNumber: Prisma.FieldRef<"SSLCertificate", 'String'>
+  readonly isAutoRenewable: Prisma.FieldRef<"SSLCertificate", 'Boolean'>
+  readonly statusMessage: Prisma.FieldRef<"SSLCertificate", 'String'>
   readonly createdAt: Prisma.FieldRef<"SSLCertificate", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"SSLCertificate", 'DateTime'>
 }

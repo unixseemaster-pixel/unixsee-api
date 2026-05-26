@@ -9,7 +9,10 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User.js'
+export type * from './models/Server.js'
+export type * from './models/VpsNode.js'
+export type * from './models/VpsMetric.js'
 export type * from './models/Website.js'
-export type * from './models/WebsiteMetric.js'
+export type * from './models/WebMetric.js'
 export type * from './models/SSLCertificate.js'
 export type * from './commonInputTypes.js'

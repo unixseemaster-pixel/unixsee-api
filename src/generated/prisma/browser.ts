@@ -23,15 +23,30 @@ export * from './enums.js';
  */
 export type User = Prisma.UserModel
 /**
+ * Model Server
+ * 
+ */
+export type Server = Prisma.ServerModel
+/**
+ * Model VpsNode
+ * 
+ */
+export type VpsNode = Prisma.VpsNodeModel
+/**
+ * Model VpsMetric
+ * 
+ */
+export type VpsMetric = Prisma.VpsMetricModel
+/**
  * Model Website
  * 
  */
 export type Website = Prisma.WebsiteModel
 /**
- * Model WebsiteMetric
+ * Model WebMetric
  * 
  */
-export type WebsiteMetric = Prisma.WebsiteMetricModel
+export type WebMetric = Prisma.WebMetricModel
 /**
  * Model SSLCertificate
  * 

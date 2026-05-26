@@ -20,26 +20,15 @@ export type WebsiteModel = runtime.Types.Result.DefaultSelection<Prisma.$Website
 
 export type AggregateWebsite = {
   _count: WebsiteCountAggregateOutputType | null
-  _avg: WebsiteAvgAggregateOutputType | null
-  _sum: WebsiteSumAggregateOutputType | null
   _min: WebsiteMinAggregateOutputType | null
   _max: WebsiteMaxAggregateOutputType | null
-}
-
-export type WebsiteAvgAggregateOutputType = {
-  port: number | null
-}
-
-export type WebsiteSumAggregateOutputType = {
-  port: number | null
 }
 
 export type WebsiteMinAggregateOutputType = {
   id: string | null
   userId: string | null
-  name: string | null
+  vpsNodeId: string | null
   domain: string | null
-  port: number | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -48,9 +37,8 @@ export type WebsiteMinAggregateOutputType = {
 export type WebsiteMaxAggregateOutputType = {
   id: string | null
   userId: string | null
-  name: string | null
+  vpsNodeId: string | null
   domain: string | null
-  port: number | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -59,9 +47,8 @@ export type WebsiteMaxAggregateOutputType = {
 export type WebsiteCountAggregateOutputType = {
   id: number
   userId: number
-  name: number
+  vpsNodeId: number
   domain: number
-  port: number
   isActive: number
   createdAt: number
   updatedAt: number
@@ -69,20 +56,11 @@ export type WebsiteCountAggregateOutputType = {
 }
 
 
-export type WebsiteAvgAggregateInputType = {
-  port?: true
-}
-
-export type WebsiteSumAggregateInputType = {
-  port?: true
-}
-
 export type WebsiteMinAggregateInputType = {
   id?: true
   userId?: true
-  name?: true
+  vpsNodeId?: true
   domain?: true
-  port?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -91,9 +69,8 @@ export type WebsiteMinAggregateInputType = {
 export type WebsiteMaxAggregateInputType = {
   id?: true
   userId?: true
-  name?: true
+  vpsNodeId?: true
   domain?: true
-  port?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -102,9 +79,8 @@ export type WebsiteMaxAggregateInputType = {
 export type WebsiteCountAggregateInputType = {
   id?: true
   userId?: true
-  name?: true
+  vpsNodeId?: true
   domain?: true
-  port?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -149,18 +125,6 @@ export type WebsiteAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: WebsiteAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: WebsiteSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: WebsiteMinAggregateInputType
@@ -191,8 +155,6 @@ export type WebsiteGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: WebsiteCountAggregateInputType | true
-  _avg?: WebsiteAvgAggregateInputType
-  _sum?: WebsiteSumAggregateInputType
   _min?: WebsiteMinAggregateInputType
   _max?: WebsiteMaxAggregateInputType
 }
@@ -200,15 +162,12 @@ export type WebsiteGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type WebsiteGroupByOutputType = {
   id: string
   userId: string
-  name: string
+  vpsNodeId: string
   domain: string
-  port: number | null
   isActive: boolean
   createdAt: Date
   updatedAt: Date
   _count: WebsiteCountAggregateOutputType | null
-  _avg: WebsiteAvgAggregateOutputType | null
-  _sum: WebsiteSumAggregateOutputType | null
   _min: WebsiteMinAggregateOutputType | null
   _max: WebsiteMaxAggregateOutputType | null
 }
@@ -233,30 +192,30 @@ export type WebsiteWhereInput = {
   OR?: Prisma.WebsiteWhereInput[]
   NOT?: Prisma.WebsiteWhereInput | Prisma.WebsiteWhereInput[]
   id?: Prisma.UuidFilter<"Website"> | string
-  userId?: Prisma.StringFilter<"Website"> | string
-  name?: Prisma.StringFilter<"Website"> | string
+  userId?: Prisma.UuidFilter<"Website"> | string
+  vpsNodeId?: Prisma.UuidFilter<"Website"> | string
   domain?: Prisma.StringFilter<"Website"> | string
-  port?: Prisma.IntNullableFilter<"Website"> | number | null
   isActive?: Prisma.BoolFilter<"Website"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Website"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Website"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  metrics?: Prisma.WebsiteMetricListRelationFilter
+  metrics?: Prisma.WebMetricListRelationFilter
   ssl?: Prisma.XOR<Prisma.SSLCertificateNullableScalarRelationFilter, Prisma.SSLCertificateWhereInput> | null
+  vps?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
 }
 
 export type WebsiteOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   domain?: Prisma.SortOrder
-  port?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
-  metrics?: Prisma.WebsiteMetricOrderByRelationAggregateInput
+  metrics?: Prisma.WebMetricOrderByRelationAggregateInput
   ssl?: Prisma.SSLCertificateOrderByWithRelationInput
+  vps?: Prisma.VpsNodeOrderByWithRelationInput
 }
 
 export type WebsiteWhereUniqueInput = Prisma.AtLeast<{
@@ -265,31 +224,28 @@ export type WebsiteWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.WebsiteWhereInput | Prisma.WebsiteWhereInput[]
   OR?: Prisma.WebsiteWhereInput[]
   NOT?: Prisma.WebsiteWhereInput | Prisma.WebsiteWhereInput[]
-  userId?: Prisma.StringFilter<"Website"> | string
-  name?: Prisma.StringFilter<"Website"> | string
-  port?: Prisma.IntNullableFilter<"Website"> | number | null
+  userId?: Prisma.UuidFilter<"Website"> | string
+  vpsNodeId?: Prisma.UuidFilter<"Website"> | string
   isActive?: Prisma.BoolFilter<"Website"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Website"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Website"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  metrics?: Prisma.WebsiteMetricListRelationFilter
+  metrics?: Prisma.WebMetricListRelationFilter
   ssl?: Prisma.XOR<Prisma.SSLCertificateNullableScalarRelationFilter, Prisma.SSLCertificateWhereInput> | null
+  vps?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
 }, "id" | "domain">
 
 export type WebsiteOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   domain?: Prisma.SortOrder
-  port?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.WebsiteCountOrderByAggregateInput
-  _avg?: Prisma.WebsiteAvgOrderByAggregateInput
   _max?: Prisma.WebsiteMaxOrderByAggregateInput
   _min?: Prisma.WebsiteMinOrderByAggregateInput
-  _sum?: Prisma.WebsiteSumOrderByAggregateInput
 }
 
 export type WebsiteScalarWhereWithAggregatesInput = {
@@ -297,10 +253,9 @@ export type WebsiteScalarWhereWithAggregatesInput = {
   OR?: Prisma.WebsiteScalarWhereWithAggregatesInput[]
   NOT?: Prisma.WebsiteScalarWhereWithAggregatesInput | Prisma.WebsiteScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Website"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"Website"> | string
-  name?: Prisma.StringWithAggregatesFilter<"Website"> | string
+  userId?: Prisma.UuidWithAggregatesFilter<"Website"> | string
+  vpsNodeId?: Prisma.UuidWithAggregatesFilter<"Website"> | string
   domain?: Prisma.StringWithAggregatesFilter<"Website"> | string
-  port?: Prisma.IntNullableWithAggregatesFilter<"Website"> | number | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Website"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Website"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Website"> | Date | string
@@ -308,62 +263,57 @@ export type WebsiteScalarWhereWithAggregatesInput = {
 
 export type WebsiteCreateInput = {
   id?: string
-  name: string
   domain: string
-  port?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutWebsitesInput
-  metrics?: Prisma.WebsiteMetricCreateNestedManyWithoutWebsiteInput
+  metrics?: Prisma.WebMetricCreateNestedManyWithoutWebsiteInput
   ssl?: Prisma.SSLCertificateCreateNestedOneWithoutWebsiteInput
+  vps: Prisma.VpsNodeCreateNestedOneWithoutWebsitesInput
 }
 
 export type WebsiteUncheckedCreateInput = {
   id?: string
   userId: string
-  name: string
+  vpsNodeId: string
   domain: string
-  port?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  metrics?: Prisma.WebsiteMetricUncheckedCreateNestedManyWithoutWebsiteInput
+  metrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutWebsiteInput
   ssl?: Prisma.SSLCertificateUncheckedCreateNestedOneWithoutWebsiteInput
 }
 
 export type WebsiteUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutWebsitesNestedInput
-  metrics?: Prisma.WebsiteMetricUpdateManyWithoutWebsiteNestedInput
+  metrics?: Prisma.WebMetricUpdateManyWithoutWebsiteNestedInput
   ssl?: Prisma.SSLCertificateUpdateOneWithoutWebsiteNestedInput
+  vps?: Prisma.VpsNodeUpdateOneRequiredWithoutWebsitesNestedInput
 }
 
 export type WebsiteUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  metrics?: Prisma.WebsiteMetricUncheckedUpdateManyWithoutWebsiteNestedInput
+  metrics?: Prisma.WebMetricUncheckedUpdateManyWithoutWebsiteNestedInput
   ssl?: Prisma.SSLCertificateUncheckedUpdateOneWithoutWebsiteNestedInput
 }
 
 export type WebsiteCreateManyInput = {
   id?: string
   userId: string
-  name: string
+  vpsNodeId: string
   domain: string
-  port?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -371,9 +321,7 @@ export type WebsiteCreateManyInput = {
 
 export type WebsiteUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -382,9 +330,8 @@ export type WebsiteUpdateManyMutationInput = {
 export type WebsiteUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -403,24 +350,18 @@ export type WebsiteOrderByRelationAggregateInput = {
 export type WebsiteCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   domain?: Prisma.SortOrder
-  port?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
-export type WebsiteAvgOrderByAggregateInput = {
-  port?: Prisma.SortOrder
-}
-
 export type WebsiteMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   domain?: Prisma.SortOrder
-  port?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -429,16 +370,11 @@ export type WebsiteMaxOrderByAggregateInput = {
 export type WebsiteMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   domain?: Prisma.SortOrder
-  port?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type WebsiteSumOrderByAggregateInput = {
-  port?: Prisma.SortOrder
 }
 
 export type WebsiteScalarRelationFilter = {
@@ -488,12 +424,46 @@ export type WebsiteUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.WebsiteScalarWhereInput | Prisma.WebsiteScalarWhereInput[]
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type WebsiteCreateNestedManyWithoutVpsInput = {
+  create?: Prisma.XOR<Prisma.WebsiteCreateWithoutVpsInput, Prisma.WebsiteUncheckedCreateWithoutVpsInput> | Prisma.WebsiteCreateWithoutVpsInput[] | Prisma.WebsiteUncheckedCreateWithoutVpsInput[]
+  connectOrCreate?: Prisma.WebsiteCreateOrConnectWithoutVpsInput | Prisma.WebsiteCreateOrConnectWithoutVpsInput[]
+  createMany?: Prisma.WebsiteCreateManyVpsInputEnvelope
+  connect?: Prisma.WebsiteWhereUniqueInput | Prisma.WebsiteWhereUniqueInput[]
+}
+
+export type WebsiteUncheckedCreateNestedManyWithoutVpsInput = {
+  create?: Prisma.XOR<Prisma.WebsiteCreateWithoutVpsInput, Prisma.WebsiteUncheckedCreateWithoutVpsInput> | Prisma.WebsiteCreateWithoutVpsInput[] | Prisma.WebsiteUncheckedCreateWithoutVpsInput[]
+  connectOrCreate?: Prisma.WebsiteCreateOrConnectWithoutVpsInput | Prisma.WebsiteCreateOrConnectWithoutVpsInput[]
+  createMany?: Prisma.WebsiteCreateManyVpsInputEnvelope
+  connect?: Prisma.WebsiteWhereUniqueInput | Prisma.WebsiteWhereUniqueInput[]
+}
+
+export type WebsiteUpdateManyWithoutVpsNestedInput = {
+  create?: Prisma.XOR<Prisma.WebsiteCreateWithoutVpsInput, Prisma.WebsiteUncheckedCreateWithoutVpsInput> | Prisma.WebsiteCreateWithoutVpsInput[] | Prisma.WebsiteUncheckedCreateWithoutVpsInput[]
+  connectOrCreate?: Prisma.WebsiteCreateOrConnectWithoutVpsInput | Prisma.WebsiteCreateOrConnectWithoutVpsInput[]
+  upsert?: Prisma.WebsiteUpsertWithWhereUniqueWithoutVpsInput | Prisma.WebsiteUpsertWithWhereUniqueWithoutVpsInput[]
+  createMany?: Prisma.WebsiteCreateManyVpsInputEnvelope
+  set?: Prisma.WebsiteWhereUniqueInput | Prisma.WebsiteWhereUniqueInput[]
+  disconnect?: Prisma.WebsiteWhereUniqueInput | Prisma.WebsiteWhereUniqueInput[]
+  delete?: Prisma.WebsiteWhereUniqueInput | Prisma.WebsiteWhereUniqueInput[]
+  connect?: Prisma.WebsiteWhereUniqueInput | Prisma.WebsiteWhereUniqueInput[]
+  update?: Prisma.WebsiteUpdateWithWhereUniqueWithoutVpsInput | Prisma.WebsiteUpdateWithWhereUniqueWithoutVpsInput[]
+  updateMany?: Prisma.WebsiteUpdateManyWithWhereWithoutVpsInput | Prisma.WebsiteUpdateManyWithWhereWithoutVpsInput[]
+  deleteMany?: Prisma.WebsiteScalarWhereInput | Prisma.WebsiteScalarWhereInput[]
+}
+
+export type WebsiteUncheckedUpdateManyWithoutVpsNestedInput = {
+  create?: Prisma.XOR<Prisma.WebsiteCreateWithoutVpsInput, Prisma.WebsiteUncheckedCreateWithoutVpsInput> | Prisma.WebsiteCreateWithoutVpsInput[] | Prisma.WebsiteUncheckedCreateWithoutVpsInput[]
+  connectOrCreate?: Prisma.WebsiteCreateOrConnectWithoutVpsInput | Prisma.WebsiteCreateOrConnectWithoutVpsInput[]
+  upsert?: Prisma.WebsiteUpsertWithWhereUniqueWithoutVpsInput | Prisma.WebsiteUpsertWithWhereUniqueWithoutVpsInput[]
+  createMany?: Prisma.WebsiteCreateManyVpsInputEnvelope
+  set?: Prisma.WebsiteWhereUniqueInput | Prisma.WebsiteWhereUniqueInput[]
+  disconnect?: Prisma.WebsiteWhereUniqueInput | Prisma.WebsiteWhereUniqueInput[]
+  delete?: Prisma.WebsiteWhereUniqueInput | Prisma.WebsiteWhereUniqueInput[]
+  connect?: Prisma.WebsiteWhereUniqueInput | Prisma.WebsiteWhereUniqueInput[]
+  update?: Prisma.WebsiteUpdateWithWhereUniqueWithoutVpsInput | Prisma.WebsiteUpdateWithWhereUniqueWithoutVpsInput[]
+  updateMany?: Prisma.WebsiteUpdateManyWithWhereWithoutVpsInput | Prisma.WebsiteUpdateManyWithWhereWithoutVpsInput[]
+  deleteMany?: Prisma.WebsiteScalarWhereInput | Prisma.WebsiteScalarWhereInput[]
 }
 
 export type BoolFieldUpdateOperationsInput = {
@@ -530,25 +500,23 @@ export type WebsiteUpdateOneRequiredWithoutSslNestedInput = {
 
 export type WebsiteCreateWithoutUserInput = {
   id?: string
-  name: string
   domain: string
-  port?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  metrics?: Prisma.WebsiteMetricCreateNestedManyWithoutWebsiteInput
+  metrics?: Prisma.WebMetricCreateNestedManyWithoutWebsiteInput
   ssl?: Prisma.SSLCertificateCreateNestedOneWithoutWebsiteInput
+  vps: Prisma.VpsNodeCreateNestedOneWithoutWebsitesInput
 }
 
 export type WebsiteUncheckedCreateWithoutUserInput = {
   id?: string
-  name: string
+  vpsNodeId: string
   domain: string
-  port?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  metrics?: Prisma.WebsiteMetricUncheckedCreateNestedManyWithoutWebsiteInput
+  metrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutWebsiteInput
   ssl?: Prisma.SSLCertificateUncheckedCreateNestedOneWithoutWebsiteInput
 }
 
@@ -583,33 +551,78 @@ export type WebsiteScalarWhereInput = {
   OR?: Prisma.WebsiteScalarWhereInput[]
   NOT?: Prisma.WebsiteScalarWhereInput | Prisma.WebsiteScalarWhereInput[]
   id?: Prisma.UuidFilter<"Website"> | string
-  userId?: Prisma.StringFilter<"Website"> | string
-  name?: Prisma.StringFilter<"Website"> | string
+  userId?: Prisma.UuidFilter<"Website"> | string
+  vpsNodeId?: Prisma.UuidFilter<"Website"> | string
   domain?: Prisma.StringFilter<"Website"> | string
-  port?: Prisma.IntNullableFilter<"Website"> | number | null
   isActive?: Prisma.BoolFilter<"Website"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Website"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Website"> | Date | string
 }
 
+export type WebsiteCreateWithoutVpsInput = {
+  id?: string
+  domain: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutWebsitesInput
+  metrics?: Prisma.WebMetricCreateNestedManyWithoutWebsiteInput
+  ssl?: Prisma.SSLCertificateCreateNestedOneWithoutWebsiteInput
+}
+
+export type WebsiteUncheckedCreateWithoutVpsInput = {
+  id?: string
+  userId: string
+  domain: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  metrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutWebsiteInput
+  ssl?: Prisma.SSLCertificateUncheckedCreateNestedOneWithoutWebsiteInput
+}
+
+export type WebsiteCreateOrConnectWithoutVpsInput = {
+  where: Prisma.WebsiteWhereUniqueInput
+  create: Prisma.XOR<Prisma.WebsiteCreateWithoutVpsInput, Prisma.WebsiteUncheckedCreateWithoutVpsInput>
+}
+
+export type WebsiteCreateManyVpsInputEnvelope = {
+  data: Prisma.WebsiteCreateManyVpsInput | Prisma.WebsiteCreateManyVpsInput[]
+  skipDuplicates?: boolean
+}
+
+export type WebsiteUpsertWithWhereUniqueWithoutVpsInput = {
+  where: Prisma.WebsiteWhereUniqueInput
+  update: Prisma.XOR<Prisma.WebsiteUpdateWithoutVpsInput, Prisma.WebsiteUncheckedUpdateWithoutVpsInput>
+  create: Prisma.XOR<Prisma.WebsiteCreateWithoutVpsInput, Prisma.WebsiteUncheckedCreateWithoutVpsInput>
+}
+
+export type WebsiteUpdateWithWhereUniqueWithoutVpsInput = {
+  where: Prisma.WebsiteWhereUniqueInput
+  data: Prisma.XOR<Prisma.WebsiteUpdateWithoutVpsInput, Prisma.WebsiteUncheckedUpdateWithoutVpsInput>
+}
+
+export type WebsiteUpdateManyWithWhereWithoutVpsInput = {
+  where: Prisma.WebsiteScalarWhereInput
+  data: Prisma.XOR<Prisma.WebsiteUpdateManyMutationInput, Prisma.WebsiteUncheckedUpdateManyWithoutVpsInput>
+}
+
 export type WebsiteCreateWithoutMetricsInput = {
   id?: string
-  name: string
   domain: string
-  port?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutWebsitesInput
   ssl?: Prisma.SSLCertificateCreateNestedOneWithoutWebsiteInput
+  vps: Prisma.VpsNodeCreateNestedOneWithoutWebsitesInput
 }
 
 export type WebsiteUncheckedCreateWithoutMetricsInput = {
   id?: string
   userId: string
-  name: string
+  vpsNodeId: string
   domain: string
-  port?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -634,22 +647,20 @@ export type WebsiteUpdateToOneWithWhereWithoutMetricsInput = {
 
 export type WebsiteUpdateWithoutMetricsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutWebsitesNestedInput
   ssl?: Prisma.SSLCertificateUpdateOneWithoutWebsiteNestedInput
+  vps?: Prisma.VpsNodeUpdateOneRequiredWithoutWebsitesNestedInput
 }
 
 export type WebsiteUncheckedUpdateWithoutMetricsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -658,26 +669,24 @@ export type WebsiteUncheckedUpdateWithoutMetricsInput = {
 
 export type WebsiteCreateWithoutSslInput = {
   id?: string
-  name: string
   domain: string
-  port?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutWebsitesInput
-  metrics?: Prisma.WebsiteMetricCreateNestedManyWithoutWebsiteInput
+  metrics?: Prisma.WebMetricCreateNestedManyWithoutWebsiteInput
+  vps: Prisma.VpsNodeCreateNestedOneWithoutWebsitesInput
 }
 
 export type WebsiteUncheckedCreateWithoutSslInput = {
   id?: string
   userId: string
-  name: string
+  vpsNodeId: string
   domain: string
-  port?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  metrics?: Prisma.WebsiteMetricUncheckedCreateNestedManyWithoutWebsiteInput
+  metrics?: Prisma.WebMetricUncheckedCreateNestedManyWithoutWebsiteInput
 }
 
 export type WebsiteCreateOrConnectWithoutSslInput = {
@@ -698,33 +707,30 @@ export type WebsiteUpdateToOneWithWhereWithoutSslInput = {
 
 export type WebsiteUpdateWithoutSslInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutWebsitesNestedInput
-  metrics?: Prisma.WebsiteMetricUpdateManyWithoutWebsiteNestedInput
+  metrics?: Prisma.WebMetricUpdateManyWithoutWebsiteNestedInput
+  vps?: Prisma.VpsNodeUpdateOneRequiredWithoutWebsitesNestedInput
 }
 
 export type WebsiteUncheckedUpdateWithoutSslInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  metrics?: Prisma.WebsiteMetricUncheckedUpdateManyWithoutWebsiteNestedInput
+  metrics?: Prisma.WebMetricUncheckedUpdateManyWithoutWebsiteNestedInput
 }
 
 export type WebsiteCreateManyUserInput = {
   id?: string
-  name: string
+  vpsNodeId: string
   domain: string
-  port?: number | null
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -732,33 +738,70 @@ export type WebsiteCreateManyUserInput = {
 
 export type WebsiteUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  metrics?: Prisma.WebsiteMetricUpdateManyWithoutWebsiteNestedInput
+  metrics?: Prisma.WebMetricUpdateManyWithoutWebsiteNestedInput
   ssl?: Prisma.SSLCertificateUpdateOneWithoutWebsiteNestedInput
+  vps?: Prisma.VpsNodeUpdateOneRequiredWithoutWebsitesNestedInput
 }
 
 export type WebsiteUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  metrics?: Prisma.WebsiteMetricUncheckedUpdateManyWithoutWebsiteNestedInput
+  metrics?: Prisma.WebMetricUncheckedUpdateManyWithoutWebsiteNestedInput
   ssl?: Prisma.SSLCertificateUncheckedUpdateOneWithoutWebsiteNestedInput
 }
 
 export type WebsiteUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   domain?: Prisma.StringFieldUpdateOperationsInput | string
-  port?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type WebsiteCreateManyVpsInput = {
+  id?: string
+  userId: string
+  domain: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type WebsiteUpdateWithoutVpsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  domain?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutWebsitesNestedInput
+  metrics?: Prisma.WebMetricUpdateManyWithoutWebsiteNestedInput
+  ssl?: Prisma.SSLCertificateUpdateOneWithoutWebsiteNestedInput
+}
+
+export type WebsiteUncheckedUpdateWithoutVpsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  domain?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  metrics?: Prisma.WebMetricUncheckedUpdateManyWithoutWebsiteNestedInput
+  ssl?: Prisma.SSLCertificateUncheckedUpdateOneWithoutWebsiteNestedInput
+}
+
+export type WebsiteUncheckedUpdateManyWithoutVpsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  domain?: Prisma.StringFieldUpdateOperationsInput | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -791,87 +834,89 @@ export type WebsiteCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
  * WebsiteCountOutputType without action
  */
 export type WebsiteCountOutputTypeCountMetricsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.WebsiteMetricWhereInput
+  where?: Prisma.WebMetricWhereInput
 }
 
 
 export type WebsiteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  name?: boolean
+  vpsNodeId?: boolean
   domain?: boolean
-  port?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   metrics?: boolean | Prisma.Website$metricsArgs<ExtArgs>
   ssl?: boolean | Prisma.Website$sslArgs<ExtArgs>
+  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.WebsiteCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["website"]>
 
 export type WebsiteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  name?: boolean
+  vpsNodeId?: boolean
   domain?: boolean
-  port?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["website"]>
 
 export type WebsiteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  name?: boolean
+  vpsNodeId?: boolean
   domain?: boolean
-  port?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["website"]>
 
 export type WebsiteSelectScalar = {
   id?: boolean
   userId?: boolean
-  name?: boolean
+  vpsNodeId?: boolean
   domain?: boolean
-  port?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type WebsiteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "domain" | "port" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["website"]>
+export type WebsiteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "vpsNodeId" | "domain" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["website"]>
 export type WebsiteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   metrics?: boolean | Prisma.Website$metricsArgs<ExtArgs>
   ssl?: boolean | Prisma.Website$sslArgs<ExtArgs>
+  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.WebsiteCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type WebsiteIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }
 export type WebsiteIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  vps?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }
 
 export type $WebsitePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Website"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
-    metrics: Prisma.$WebsiteMetricPayload<ExtArgs>[]
+    metrics: Prisma.$WebMetricPayload<ExtArgs>[]
     ssl: Prisma.$SSLCertificatePayload<ExtArgs> | null
+    vps: Prisma.$VpsNodePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
-    name: string
+    vpsNodeId: string
     domain: string
-    port: number | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1270,8 +1315,9 @@ readonly fields: WebsiteFieldRefs;
 export interface Prisma__WebsiteClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  metrics<T extends Prisma.Website$metricsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Website$metricsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebsiteMetricPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  metrics<T extends Prisma.Website$metricsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Website$metricsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebMetricPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ssl<T extends Prisma.Website$sslArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Website$sslArgs<ExtArgs>>): Prisma.Prisma__SSLCertificateClient<runtime.Types.Result.GetResult<Prisma.$SSLCertificatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  vps<T extends Prisma.VpsNodeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VpsNodeDefaultArgs<ExtArgs>>): Prisma.Prisma__VpsNodeClient<runtime.Types.Result.GetResult<Prisma.$VpsNodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1303,9 +1349,8 @@ export interface Prisma__WebsiteClient<T, Null = never, ExtArgs extends runtime.
 export interface WebsiteFieldRefs {
   readonly id: Prisma.FieldRef<"Website", 'String'>
   readonly userId: Prisma.FieldRef<"Website", 'String'>
-  readonly name: Prisma.FieldRef<"Website", 'String'>
+  readonly vpsNodeId: Prisma.FieldRef<"Website", 'String'>
   readonly domain: Prisma.FieldRef<"Website", 'String'>
-  readonly port: Prisma.FieldRef<"Website", 'Int'>
   readonly isActive: Prisma.FieldRef<"Website", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Website", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Website", 'DateTime'>
@@ -1714,23 +1759,23 @@ export type WebsiteDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
  */
 export type Website$metricsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the WebsiteMetric
+   * Select specific fields to fetch from the WebMetric
    */
-  select?: Prisma.WebsiteMetricSelect<ExtArgs> | null
+  select?: Prisma.WebMetricSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the WebsiteMetric
+   * Omit specific fields from the WebMetric
    */
-  omit?: Prisma.WebsiteMetricOmit<ExtArgs> | null
+  omit?: Prisma.WebMetricOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.WebsiteMetricInclude<ExtArgs> | null
-  where?: Prisma.WebsiteMetricWhereInput
-  orderBy?: Prisma.WebsiteMetricOrderByWithRelationInput | Prisma.WebsiteMetricOrderByWithRelationInput[]
-  cursor?: Prisma.WebsiteMetricWhereUniqueInput
+  include?: Prisma.WebMetricInclude<ExtArgs> | null
+  where?: Prisma.WebMetricWhereInput
+  orderBy?: Prisma.WebMetricOrderByWithRelationInput | Prisma.WebMetricOrderByWithRelationInput[]
+  cursor?: Prisma.WebMetricWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.WebsiteMetricScalarFieldEnum | Prisma.WebsiteMetricScalarFieldEnum[]
+  distinct?: Prisma.WebMetricScalarFieldEnum | Prisma.WebMetricScalarFieldEnum[]
 }
 
 /**

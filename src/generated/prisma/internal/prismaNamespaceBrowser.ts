@@ -52,8 +52,11 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Server: 'Server',
+  VpsNode: 'VpsNode',
+  VpsMetric: 'VpsMetric',
   Website: 'Website',
-  WebsiteMetric: 'WebsiteMetric',
+  WebMetric: 'WebMetric',
   SSLCertificate: 'SSLCertificate'
 } as const
 
@@ -80,6 +83,7 @@ export const UserScalarFieldEnum = {
   password: 'password',
   fullName: 'fullName',
   phoneNumber: 'phoneNumber',
+  role: 'role',
   hashedRt: 'hashedRt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -88,12 +92,57 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const ServerScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  ipAddress: 'ipAddress',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServerScalarFieldEnum = (typeof ServerScalarFieldEnum)[keyof typeof ServerScalarFieldEnum]
+
+
+export const VpsNodeScalarFieldEnum = {
+  id: 'id',
+  serverId: 'serverId',
+  userId: 'userId',
+  machineId: 'machineId',
+  name: 'name',
+  secretKey: 'secretKey',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VpsNodeScalarFieldEnum = (typeof VpsNodeScalarFieldEnum)[keyof typeof VpsNodeScalarFieldEnum]
+
+
+export const VpsMetricScalarFieldEnum = {
+  recordedAt: 'recordedAt',
+  VpsNodeId: 'VpsNodeId',
+  cpuUsagePercent: 'cpuUsagePercent',
+  memoryTotalMB: 'memoryTotalMB',
+  memoryUsedMB: 'memoryUsedMB',
+  liteSpeedConnections: 'liteSpeedConnections',
+  diskReadBytesPerSecond: 'diskReadBytesPerSecond',
+  diskWriteBytesPerSecond: 'diskWriteBytesPerSecond',
+  diskIops: 'diskIops',
+  storageTotalMB: 'storageTotalMB',
+  storageAvailableMB: 'storageAvailableMB',
+  networkRxBytesPerSecond: 'networkRxBytesPerSecond',
+  networkTxBytesPerSecond: 'networkTxBytesPerSecond',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VpsMetricScalarFieldEnum = (typeof VpsMetricScalarFieldEnum)[keyof typeof VpsMetricScalarFieldEnum]
+
+
 export const WebsiteScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  name: 'name',
+  vpsNodeId: 'vpsNodeId',
   domain: 'domain',
-  port: 'port',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -102,14 +151,17 @@ export const WebsiteScalarFieldEnum = {
 export type WebsiteScalarFieldEnum = (typeof WebsiteScalarFieldEnum)[keyof typeof WebsiteScalarFieldEnum]
 
 
-export const WebsiteMetricScalarFieldEnum = {
-  id: 'id',
+export const WebMetricScalarFieldEnum = {
+  recordedAt: 'recordedAt',
+  VpsNodeId: 'VpsNodeId',
   websiteId: 'websiteId',
+  concurrentRequests: 'concurrentRequests',
+  requestRate: 'requestRate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type WebsiteMetricScalarFieldEnum = (typeof WebsiteMetricScalarFieldEnum)[keyof typeof WebsiteMetricScalarFieldEnum]
+export type WebMetricScalarFieldEnum = (typeof WebMetricScalarFieldEnum)[keyof typeof WebMetricScalarFieldEnum]
 
 
 export const SSLCertificateScalarFieldEnum = {
@@ -120,6 +172,9 @@ export const SSLCertificateScalarFieldEnum = {
   validFrom: 'validFrom',
   validTo: 'validTo',
   isValid: 'isValid',
+  serialNumber: 'serialNumber',
+  isAutoRenewable: 'isAutoRenewable',
+  statusMessage: 'statusMessage',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

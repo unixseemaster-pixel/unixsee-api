@@ -10,9 +10,9 @@ import { PrismaModule } from './modules/prisma/prisma.module.js';
 import { UserModule } from './modules/user/user.module.js';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
-import { AtGuard } from './common/guards/at-guard.js';
-import { SiteMonitoringModule } from './modules/site-monitoring/site-monitoring.module.js';
-import { AdminModule } from './modules/admin/admin.module.js';
+import { AtGuard } from './modules/auth/guards/at-guard.js';
+import { RealtimeModule } from './modules/realtime/realtime.module.js';
+import { EventModule } from './modules/event/event.module.js';
 
 @Module({
   imports: [
@@ -27,8 +27,8 @@ import { AdminModule } from './modules/admin/admin.module.js';
     AuthModule,
     UserModule,
     JwtModule,
-    SiteMonitoringModule,
-    AdminModule,
+    RealtimeModule,
+    EventModule,
   ],
   controllers: [AppController],
   providers: [
@@ -39,9 +39,7 @@ import { AdminModule } from './modules/admin/admin.module.js';
       useValue: new ValidationPipe({
         whitelist: true,
         // transform: true,
-        // transformOptions: {
-        //   enableImplicitConversion: true,
-        // },
+        forbidNonWhitelisted: true,
       }),
     },
 
