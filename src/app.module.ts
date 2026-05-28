@@ -15,6 +15,15 @@ import { RealtimeModule } from './modules/realtime/realtime.module.js';
 import { EventModule } from './modules/event/event.module.js';
 import { AgentController } from './modules/agent/agent.controller.js';
 import { AgentModule } from './modules/agent/agent.module.js';
+import { WebsiteModule } from './modules/website/website.module';
+import { MetricModule } from './modules/metric/metric.module';
+import { WebsitesModule } from './modules/websites/websites.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
+import { SslCertificatesModule } from './modules/ssl-certificates/ssl-certificates.module';
+import { AlertsModule } from './modules/alerts/alerts.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { AlertModule } from './modules/alert/alert.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -32,6 +41,15 @@ import { AgentModule } from './modules/agent/agent.module.js';
     RealtimeModule,
     EventModule,
     AgentModule,
+    WebsiteModule,
+    MetricModule,
+    WebsitesModule,
+    MetricsModule,
+    SslCertificatesModule,
+    AlertsModule,
+    DashboardModule,
+    AlertModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [

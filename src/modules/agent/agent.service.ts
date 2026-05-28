@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { EventDispatcherService } from '../event/event-dispatcher.service.js';
 import { IngestAgentMetricsDto } from './dto/ingest-agent-metrics.dto.js';
+import { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
 
 @Injectable()
 export class AgentService {
@@ -33,6 +34,7 @@ export class AgentService {
             ipAddress: clientIp || '127.0.0.1',
           },
         });
+
         const structuralSecretKey = randomBytes(32).toString('hex');
 
         const newNode = await this.prisma.vpsNode.create({
@@ -56,6 +58,10 @@ export class AgentService {
       include: { websites: true },
     });
 
+    const websiteMap = new Map(vpsTarget.websites.map((w) => [w.domain, w]));
+
+    const emittedEvents: WebsiteMetricsEvaluatedEvent[] = [];
+
     await this.prisma.$transaction(async (tx) => {
       for (const entry of payload.batch) {
         const timestampDate = new Date(entry.timestamp);
@@ -63,7 +69,7 @@ export class AgentService {
         await tx.vpsMetric.create({
           data: {
             recordedAt: timestampDate,
-            VpsNodeId: vpsTarget.id,
+            vpsNodeId: vpsTarget.id,
             cpuUsagePercent: entry.metrics.cpuMean,
             memoryTotalMB: entry.metrics.ramTotalMB,
             memoryUsedMB: entry.metrics.ramMeanMB,
@@ -83,16 +89,14 @@ export class AgentService {
         });
 
         for (const siteData of entry.websites) {
-          let matchedWebsite = vpsTarget.websites.find(
-            (w) => w.domain === siteData.domain,
-          );
+          let website = websiteMap.get(siteData.domain);
 
-          if (!matchedWebsite) {
+          if (!website) {
             const systemAdminUser = await tx.user.findFirstOrThrow({
-              where: { role: 'ADMIN' },
+              where: { OR: [{ role: 'ADMIN' }, { role: 'OPERATOR' }] },
             });
 
-            matchedWebsite = await tx.website.create({
+            website = await tx.website.create({
               data: {
                 id: randomUUID(),
                 vpsNodeId: vpsTarget.id,
@@ -101,25 +105,34 @@ export class AgentService {
                 isActive: true,
               },
             });
+
+            websiteMap.set(siteData.domain, website);
           }
 
           await tx.webMetric.create({
             data: {
               recordedAt: timestampDate,
-              VpsNodeId: vpsTarget.id,
-              websiteId: matchedWebsite.id,
+              vpsNodeId: vpsTarget.id,
+              websiteId: website.id,
               concurrentRequests: siteData.peakConcurrentRequests,
               requestRate: 0,
             },
+          });
+
+          emittedEvents.push({
+            vpsNodeId: vpsTarget.id,
+            websiteId: website.id,
+            domain: siteData.domain,
+            concurrentRequests: siteData.peakConcurrentRequests,
+            timestamp: timestampDate,
           });
         }
       }
     });
 
-    this.eventDispatcher.dispatchMetricsIngested({
-      vpsNodeId: vpsTarget.id,
-      batch: payload.batch,
-    });
+    for (const event of emittedEvents) {
+      this.eventDispatcher.dispatchWebsiteMetricsEvaluated(event);
+    }
 
     return { vpsNodeId: vpsTarget.id };
   }

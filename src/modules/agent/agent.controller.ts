@@ -15,7 +15,7 @@ import { AgentService } from './agent.service.js';
 import { Public } from '../auth/decorators/public.decorator.js';
 import { IsFirstProvisioning } from './decorators/is-first-provisioning.js';
 
-@Controller('agent')
+@Controller('internal/agent/v1')
 export class AgentController {
   constructor(private readonly agentService: AgentService) {}
 
@@ -28,6 +28,7 @@ export class AgentController {
     @IsFirstProvisioning() isFirstProvisioningCycle: boolean,
     @Body() payload: IngestAgentMetricsDto,
   ) {
+    console.log('request received.............');
     const result = await this.agentService.processTelemetryIngestion(
       payload,
       isFirstProvisioningCycle,

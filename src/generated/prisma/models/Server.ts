@@ -183,6 +183,7 @@ export type ServerWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   vpsNodes?: Prisma.VpsNodeListRelationFilter
+  alerts?: Prisma.AlertListRelationFilter
 }
 
 export type ServerOrderByWithRelationInput = {
@@ -192,6 +193,7 @@ export type ServerOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   vpsNodes?: Prisma.VpsNodeOrderByRelationAggregateInput
+  alerts?: Prisma.AlertOrderByRelationAggregateInput
 }
 
 export type ServerWhereUniqueInput = Prisma.AtLeast<{
@@ -204,6 +206,7 @@ export type ServerWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   vpsNodes?: Prisma.VpsNodeListRelationFilter
+  alerts?: Prisma.AlertListRelationFilter
 }, "id" | "name">
 
 export type ServerOrderByWithAggregationInput = {
@@ -235,6 +238,7 @@ export type ServerCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   vpsNodes?: Prisma.VpsNodeCreateNestedManyWithoutServerInput
+  alerts?: Prisma.AlertCreateNestedManyWithoutServerInput
 }
 
 export type ServerUncheckedCreateInput = {
@@ -244,6 +248,7 @@ export type ServerUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   vpsNodes?: Prisma.VpsNodeUncheckedCreateNestedManyWithoutServerInput
+  alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutServerInput
 }
 
 export type ServerUpdateInput = {
@@ -253,6 +258,7 @@ export type ServerUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNodes?: Prisma.VpsNodeUpdateManyWithoutServerNestedInput
+  alerts?: Prisma.AlertUpdateManyWithoutServerNestedInput
 }
 
 export type ServerUncheckedUpdateInput = {
@@ -262,6 +268,7 @@ export type ServerUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNodes?: Prisma.VpsNodeUncheckedUpdateManyWithoutServerNestedInput
+  alerts?: Prisma.AlertUncheckedUpdateManyWithoutServerNestedInput
 }
 
 export type ServerCreateManyInput = {
@@ -317,6 +324,11 @@ export type ServerScalarRelationFilter = {
   isNot?: Prisma.ServerWhereInput
 }
 
+export type ServerNullableScalarRelationFilter = {
+  is?: Prisma.ServerWhereInput | null
+  isNot?: Prisma.ServerWhereInput | null
+}
+
 export type ServerCreateNestedOneWithoutVpsNodesInput = {
   create?: Prisma.XOR<Prisma.ServerCreateWithoutVpsNodesInput, Prisma.ServerUncheckedCreateWithoutVpsNodesInput>
   connectOrCreate?: Prisma.ServerCreateOrConnectWithoutVpsNodesInput
@@ -331,12 +343,29 @@ export type ServerUpdateOneRequiredWithoutVpsNodesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ServerUpdateToOneWithWhereWithoutVpsNodesInput, Prisma.ServerUpdateWithoutVpsNodesInput>, Prisma.ServerUncheckedUpdateWithoutVpsNodesInput>
 }
 
+export type ServerCreateNestedOneWithoutAlertsInput = {
+  create?: Prisma.XOR<Prisma.ServerCreateWithoutAlertsInput, Prisma.ServerUncheckedCreateWithoutAlertsInput>
+  connectOrCreate?: Prisma.ServerCreateOrConnectWithoutAlertsInput
+  connect?: Prisma.ServerWhereUniqueInput
+}
+
+export type ServerUpdateOneWithoutAlertsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServerCreateWithoutAlertsInput, Prisma.ServerUncheckedCreateWithoutAlertsInput>
+  connectOrCreate?: Prisma.ServerCreateOrConnectWithoutAlertsInput
+  upsert?: Prisma.ServerUpsertWithoutAlertsInput
+  disconnect?: Prisma.ServerWhereInput | boolean
+  delete?: Prisma.ServerWhereInput | boolean
+  connect?: Prisma.ServerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServerUpdateToOneWithWhereWithoutAlertsInput, Prisma.ServerUpdateWithoutAlertsInput>, Prisma.ServerUncheckedUpdateWithoutAlertsInput>
+}
+
 export type ServerCreateWithoutVpsNodesInput = {
   id?: string
   name: string
   ipAddress: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  alerts?: Prisma.AlertCreateNestedManyWithoutServerInput
 }
 
 export type ServerUncheckedCreateWithoutVpsNodesInput = {
@@ -345,6 +374,7 @@ export type ServerUncheckedCreateWithoutVpsNodesInput = {
   ipAddress: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutServerInput
 }
 
 export type ServerCreateOrConnectWithoutVpsNodesInput = {
@@ -369,6 +399,7 @@ export type ServerUpdateWithoutVpsNodesInput = {
   ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  alerts?: Prisma.AlertUpdateManyWithoutServerNestedInput
 }
 
 export type ServerUncheckedUpdateWithoutVpsNodesInput = {
@@ -377,6 +408,59 @@ export type ServerUncheckedUpdateWithoutVpsNodesInput = {
   ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  alerts?: Prisma.AlertUncheckedUpdateManyWithoutServerNestedInput
+}
+
+export type ServerCreateWithoutAlertsInput = {
+  id?: string
+  name: string
+  ipAddress: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vpsNodes?: Prisma.VpsNodeCreateNestedManyWithoutServerInput
+}
+
+export type ServerUncheckedCreateWithoutAlertsInput = {
+  id?: string
+  name: string
+  ipAddress: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vpsNodes?: Prisma.VpsNodeUncheckedCreateNestedManyWithoutServerInput
+}
+
+export type ServerCreateOrConnectWithoutAlertsInput = {
+  where: Prisma.ServerWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServerCreateWithoutAlertsInput, Prisma.ServerUncheckedCreateWithoutAlertsInput>
+}
+
+export type ServerUpsertWithoutAlertsInput = {
+  update: Prisma.XOR<Prisma.ServerUpdateWithoutAlertsInput, Prisma.ServerUncheckedUpdateWithoutAlertsInput>
+  create: Prisma.XOR<Prisma.ServerCreateWithoutAlertsInput, Prisma.ServerUncheckedCreateWithoutAlertsInput>
+  where?: Prisma.ServerWhereInput
+}
+
+export type ServerUpdateToOneWithWhereWithoutAlertsInput = {
+  where?: Prisma.ServerWhereInput
+  data: Prisma.XOR<Prisma.ServerUpdateWithoutAlertsInput, Prisma.ServerUncheckedUpdateWithoutAlertsInput>
+}
+
+export type ServerUpdateWithoutAlertsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vpsNodes?: Prisma.VpsNodeUpdateManyWithoutServerNestedInput
+}
+
+export type ServerUncheckedUpdateWithoutAlertsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vpsNodes?: Prisma.VpsNodeUncheckedUpdateManyWithoutServerNestedInput
 }
 
 
@@ -386,10 +470,12 @@ export type ServerUncheckedUpdateWithoutVpsNodesInput = {
 
 export type ServerCountOutputType = {
   vpsNodes: number
+  alerts: number
 }
 
 export type ServerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vpsNodes?: boolean | ServerCountOutputTypeCountVpsNodesArgs
+  alerts?: boolean | ServerCountOutputTypeCountAlertsArgs
 }
 
 /**
@@ -409,6 +495,13 @@ export type ServerCountOutputTypeCountVpsNodesArgs<ExtArgs extends runtime.Types
   where?: Prisma.VpsNodeWhereInput
 }
 
+/**
+ * ServerCountOutputType without action
+ */
+export type ServerCountOutputTypeCountAlertsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AlertWhereInput
+}
+
 
 export type ServerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -417,6 +510,7 @@ export type ServerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   createdAt?: boolean
   updatedAt?: boolean
   vpsNodes?: boolean | Prisma.Server$vpsNodesArgs<ExtArgs>
+  alerts?: boolean | Prisma.Server$alertsArgs<ExtArgs>
   _count?: boolean | Prisma.ServerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["server"]>
 
@@ -447,6 +541,7 @@ export type ServerSelectScalar = {
 export type ServerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "ipAddress" | "createdAt" | "updatedAt", ExtArgs["result"]["server"]>
 export type ServerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vpsNodes?: boolean | Prisma.Server$vpsNodesArgs<ExtArgs>
+  alerts?: boolean | Prisma.Server$alertsArgs<ExtArgs>
   _count?: boolean | Prisma.ServerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -456,6 +551,7 @@ export type $ServerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name: "Server"
   objects: {
     vpsNodes: Prisma.$VpsNodePayload<ExtArgs>[]
+    alerts: Prisma.$AlertPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -858,6 +954,7 @@ readonly fields: ServerFieldRefs;
 export interface Prisma__ServerClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   vpsNodes<T extends Prisma.Server$vpsNodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$vpsNodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VpsNodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  alerts<T extends Prisma.Server$alertsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$alertsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AlertPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1306,6 +1403,30 @@ export type Server$vpsNodesArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.VpsNodeScalarFieldEnum | Prisma.VpsNodeScalarFieldEnum[]
+}
+
+/**
+ * Server.alerts
+ */
+export type Server$alertsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Alert
+   */
+  select?: Prisma.AlertSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Alert
+   */
+  omit?: Prisma.AlertOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AlertInclude<ExtArgs> | null
+  where?: Prisma.AlertWhereInput
+  orderBy?: Prisma.AlertOrderByWithRelationInput | Prisma.AlertOrderByWithRelationInput[]
+  cursor?: Prisma.AlertWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AlertScalarFieldEnum | Prisma.AlertScalarFieldEnum[]
 }
 
 /**

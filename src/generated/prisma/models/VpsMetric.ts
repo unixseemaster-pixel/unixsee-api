@@ -56,7 +56,7 @@ export type VpsMetricSumAggregateOutputType = {
 
 export type VpsMetricMinAggregateOutputType = {
   recordedAt: Date | null
-  VpsNodeId: string | null
+  vpsNodeId: string | null
   cpuUsagePercent: number | null
   memoryTotalMB: number | null
   memoryUsedMB: number | null
@@ -74,7 +74,7 @@ export type VpsMetricMinAggregateOutputType = {
 
 export type VpsMetricMaxAggregateOutputType = {
   recordedAt: Date | null
-  VpsNodeId: string | null
+  vpsNodeId: string | null
   cpuUsagePercent: number | null
   memoryTotalMB: number | null
   memoryUsedMB: number | null
@@ -92,7 +92,7 @@ export type VpsMetricMaxAggregateOutputType = {
 
 export type VpsMetricCountAggregateOutputType = {
   recordedAt: number
-  VpsNodeId: number
+  vpsNodeId: number
   cpuUsagePercent: number
   memoryTotalMB: number
   memoryUsedMB: number
@@ -140,7 +140,7 @@ export type VpsMetricSumAggregateInputType = {
 
 export type VpsMetricMinAggregateInputType = {
   recordedAt?: true
-  VpsNodeId?: true
+  vpsNodeId?: true
   cpuUsagePercent?: true
   memoryTotalMB?: true
   memoryUsedMB?: true
@@ -158,7 +158,7 @@ export type VpsMetricMinAggregateInputType = {
 
 export type VpsMetricMaxAggregateInputType = {
   recordedAt?: true
-  VpsNodeId?: true
+  vpsNodeId?: true
   cpuUsagePercent?: true
   memoryTotalMB?: true
   memoryUsedMB?: true
@@ -176,7 +176,7 @@ export type VpsMetricMaxAggregateInputType = {
 
 export type VpsMetricCountAggregateInputType = {
   recordedAt?: true
-  VpsNodeId?: true
+  vpsNodeId?: true
   cpuUsagePercent?: true
   memoryTotalMB?: true
   memoryUsedMB?: true
@@ -281,7 +281,7 @@ export type VpsMetricGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 
 export type VpsMetricGroupByOutputType = {
   recordedAt: Date
-  VpsNodeId: string
+  vpsNodeId: string
   cpuUsagePercent: number
   memoryTotalMB: number
   memoryUsedMB: number
@@ -322,7 +322,7 @@ export type VpsMetricWhereInput = {
   OR?: Prisma.VpsMetricWhereInput[]
   NOT?: Prisma.VpsMetricWhereInput | Prisma.VpsMetricWhereInput[]
   recordedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
-  VpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
+  vpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
   cpuUsagePercent?: Prisma.FloatFilter<"VpsMetric"> | number
   memoryTotalMB?: Prisma.IntFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntFilter<"VpsMetric"> | number
@@ -341,7 +341,7 @@ export type VpsMetricWhereInput = {
 
 export type VpsMetricOrderByWithRelationInput = {
   recordedAt?: Prisma.SortOrder
-  VpsNodeId?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   cpuUsagePercent?: Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
@@ -359,12 +359,12 @@ export type VpsMetricOrderByWithRelationInput = {
 }
 
 export type VpsMetricWhereUniqueInput = Prisma.AtLeast<{
-  recordedAt_VpsNodeId?: Prisma.VpsMetricRecordedAtVpsNodeIdCompoundUniqueInput
+  recordedAt_vpsNodeId?: Prisma.VpsMetricRecordedAtVpsNodeIdCompoundUniqueInput
   AND?: Prisma.VpsMetricWhereInput | Prisma.VpsMetricWhereInput[]
   OR?: Prisma.VpsMetricWhereInput[]
   NOT?: Prisma.VpsMetricWhereInput | Prisma.VpsMetricWhereInput[]
   recordedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
-  VpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
+  vpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
   cpuUsagePercent?: Prisma.FloatFilter<"VpsMetric"> | number
   memoryTotalMB?: Prisma.IntFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntFilter<"VpsMetric"> | number
@@ -379,11 +379,11 @@ export type VpsMetricWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   vpsNode?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
-}, "recordedAt_VpsNodeId">
+}, "recordedAt_vpsNodeId">
 
 export type VpsMetricOrderByWithAggregationInput = {
   recordedAt?: Prisma.SortOrder
-  VpsNodeId?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   cpuUsagePercent?: Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
@@ -409,7 +409,7 @@ export type VpsMetricScalarWhereWithAggregatesInput = {
   OR?: Prisma.VpsMetricScalarWhereWithAggregatesInput[]
   NOT?: Prisma.VpsMetricScalarWhereWithAggregatesInput | Prisma.VpsMetricScalarWhereWithAggregatesInput[]
   recordedAt?: Prisma.DateTimeWithAggregatesFilter<"VpsMetric"> | Date | string
-  VpsNodeId?: Prisma.UuidWithAggregatesFilter<"VpsMetric"> | string
+  vpsNodeId?: Prisma.UuidWithAggregatesFilter<"VpsMetric"> | string
   cpuUsagePercent?: Prisma.FloatWithAggregatesFilter<"VpsMetric"> | number
   memoryTotalMB?: Prisma.IntWithAggregatesFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntWithAggregatesFilter<"VpsMetric"> | number
@@ -445,7 +445,7 @@ export type VpsMetricCreateInput = {
 
 export type VpsMetricUncheckedCreateInput = {
   recordedAt?: Date | string
-  VpsNodeId: string
+  vpsNodeId: string
   cpuUsagePercent: number
   memoryTotalMB: number
   memoryUsedMB: number
@@ -481,7 +481,7 @@ export type VpsMetricUpdateInput = {
 
 export type VpsMetricUncheckedUpdateInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  VpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
@@ -499,7 +499,7 @@ export type VpsMetricUncheckedUpdateInput = {
 
 export type VpsMetricCreateManyInput = {
   recordedAt?: Date | string
-  VpsNodeId: string
+  vpsNodeId: string
   cpuUsagePercent: number
   memoryTotalMB: number
   memoryUsedMB: number
@@ -534,7 +534,7 @@ export type VpsMetricUpdateManyMutationInput = {
 
 export type VpsMetricUncheckedUpdateManyInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  VpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
@@ -562,12 +562,12 @@ export type VpsMetricOrderByRelationAggregateInput = {
 
 export type VpsMetricRecordedAtVpsNodeIdCompoundUniqueInput = {
   recordedAt: Date | string
-  VpsNodeId: string
+  vpsNodeId: string
 }
 
 export type VpsMetricCountOrderByAggregateInput = {
   recordedAt?: Prisma.SortOrder
-  VpsNodeId?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   cpuUsagePercent?: Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
@@ -599,7 +599,7 @@ export type VpsMetricAvgOrderByAggregateInput = {
 
 export type VpsMetricMaxOrderByAggregateInput = {
   recordedAt?: Prisma.SortOrder
-  VpsNodeId?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   cpuUsagePercent?: Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
@@ -617,7 +617,7 @@ export type VpsMetricMaxOrderByAggregateInput = {
 
 export type VpsMetricMinOrderByAggregateInput = {
   recordedAt?: Prisma.SortOrder
-  VpsNodeId?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   cpuUsagePercent?: Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
@@ -778,7 +778,7 @@ export type VpsMetricScalarWhereInput = {
   OR?: Prisma.VpsMetricScalarWhereInput[]
   NOT?: Prisma.VpsMetricScalarWhereInput | Prisma.VpsMetricScalarWhereInput[]
   recordedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
-  VpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
+  vpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
   cpuUsagePercent?: Prisma.FloatFilter<"VpsMetric"> | number
   memoryTotalMB?: Prisma.IntFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntFilter<"VpsMetric"> | number
@@ -866,7 +866,7 @@ export type VpsMetricUncheckedUpdateManyWithoutVpsNodeInput = {
 
 export type VpsMetricSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   recordedAt?: boolean
-  VpsNodeId?: boolean
+  vpsNodeId?: boolean
   cpuUsagePercent?: boolean
   memoryTotalMB?: boolean
   memoryUsedMB?: boolean
@@ -885,7 +885,7 @@ export type VpsMetricSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type VpsMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   recordedAt?: boolean
-  VpsNodeId?: boolean
+  vpsNodeId?: boolean
   cpuUsagePercent?: boolean
   memoryTotalMB?: boolean
   memoryUsedMB?: boolean
@@ -904,7 +904,7 @@ export type VpsMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
 
 export type VpsMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   recordedAt?: boolean
-  VpsNodeId?: boolean
+  vpsNodeId?: boolean
   cpuUsagePercent?: boolean
   memoryTotalMB?: boolean
   memoryUsedMB?: boolean
@@ -923,7 +923,7 @@ export type VpsMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
 
 export type VpsMetricSelectScalar = {
   recordedAt?: boolean
-  VpsNodeId?: boolean
+  vpsNodeId?: boolean
   cpuUsagePercent?: boolean
   memoryTotalMB?: boolean
   memoryUsedMB?: boolean
@@ -939,7 +939,7 @@ export type VpsMetricSelectScalar = {
   updatedAt?: boolean
 }
 
-export type VpsMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"recordedAt" | "VpsNodeId" | "cpuUsagePercent" | "memoryTotalMB" | "memoryUsedMB" | "liteSpeedConnections" | "diskReadBytesPerSecond" | "diskWriteBytesPerSecond" | "diskIops" | "storageTotalMB" | "storageAvailableMB" | "networkRxBytesPerSecond" | "networkTxBytesPerSecond" | "createdAt" | "updatedAt", ExtArgs["result"]["vpsMetric"]>
+export type VpsMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"recordedAt" | "vpsNodeId" | "cpuUsagePercent" | "memoryTotalMB" | "memoryUsedMB" | "liteSpeedConnections" | "diskReadBytesPerSecond" | "diskWriteBytesPerSecond" | "diskIops" | "storageTotalMB" | "storageAvailableMB" | "networkRxBytesPerSecond" | "networkTxBytesPerSecond" | "createdAt" | "updatedAt", ExtArgs["result"]["vpsMetric"]>
 export type VpsMetricInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }
@@ -957,7 +957,7 @@ export type $VpsMetricPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     recordedAt: Date
-    VpsNodeId: string
+    vpsNodeId: string
     cpuUsagePercent: number
     memoryTotalMB: number
     memoryUsedMB: number
@@ -1396,7 +1396,7 @@ export interface Prisma__VpsMetricClient<T, Null = never, ExtArgs extends runtim
  */
 export interface VpsMetricFieldRefs {
   readonly recordedAt: Prisma.FieldRef<"VpsMetric", 'DateTime'>
-  readonly VpsNodeId: Prisma.FieldRef<"VpsMetric", 'String'>
+  readonly vpsNodeId: Prisma.FieldRef<"VpsMetric", 'String'>
   readonly cpuUsagePercent: Prisma.FieldRef<"VpsMetric", 'Float'>
   readonly memoryTotalMB: Prisma.FieldRef<"VpsMetric", 'Int'>
   readonly memoryUsedMB: Prisma.FieldRef<"VpsMetric", 'Int'>

@@ -41,6 +41,7 @@ model Server {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   vpsNodes VpsNode[]
+  alerts   Alert[]
 
   @@map("servers")
 }
@@ -61,6 +62,7 @@ model VpsNode {
   websites   Website[]
   vpsMetrics VpsMetric[]
   webMetrics WebMetric[]
+  alerts     Alert[]
 
   @@map("vps_nodes")
 }
@@ -68,7 +70,7 @@ model VpsNode {
 // APPEND-ONLY IMMUTABLE TIME-SERIES PROFILE 1: VPS Telemetry
 model VpsMetric {
   recordedAt              DateTime @default(now()) @map("recorded_at") @db.Timestamptz
-  VpsNodeId               String   @map("vps_nodes_id") @db.Uuid
+  vpsNodeId               String   @map("vps_nodes_id") @db.Uuid
   cpuUsagePercent         Float    @map("cpu_usage_percent")
   memoryTotalMB           Int      @map("memory_total_mb")
   memoryUsedMB            Int      @map("memory_used_mb")
@@ -81,12 +83,13 @@ model VpsMetric {
   networkRxBytesPerSecond BigInt   @map("network_rx_bytes_per_second")
   networkTxBytesPerSecond BigInt   @map("network_tx_bytes_per_second")
 
-  vpsNode VpsNode @relation(fields: [VpsNodeId], references: [id], onDelete: Cascade)
+  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@id([recordedAt, VpsNodeId]) // Composite Primary Key critical for TimescaleDB Hypertables
+  @@id([recordedAt, vpsNodeId]) // Composite Primary Key critical for TimescaleDB Hypertables
+  @@index([vpsNodeId, recordedAt(sort: Desc)])
   @@map("vps_metrics")
 }
 
@@ -101,28 +104,30 @@ model Website {
 
   metrics WebMetric[]
   ssl     SSLCertificate?
-  vps     VpsNode         @relation(fields: [vpsNodeId], references: [id])
+  vpsNode VpsNode         @relation(fields: [vpsNodeId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  alerts    Alert[]
 
   @@map("websites")
 }
 
 model WebMetric {
   recordedAt         DateTime @default(now()) @map("recorded_at") @db.Timestamptz
-  VpsNodeId          String   @map("vps_nodes_id") @db.Uuid
+  vpsNodeId          String   @map("vps_nodes_id") @db.Uuid
   websiteId          String   @map("website_id") @db.Uuid
   concurrentRequests Int      @map("concurrent_requests") // Scraped live from LiteSpeed virtual host reports
   requestRate        Int      @default(0) @map("request_rate")
 
-  vpsNode VpsNode @relation(fields: [VpsNodeId], references: [id], onDelete: Cascade)
+  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
   website Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@id([recordedAt, websiteId]) // Composite Primary Key critical for TimescaleDB Hypertables
+  @@index([websiteId, recordedAt(sort: Desc)])
   @@map("web_metrics")
 }
 
@@ -148,4 +153,46 @@ model SSLCertificate {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("ssl_certificates")
+}
+
+model Alert {
+  id String @id @default(uuid()) @db.Uuid
+
+  websiteId String? @map("website_id") @db.Uuid
+  vpsNodeId String? @map("vps_node_id") @db.Uuid
+  serverId  String? @map("server_id") @db.Uuid
+
+  title   String
+  message String
+
+  severity AlertSeverity
+  status   AlertStatus   @default(ACTIVE)
+
+  startedAt  DateTime  @default(now()) @map("started_at")
+  resolvedAt DateTime? @map("resolved_at")
+
+  metadata Json?
+
+  website Website? @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  vpsNode VpsNode? @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
+  server  Server?  @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([websiteId])
+  @@index([status])
+  @@index([severity])
+  @@map("alerts")
+}
+
+enum AlertSeverity {
+  MONITORING
+  WARNING
+  CRITICAL
+}
+
+enum AlertStatus {
+  ACTIVE
+  RESOLVED
 }

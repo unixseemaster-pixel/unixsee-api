@@ -17,3 +17,20 @@ export const Role = {
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const AlertSeverity = {
+  MONITORING: 'MONITORING',
+  WARNING: 'WARNING',
+  CRITICAL: 'CRITICAL'
+} as const
+
+export type AlertSeverity = (typeof AlertSeverity)[keyof typeof AlertSeverity]
+
+
+export const AlertStatus = {
+  ACTIVE: 'ACTIVE',
+  RESOLVED: 'RESOLVED'
+} as const
+
+export type AlertStatus = (typeof AlertStatus)[keyof typeof AlertStatus]

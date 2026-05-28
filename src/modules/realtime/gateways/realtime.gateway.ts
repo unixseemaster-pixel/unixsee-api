@@ -4,11 +4,16 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
+
 import { Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { Server, Socket } from 'socket.io';
+
 import { RealtimeService } from '#/modules/realtime/services/realtime.service.js';
+
 import type { MetricsIngestedEventPayload } from '#/modules/event/event-dispatcher.service.js';
+import type { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
+import { EVENT_NAMES } from '#/common/events/event.constants.js';
 
 @WebSocketGateway({
   namespace: '/realtime',
@@ -27,75 +32,67 @@ export class RealtimeGateway
 
   constructor(private readonly realtimeService: RealtimeService) {}
 
-  // We keep the main hook signature synchronous to protect the engine thread execution context
   handleConnection(client: Socket): void {
     this.initializeSocketSession(client).catch((error) => {
-      this.logger.error(
-        `Critical socket handshake exception isolated: ${error.message}`,
-      );
+      this.logger.error(`Socket handshake failed: ${error.message}`);
       client.disconnect(true);
     });
   }
 
   handleDisconnect(client: Socket): void {
-    this.logger.log(`Client downstream subscription terminated: ${client.id}`);
+    this.logger.log(`Socket disconnected: ${client.id}`);
   }
 
-  /**
-   * Encapsulated async session handler to securely validate signatures and bind tenant channels.
-   */
   private async initializeSocketSession(client: Socket): Promise<void> {
     const token = client.handshake.auth?.token;
 
     if (!token) {
-      this.logger.warn(
-        `Connection rejected: Missing auth parameters on socket ${client.id}`,
-      );
       client.disconnect(true);
       return;
     }
 
     const user = await this.realtimeService.verifySocketToken(token);
+
     if (!user) {
-      this.logger.warn(
-        `Connection rejected: Invalid signature credentials on socket ${client.id}`,
-      );
       client.disconnect(true);
       return;
     }
 
-    // Cache authorization metadata natively inside the volatile socket thread memory map
     client.data.user = user;
 
-    // Fulfill multi-tenant isolation rules: Authorize access to parent VPS node clusters
     const allowedVpsNodeIds =
       await this.realtimeService.getAllowedVpsNodeIdsForUser(user.id);
+
+    const allowedWebsiteIds =
+      await this.realtimeService.getAllowedWebsiteIdsForUser(user.id);
 
     for (const vpsNodeId of allowedVpsNodeIds) {
       await client.join(`vps:${vpsNodeId}`);
     }
 
-    // Anchor an isolated user-specific room channel for dedicated alert broadcasts
+    for (const websiteId of allowedWebsiteIds) {
+      await client.join(`website:${websiteId}`);
+    }
+
     await client.join(`user:${user.id}`);
 
     this.logger.log(
-      `Authenticated User ${user.id} bound to room isolation channels: ${allowedVpsNodeIds.length} VPS cluster(s).`,
+      `User ${user.id} connected | VPS: ${allowedVpsNodeIds.length} | Websites: ${allowedWebsiteIds.length}`,
     );
   }
 
-  /**
-   * Asynchronous internal memory event consumer triggered immediately after an agent completes ingestion.
-   */
-  @OnEvent('metrics.ingested', { async: true })
+  // =========================
+  // STEP 3 — VPS LIVE TICKS
+  // =========================
+  @OnEvent(EVENT_NAMES.METRICS_INGESTED, { async: true })
   async handleMetricsIngestedEvent(
     event: MetricsIngestedEventPayload,
   ): Promise<void> {
     try {
       const { vpsNodeId, batch } = event;
 
-      // Extract volatile instant stats for our merchant and administrator visualization graphs
       for (const entry of batch) {
-        const liveVpsTickPayload = {
+        const payload = {
           timestamp: entry.timestamp,
           metrics: {
             cpuUsagePercent: entry.metrics.cpuMean,
@@ -104,21 +101,54 @@ export class RealtimeGateway
             liteSpeedConnections: entry.metrics.lsConnectionsPeak,
             diskIops: entry.metrics.diskIopsMean,
           },
-          websites: entry.websites.map((site) => ({
-            domain: site.domain,
-            concurrentRequests: site.peakConcurrentRequests,
-          })),
         };
 
-        // Broadcast the real-time ticks exclusively to users locked into this specific authorized VPS room
-        this.server
-          .to(`vps:${vpsNodeId}`)
-          .emit('vps:live_tick', liveVpsTickPayload);
+        this.server.to(`vps:${vpsNodeId}`).emit('vps:live_tick', payload);
       }
     } catch (error: any) {
-      this.logger.error(
-        `Failed to distribute metrics ingestion streaming update: ${error.message}`,
-      );
+      this.logger.error(error.message);
     }
+  }
+
+  // =========================
+  // STEP 4 — WEBSITE HEALTH STREAM
+  // =========================
+  @OnEvent(EVENT_NAMES.WEBSITE_METRICS_EVALUATED, { async: true })
+  async handleWebsiteMetricsEvaluated(
+    event: WebsiteMetricsEvaluatedEvent,
+  ): Promise<void> {
+    this.server
+      .to(`website:${event.websiteId}`)
+      .emit(EVENT_NAMES.WEBSITE_METRICS_EVALUATED, {
+        websiteId: event.websiteId,
+        domain: event.domain,
+        concurrentRequests: event.metrics.concurrentRequests,
+        timestamp: event.timestamp,
+      });
+  }
+
+  // =========================
+  // STEP 5 — INCIDENT CREATED
+  // =========================
+  @OnEvent(EVENT_NAMES.INCIDENT_CREATED, { async: true })
+  async handleIncidentCreated(event: {
+    websiteId: string;
+    severity: string;
+    title: string;
+    message: string;
+  }) {
+    this.server
+      .to(`website:${event.websiteId}`)
+      .emit(EVENT_NAMES.INCIDENT_CREATED, event);
+  }
+
+  // =========================
+  // STEP 6 — INCIDENT RESOLVED
+  // =========================
+  @OnEvent(EVENT_NAMES.INCIDENT_RESOLVED, { async: true })
+  async handleIncidentResolved(event: { websiteId: string; alertId: string }) {
+    this.server
+      .to(`website:${event.websiteId}`)
+      .emit(EVENT_NAMES.INCIDENT_RESOLVED, event);
   }
 }

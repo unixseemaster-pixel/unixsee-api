@@ -52,3 +52,8 @@ export type WebMetric = Prisma.WebMetricModel
  * 
  */
 export type SSLCertificate = Prisma.SSLCertificateModel
+/**
+ * Model Alert
+ * 
+ */
+export type Alert = Prisma.AlertModel

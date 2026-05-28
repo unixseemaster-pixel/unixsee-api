@@ -57,7 +57,8 @@ export const ModelName = {
   VpsMetric: 'VpsMetric',
   Website: 'Website',
   WebMetric: 'WebMetric',
-  SSLCertificate: 'SSLCertificate'
+  SSLCertificate: 'SSLCertificate',
+  Alert: 'Alert'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -119,7 +120,7 @@ export type VpsNodeScalarFieldEnum = (typeof VpsNodeScalarFieldEnum)[keyof typeo
 
 export const VpsMetricScalarFieldEnum = {
   recordedAt: 'recordedAt',
-  VpsNodeId: 'VpsNodeId',
+  vpsNodeId: 'vpsNodeId',
   cpuUsagePercent: 'cpuUsagePercent',
   memoryTotalMB: 'memoryTotalMB',
   memoryUsedMB: 'memoryUsedMB',
@@ -153,7 +154,7 @@ export type WebsiteScalarFieldEnum = (typeof WebsiteScalarFieldEnum)[keyof typeo
 
 export const WebMetricScalarFieldEnum = {
   recordedAt: 'recordedAt',
-  VpsNodeId: 'VpsNodeId',
+  vpsNodeId: 'vpsNodeId',
   websiteId: 'websiteId',
   concurrentRequests: 'concurrentRequests',
   requestRate: 'requestRate',
@@ -182,12 +183,39 @@ export const SSLCertificateScalarFieldEnum = {
 export type SSLCertificateScalarFieldEnum = (typeof SSLCertificateScalarFieldEnum)[keyof typeof SSLCertificateScalarFieldEnum]
 
 
+export const AlertScalarFieldEnum = {
+  id: 'id',
+  websiteId: 'websiteId',
+  vpsNodeId: 'vpsNodeId',
+  serverId: 'serverId',
+  title: 'title',
+  message: 'message',
+  severity: 'severity',
+  status: 'status',
+  startedAt: 'startedAt',
+  resolvedAt: 'resolvedAt',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AlertScalarFieldEnum = (typeof AlertScalarFieldEnum)[keyof typeof AlertScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -204,4 +232,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

@@ -38,7 +38,7 @@ export type WebMetricSumAggregateOutputType = {
 
 export type WebMetricMinAggregateOutputType = {
   recordedAt: Date | null
-  VpsNodeId: string | null
+  vpsNodeId: string | null
   websiteId: string | null
   concurrentRequests: number | null
   requestRate: number | null
@@ -48,7 +48,7 @@ export type WebMetricMinAggregateOutputType = {
 
 export type WebMetricMaxAggregateOutputType = {
   recordedAt: Date | null
-  VpsNodeId: string | null
+  vpsNodeId: string | null
   websiteId: string | null
   concurrentRequests: number | null
   requestRate: number | null
@@ -58,7 +58,7 @@ export type WebMetricMaxAggregateOutputType = {
 
 export type WebMetricCountAggregateOutputType = {
   recordedAt: number
-  VpsNodeId: number
+  vpsNodeId: number
   websiteId: number
   concurrentRequests: number
   requestRate: number
@@ -80,7 +80,7 @@ export type WebMetricSumAggregateInputType = {
 
 export type WebMetricMinAggregateInputType = {
   recordedAt?: true
-  VpsNodeId?: true
+  vpsNodeId?: true
   websiteId?: true
   concurrentRequests?: true
   requestRate?: true
@@ -90,7 +90,7 @@ export type WebMetricMinAggregateInputType = {
 
 export type WebMetricMaxAggregateInputType = {
   recordedAt?: true
-  VpsNodeId?: true
+  vpsNodeId?: true
   websiteId?: true
   concurrentRequests?: true
   requestRate?: true
@@ -100,7 +100,7 @@ export type WebMetricMaxAggregateInputType = {
 
 export type WebMetricCountAggregateInputType = {
   recordedAt?: true
-  VpsNodeId?: true
+  vpsNodeId?: true
   websiteId?: true
   concurrentRequests?: true
   requestRate?: true
@@ -197,7 +197,7 @@ export type WebMetricGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 
 export type WebMetricGroupByOutputType = {
   recordedAt: Date
-  VpsNodeId: string
+  vpsNodeId: string
   websiteId: string
   concurrentRequests: number
   requestRate: number
@@ -230,7 +230,7 @@ export type WebMetricWhereInput = {
   OR?: Prisma.WebMetricWhereInput[]
   NOT?: Prisma.WebMetricWhereInput | Prisma.WebMetricWhereInput[]
   recordedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
-  VpsNodeId?: Prisma.UuidFilter<"WebMetric"> | string
+  vpsNodeId?: Prisma.UuidFilter<"WebMetric"> | string
   websiteId?: Prisma.UuidFilter<"WebMetric"> | string
   concurrentRequests?: Prisma.IntFilter<"WebMetric"> | number
   requestRate?: Prisma.IntFilter<"WebMetric"> | number
@@ -242,7 +242,7 @@ export type WebMetricWhereInput = {
 
 export type WebMetricOrderByWithRelationInput = {
   recordedAt?: Prisma.SortOrder
-  VpsNodeId?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
@@ -258,7 +258,7 @@ export type WebMetricWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.WebMetricWhereInput[]
   NOT?: Prisma.WebMetricWhereInput | Prisma.WebMetricWhereInput[]
   recordedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
-  VpsNodeId?: Prisma.UuidFilter<"WebMetric"> | string
+  vpsNodeId?: Prisma.UuidFilter<"WebMetric"> | string
   websiteId?: Prisma.UuidFilter<"WebMetric"> | string
   concurrentRequests?: Prisma.IntFilter<"WebMetric"> | number
   requestRate?: Prisma.IntFilter<"WebMetric"> | number
@@ -270,7 +270,7 @@ export type WebMetricWhereUniqueInput = Prisma.AtLeast<{
 
 export type WebMetricOrderByWithAggregationInput = {
   recordedAt?: Prisma.SortOrder
-  VpsNodeId?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
@@ -288,7 +288,7 @@ export type WebMetricScalarWhereWithAggregatesInput = {
   OR?: Prisma.WebMetricScalarWhereWithAggregatesInput[]
   NOT?: Prisma.WebMetricScalarWhereWithAggregatesInput | Prisma.WebMetricScalarWhereWithAggregatesInput[]
   recordedAt?: Prisma.DateTimeWithAggregatesFilter<"WebMetric"> | Date | string
-  VpsNodeId?: Prisma.UuidWithAggregatesFilter<"WebMetric"> | string
+  vpsNodeId?: Prisma.UuidWithAggregatesFilter<"WebMetric"> | string
   websiteId?: Prisma.UuidWithAggregatesFilter<"WebMetric"> | string
   concurrentRequests?: Prisma.IntWithAggregatesFilter<"WebMetric"> | number
   requestRate?: Prisma.IntWithAggregatesFilter<"WebMetric"> | number
@@ -308,7 +308,7 @@ export type WebMetricCreateInput = {
 
 export type WebMetricUncheckedCreateInput = {
   recordedAt?: Date | string
-  VpsNodeId: string
+  vpsNodeId: string
   websiteId: string
   concurrentRequests: number
   requestRate?: number
@@ -328,7 +328,7 @@ export type WebMetricUpdateInput = {
 
 export type WebMetricUncheckedUpdateInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  VpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   websiteId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
@@ -338,7 +338,7 @@ export type WebMetricUncheckedUpdateInput = {
 
 export type WebMetricCreateManyInput = {
   recordedAt?: Date | string
-  VpsNodeId: string
+  vpsNodeId: string
   websiteId: string
   concurrentRequests: number
   requestRate?: number
@@ -356,7 +356,7 @@ export type WebMetricUpdateManyMutationInput = {
 
 export type WebMetricUncheckedUpdateManyInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  VpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   websiteId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
@@ -381,7 +381,7 @@ export type WebMetricRecordedAtWebsiteIdCompoundUniqueInput = {
 
 export type WebMetricCountOrderByAggregateInput = {
   recordedAt?: Prisma.SortOrder
-  VpsNodeId?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
@@ -396,7 +396,7 @@ export type WebMetricAvgOrderByAggregateInput = {
 
 export type WebMetricMaxOrderByAggregateInput = {
   recordedAt?: Prisma.SortOrder
-  VpsNodeId?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
@@ -406,7 +406,7 @@ export type WebMetricMaxOrderByAggregateInput = {
 
 export type WebMetricMinOrderByAggregateInput = {
   recordedAt?: Prisma.SortOrder
-  VpsNodeId?: Prisma.SortOrder
+  vpsNodeId?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
@@ -552,7 +552,7 @@ export type WebMetricScalarWhereInput = {
   OR?: Prisma.WebMetricScalarWhereInput[]
   NOT?: Prisma.WebMetricScalarWhereInput | Prisma.WebMetricScalarWhereInput[]
   recordedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
-  VpsNodeId?: Prisma.UuidFilter<"WebMetric"> | string
+  vpsNodeId?: Prisma.UuidFilter<"WebMetric"> | string
   websiteId?: Prisma.UuidFilter<"WebMetric"> | string
   concurrentRequests?: Prisma.IntFilter<"WebMetric"> | number
   requestRate?: Prisma.IntFilter<"WebMetric"> | number
@@ -571,7 +571,7 @@ export type WebMetricCreateWithoutWebsiteInput = {
 
 export type WebMetricUncheckedCreateWithoutWebsiteInput = {
   recordedAt?: Date | string
-  VpsNodeId: string
+  vpsNodeId: string
   concurrentRequests: number
   requestRate?: number
   createdAt?: Date | string
@@ -642,7 +642,7 @@ export type WebMetricUncheckedUpdateManyWithoutVpsNodeInput = {
 
 export type WebMetricCreateManyWebsiteInput = {
   recordedAt?: Date | string
-  VpsNodeId: string
+  vpsNodeId: string
   concurrentRequests: number
   requestRate?: number
   createdAt?: Date | string
@@ -660,7 +660,7 @@ export type WebMetricUpdateWithoutWebsiteInput = {
 
 export type WebMetricUncheckedUpdateWithoutWebsiteInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  VpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -669,7 +669,7 @@ export type WebMetricUncheckedUpdateWithoutWebsiteInput = {
 
 export type WebMetricUncheckedUpdateManyWithoutWebsiteInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  VpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
+  vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -680,7 +680,7 @@ export type WebMetricUncheckedUpdateManyWithoutWebsiteInput = {
 
 export type WebMetricSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   recordedAt?: boolean
-  VpsNodeId?: boolean
+  vpsNodeId?: boolean
   websiteId?: boolean
   concurrentRequests?: boolean
   requestRate?: boolean
@@ -692,7 +692,7 @@ export type WebMetricSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type WebMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   recordedAt?: boolean
-  VpsNodeId?: boolean
+  vpsNodeId?: boolean
   websiteId?: boolean
   concurrentRequests?: boolean
   requestRate?: boolean
@@ -704,7 +704,7 @@ export type WebMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
 
 export type WebMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   recordedAt?: boolean
-  VpsNodeId?: boolean
+  vpsNodeId?: boolean
   websiteId?: boolean
   concurrentRequests?: boolean
   requestRate?: boolean
@@ -716,7 +716,7 @@ export type WebMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
 
 export type WebMetricSelectScalar = {
   recordedAt?: boolean
-  VpsNodeId?: boolean
+  vpsNodeId?: boolean
   websiteId?: boolean
   concurrentRequests?: boolean
   requestRate?: boolean
@@ -724,7 +724,7 @@ export type WebMetricSelectScalar = {
   updatedAt?: boolean
 }
 
-export type WebMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"recordedAt" | "VpsNodeId" | "websiteId" | "concurrentRequests" | "requestRate" | "createdAt" | "updatedAt", ExtArgs["result"]["webMetric"]>
+export type WebMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"recordedAt" | "vpsNodeId" | "websiteId" | "concurrentRequests" | "requestRate" | "createdAt" | "updatedAt", ExtArgs["result"]["webMetric"]>
 export type WebMetricInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
@@ -746,7 +746,7 @@ export type $WebMetricPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     recordedAt: Date
-    VpsNodeId: string
+    vpsNodeId: string
     websiteId: string
     concurrentRequests: number
     requestRate: number
@@ -1178,7 +1178,7 @@ export interface Prisma__WebMetricClient<T, Null = never, ExtArgs extends runtim
  */
 export interface WebMetricFieldRefs {
   readonly recordedAt: Prisma.FieldRef<"WebMetric", 'DateTime'>
-  readonly VpsNodeId: Prisma.FieldRef<"WebMetric", 'String'>
+  readonly vpsNodeId: Prisma.FieldRef<"WebMetric", 'String'>
   readonly websiteId: Prisma.FieldRef<"WebMetric", 'String'>
   readonly concurrentRequests: Prisma.FieldRef<"WebMetric", 'Int'>
   readonly requestRate: Prisma.FieldRef<"WebMetric", 'Int'>
