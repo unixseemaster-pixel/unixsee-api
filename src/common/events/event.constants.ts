@@ -4,3 +4,8 @@ export const EVENT_NAMES = {
   INCIDENT_CREATED: 'incident.created',
   INCIDENT_RESOLVED: 'incident.resolved',
 } as const;
+
+export const INTERNAL_EVENTS = {
+  METRICS_INGESTED: 'internal.metrics.ingested',
+  INTERNAL_WEBSITE_METRICS_EVALUATED: 'internal.website.metrics.evaluated',
+} as const;

@@ -1,67 +1,84 @@
 import { Injectable } from '@nestjs/common';
+
 import { WebMetricsService } from './web-metrics.service.js';
 import { AlertsService } from '#/modules/alerts/services/alerts.service.js';
-import { MetricsAggregationService } from './metrics-aggregation.service.js';
-import { WebsiteMetricsType } from '../types/web-metrics.type.js';
+import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
 
 @Injectable()
 export class MetricsOverviewService {
   constructor(
-    private webMetricsService: WebMetricsService,
-    private metricAggregationService: MetricsAggregationService,
+    private readonly webMetricsService: WebMetricsService,
+    private readonly systemHealthService: SystemHealthService,
+    private readonly alertsService: AlertsService,
   ) {}
 
   async getOverview(userId: string) {
-    const websites =
-      await this.webMetricsService.getWebsitesOverviewByUser(userId);
+    const [websites, alerts] = await Promise.all([
+      this.webMetricsService.getWebsitesOverviewByUser(userId),
+      this.alertsService.getRecentAlerts(userId),
+    ]);
 
-    const activeVisitors = this.sumActiveVisitors(websites);
-    const uptime = this.calculateSyntheticUptime(websites);
-    const trafficStatus = this.resolveTrafficStatus(websites);
+    const websiteOverviews = websites.map((website) => {
+      const websiteAlerts = alerts.filter(
+        (alert) => alert.websiteId === website.websiteId,
+      );
+
+      const activeVisitors = website.latestMetric.activeVisitors ?? 0;
+
+      return {
+        websiteId: website.websiteId,
+
+        activeVisitors,
+
+        requestRate: website.latestMetric.requestRate ?? 0,
+
+        lastCheckedAt: website.latestMetric.recordedAt,
+
+        status: this.systemHealthService.calculate({
+          activeVisitors,
+          alerts: websiteAlerts,
+        }),
+
+        trafficStatus: this.resolveTrafficStatus(activeVisitors),
+      };
+    });
 
     return {
-      status: this.resolveSystemStatus(websites),
+      status: this.resolveGlobalStatus(websiteOverviews),
 
-      uptime,
-
-      activeVisitors,
-
-      trafficStatus,
-
-      websites,
+      websites: websiteOverviews,
     };
   }
 
-  private sumActiveVisitors(websites: WebsiteMetricsType[]) {
-    return websites.reduce(
-      (sum, w) => sum + (w.latestMetric.activeVisitors ?? 0),
-      0,
-    );
-  }
+  private resolveTrafficStatus(activeVisitors: number) {
+    if (activeVisitors > 500) {
+      return 'high';
+    }
 
-  private calculateSyntheticUptime(websites: WebsiteMetricsType[]) {
-    if (!websites.length) return 100;
+    if (activeVisitors > 200) {
+      return 'medium';
+    }
 
-    const activeRatio =
-      websites.filter((w) => w.latestMetric.activeVisitors > 0).length /
-      websites.length;
-
-    return Math.round(activeRatio * 100);
-  }
-
-  private resolveSystemStatus(websites: WebsiteMetricsType[]) {
-    const totalVisitors = this.sumActiveVisitors(websites);
-
-    if (totalVisitors > 500) return 'warning';
-    if (totalVisitors > 200) return 'monitoring';
-    return 'healthy';
-  }
-
-  private resolveTrafficStatus(websites: WebsiteMetricsType[]) {
-    const totalVisitors = this.sumActiveVisitors(websites);
-
-    if (totalVisitors > 500) return 'high';
-    if (totalVisitors > 200) return 'medium';
     return 'normal';
+  }
+
+  private resolveGlobalStatus(
+    websites: {
+      status: string;
+    }[],
+  ) {
+    if (websites.some((website) => website.status === 'critical')) {
+      return 'critical';
+    }
+
+    if (websites.some((website) => website.status === 'warning')) {
+      return 'warning';
+    }
+
+    if (websites.some((website) => website.status === 'monitoring')) {
+      return 'monitoring';
+    }
+
+    return 'healthy';
   }
 }

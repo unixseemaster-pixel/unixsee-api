@@ -4,16 +4,15 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-
 import { Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { Server, Socket } from 'socket.io';
 
 import { RealtimeService } from '#/modules/realtime/services/realtime.service.js';
+import { EVENT_NAMES } from '#/common/events/event.constants.js';
 
 import type { MetricsIngestedEventPayload } from '#/modules/event/event-dispatcher.service.js';
 import type { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
-import { EVENT_NAMES } from '#/common/events/event.constants.js';
 
 @WebSocketGateway({
   namespace: '/realtime',
@@ -60,30 +59,31 @@ export class RealtimeGateway
 
     client.data.user = user;
 
-    const allowedVpsNodeIds =
-      await this.realtimeService.getAllowedVpsNodeIdsForUser(user.id);
+    const vpsNodeIds = await this.realtimeService.getAllowedVpsNodeIdsForUser(
+      user.id,
+    );
+    const websiteIds = await this.realtimeService.getAllowedWebsiteIdsForUser(
+      user.id,
+    );
 
-    const allowedWebsiteIds =
-      await this.realtimeService.getAllowedWebsiteIdsForUser(user.id);
-
-    for (const vpsNodeId of allowedVpsNodeIds) {
+    for (const vpsNodeId of vpsNodeIds) {
       await client.join(`vps:${vpsNodeId}`);
     }
 
-    for (const websiteId of allowedWebsiteIds) {
+    for (const websiteId of websiteIds) {
       await client.join(`website:${websiteId}`);
     }
 
     await client.join(`user:${user.id}`);
 
     this.logger.log(
-      `User ${user.id} connected | VPS: ${allowedVpsNodeIds.length} | Websites: ${allowedWebsiteIds.length}`,
+      `User ${user.id} connected | VPS: ${vpsNodeIds.length} | Websites: ${websiteIds.length}`,
     );
   }
 
-  // =========================
-  // STEP 3 — VPS LIVE TICKS
-  // =========================
+  // =========================================================
+  // STEP 1 — VPS LIVE TICKS (REAL-TIME INFRA METRICS)
+  // =========================================================
   @OnEvent(EVENT_NAMES.METRICS_INGESTED, { async: true })
   async handleMetricsIngestedEvent(
     event: MetricsIngestedEventPayload,
@@ -92,7 +92,8 @@ export class RealtimeGateway
       const { vpsNodeId, batch } = event;
 
       for (const entry of batch) {
-        const payload = {
+        this.server.to(`vps:${vpsNodeId}`).emit('vps:live_tick', {
+          vpsNodeId,
           timestamp: entry.timestamp,
           metrics: {
             cpuUsagePercent: entry.metrics.cpuMean,
@@ -101,54 +102,67 @@ export class RealtimeGateway
             liteSpeedConnections: entry.metrics.lsConnectionsPeak,
             diskIops: entry.metrics.diskIopsMean,
           },
-        };
-
-        this.server.to(`vps:${vpsNodeId}`).emit('vps:live_tick', payload);
+        });
       }
     } catch (error: any) {
-      this.logger.error(error.message);
+      this.logger.error(`VPS live tick error: ${error.message}`);
     }
   }
 
-  // =========================
-  // STEP 4 — WEBSITE HEALTH STREAM
-  // =========================
+  // =========================================================
+  // STEP 2 — WEBSITE METRICS STREAM (UX-FOCUSED LAYER)
+  // =========================================================
   @OnEvent(EVENT_NAMES.WEBSITE_METRICS_EVALUATED, { async: true })
   async handleWebsiteMetricsEvaluated(
     event: WebsiteMetricsEvaluatedEvent,
   ): Promise<void> {
-    this.server
-      .to(`website:${event.websiteId}`)
-      .emit(EVENT_NAMES.WEBSITE_METRICS_EVALUATED, {
-        websiteId: event.websiteId,
-        domain: event.domain,
-        concurrentRequests: event.metrics.concurrentRequests,
-        timestamp: event.timestamp,
-      });
+    try {
+      this.server
+        .to(`website:${event.websiteId}`)
+        .emit(EVENT_NAMES.WEBSITE_METRICS_EVALUATED, {
+          websiteId: event.websiteId,
+          domain: event.domain,
+          concurrentRequests: event.metrics.concurrentRequests,
+          timestamp: event.timestamp,
+        });
+    } catch (error: any) {
+      this.logger.error(`Website metrics stream error: ${error.message}`);
+    }
   }
 
-  // =========================
-  // STEP 5 — INCIDENT CREATED
-  // =========================
+  // =========================================================
+  // STEP 3 — INCIDENT CREATED
+  // =========================================================
   @OnEvent(EVENT_NAMES.INCIDENT_CREATED, { async: true })
   async handleIncidentCreated(event: {
     websiteId: string;
-    severity: string;
+    severity: 'info' | 'warning' | 'critical';
     title: string;
     message: string;
-  }) {
-    this.server
-      .to(`website:${event.websiteId}`)
-      .emit(EVENT_NAMES.INCIDENT_CREATED, event);
+  }): Promise<void> {
+    try {
+      this.server
+        .to(`website:${event.websiteId}`)
+        .emit(EVENT_NAMES.INCIDENT_CREATED, event);
+    } catch (error: any) {
+      this.logger.error(`Incident created stream error: ${error.message}`);
+    }
   }
 
-  // =========================
-  // STEP 6 — INCIDENT RESOLVED
-  // =========================
+  // =========================================================
+  // STEP 4 — INCIDENT RESOLVED
+  // =========================================================
   @OnEvent(EVENT_NAMES.INCIDENT_RESOLVED, { async: true })
-  async handleIncidentResolved(event: { websiteId: string; alertId: string }) {
-    this.server
-      .to(`website:${event.websiteId}`)
-      .emit(EVENT_NAMES.INCIDENT_RESOLVED, event);
+  async handleIncidentResolved(event: {
+    websiteId: string;
+    alertId: string;
+  }): Promise<void> {
+    try {
+      this.server
+        .to(`website:${event.websiteId}`)
+        .emit(EVENT_NAMES.INCIDENT_RESOLVED, event);
+    } catch (error: any) {
+      this.logger.error(`Incident resolved stream error: ${error.message}`);
+    }
   }
 }
