@@ -7,6 +7,15 @@ import type { UserCreateInput } from '#/generated/prisma/models.js';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async findOneById(userId) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+      omit: {
+        password: true,
+      },
+    });
+  }
+
   async findOneByUsername({ username }: { username: string }) {
     const user = await this.prisma.user.findUnique({
       where: { username },

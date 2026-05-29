@@ -23,11 +23,12 @@ export class AtGuard extends AuthGuard('jwt') {
     const canActivate = (await super.canActivate(context)) as boolean;
     if (!canActivate) return false;
 
-    // const request = context.switchToHttp().getRequest();
-    // const user = await this.getUserFromRequest(request);
-    // if (!user) return false;
+    const request = context.switchToHttp().getRequest();
 
-    // request.originalUser = user;
+    const user = request.user;
+
+    if (!user) return false;
+
     return true;
   }
 

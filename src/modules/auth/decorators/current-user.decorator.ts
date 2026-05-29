@@ -1,13 +1,16 @@
-// import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { CurrentUserType } from '#/@types/express/index.js';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { Request } from 'express';
 
-// import { JwtPayload } from 'src/modules/authentication/types';
+type CurrentUserKey = keyof CurrentUserType;
 
-// export const CurrentUser = createParamDecorator(
-//   (data: keyof JwtPayload | undefined, context: ExecutionContext) => {
-//     const request = context.switchToHttp().getRequest();
+export const CurrentUser = createParamDecorator(
+  (data: CurrentUserKey | undefined, context: ExecutionContext) => {
+    const request = context.switchToHttp().getRequest() as Request;
+    if (!request.user) return null;
 
-//     if (!data) return { ...request.originalUser, ...request.user };
+    if (!data) return request.user;
 
-//     return { ...request.originalUser, ...request.user }[data];
-//   },
-// );
+    return request.user[data];
+  },
+);

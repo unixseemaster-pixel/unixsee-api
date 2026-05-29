@@ -1,7 +1,7 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 import appConfig from './utils/config/app.config.js';
 import { validateEnv } from './utils/config/env.validation.js';
@@ -15,15 +15,12 @@ import { RealtimeModule } from './modules/realtime/realtime.module.js';
 import { EventModule } from './modules/event/event.module.js';
 import { AgentController } from './modules/agent/agent.controller.js';
 import { AgentModule } from './modules/agent/agent.module.js';
-import { WebsiteModule } from './modules/website/website.module';
-import { MetricModule } from './modules/metric/metric.module';
-import { WebsitesModule } from './modules/websites/websites.module';
-import { MetricsModule } from './modules/metrics/metrics.module';
-import { SslCertificatesModule } from './modules/ssl-certificates/ssl-certificates.module';
-import { AlertsModule } from './modules/alerts/alerts.module';
-import { DashboardModule } from './modules/dashboard/dashboard.module';
-import { AlertModule } from './modules/alert/alert.module';
-import { HealthModule } from './modules/health/health.module';
+import { WebsitesModule } from './modules/websites/websites.module.js';
+import { MetricsModule } from './modules/metrics/metrics.module.js';
+import { SslCertificatesModule } from './modules/ssl-certificates/ssl-certificates.module.js';
+import { AlertsModule } from './modules/alerts/alerts.module.js';
+import { DashboardModule } from './modules/dashboard/dashboard.module.js';
+import { HealthModule } from './modules/health/health.module.js';
 
 @Module({
   imports: [
@@ -41,25 +38,26 @@ import { HealthModule } from './modules/health/health.module';
     RealtimeModule,
     EventModule,
     AgentModule,
-    WebsiteModule,
-    MetricModule,
+    WebsitesModule,
+    MetricsModule,
     WebsitesModule,
     MetricsModule,
     SslCertificatesModule,
     AlertsModule,
     DashboardModule,
-    AlertModule,
+    AlertsModule,
     HealthModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    JwtService,
 
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({
         whitelist: true,
-        // transform: true,
+        transform: true,
         forbidNonWhitelisted: true,
       }),
     },

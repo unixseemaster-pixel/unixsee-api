@@ -13,8 +13,8 @@ export class RegisterDto {
   @IsOptional()
   email?: string;
 
+  // @MinLength(8)
   @IsString()
-  @MinLength(8)
   username!: string;
 
   @IsString()
@@ -25,7 +25,7 @@ export class RegisterDto {
   fullName?: string;
 
   @IsOptional()
-  @IsNumber()
+  @IsString()
   @Matches(VALIDATE_PHONE_NUMBER_REGEX, {
     message: 'Invalid phone number.',
   })

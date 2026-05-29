@@ -14,7 +14,7 @@ export class LoginDto {
   email?: string;
 
   @IsString()
-  @MinLength(8)
+  // @MinLength(8)
   username!: string;
 
   @IsString()
@@ -22,10 +22,7 @@ export class LoginDto {
   password!: string;
 
   @IsOptional()
-  fullName?: string;
-
-  @IsOptional()
-  @IsNumber()
+  @IsString()
   @Matches(VALIDATE_PHONE_NUMBER_REGEX, {
     message: 'Invalid phone number.',
   })

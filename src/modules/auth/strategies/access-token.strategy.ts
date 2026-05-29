@@ -3,8 +3,14 @@ import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 
-import type { AppConfigType } from '#/utils/config/app.config.js';
-import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
+import { AppConfigType } from '#/utils/config/app.config.js';
+import { UserService } from '#/modules/user/services/user/user.service.js';
+
+type JwtPayload = {
+  sub: string;
+  iat: number;
+  exp: number;
+};
 
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -12,26 +18,23 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
     // private readonly prisma: PrismaService,
     // private readonly reflector: Reflector,
     private readonly config: ConfigService<AppConfigType, true>,
-    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.get('app', { infer: true }).jwt.accessSecret,
-      passReqToCallback: true,
+      // passReqToCallback: true,
       ignoreExpiration: false,
     });
   }
 
   // async validate(payload: JwtPayload) {
-  async validate(payload: {}) {
-    // const user = await this.prisma.user.findUnique({
-    //   where: { id: payload.sub },
-    // });
+  async validate(payload: JwtPayload) {
+    const user = await this.userService.findOneById(payload?.sub);
 
     return {
       ...payload,
-      //   role: user.role,
-      //   fullName: user.fullName,
+      ...user,
     };
   }
 }

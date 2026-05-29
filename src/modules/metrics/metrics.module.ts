@@ -1,13 +1,28 @@
 import { Module } from '@nestjs/common';
-import { MetricsService } from './services/metrics/metrics.service';
-import { VpsMetricsService } from './services/vps-metrics.service';
-import { WebMetricsService } from './services/web-metrics.service';
-import { MetricsAggregationService } from './services/metrics-aggregation.service';
-import { MetricsInterpretationService } from './services/metrics-interpretation.service';
-import { MetricsOverviewService } from './services/metrics-overview.service';
-import { VpsMetricsRepositoryService } from './repositories/vps-metrics-repository.service';
+import { MetricsOverviewService } from './services/metrics-overview.service.js';
+import { VpsMetricsService } from './services/vps-metrics.service.js';
+import { WebMetricsService } from './services/web-metrics.service.js';
+import { MetricsAggregationService } from './services/metrics-aggregation.service.js';
+import { MetricsInterpretationService } from './services/metrics-interpretation.service.js';
+import { SystemHealthService } from '../health/services/system-health.service.js';
+import { AlertsService } from '../alerts/services/alerts.service.js';
+import { VpsMetricsRepository } from './repositories/vps-metrics.repository.js';
+import { WebMetricsRepository } from './repositories/web-metrics.repository.js';
+import { AlertsRepository } from '../alerts/repositories/alerts.repository.js';
 
 @Module({
-  providers: [MetricsService, VpsMetricsService, WebMetricsService, MetricsAggregationService, MetricsInterpretationService, MetricsOverviewService, VpsMetricsRepositoryService]
+  providers: [
+    MetricsOverviewService,
+    VpsMetricsService,
+    WebMetricsService,
+    MetricsAggregationService,
+    MetricsInterpretationService,
+    MetricsOverviewService,
+    SystemHealthService,
+    AlertsService,
+    VpsMetricsRepository,
+    WebMetricsRepository,
+    AlertsRepository,
+  ],
 })
 export class MetricsModule {}

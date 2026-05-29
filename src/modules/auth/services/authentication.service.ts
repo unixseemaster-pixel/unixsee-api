@@ -33,7 +33,7 @@ export class AuthenticationService {
   }: RegisterDto) {
     const user = await this.userService.findOneByUsername({ username });
 
-    if (user) throw new ConflictException(ERROR_MESSAGES.fa);
+    if (user) throw new ConflictException(ERROR_MESSAGES.fa.userExist);
 
     const hashedPassword = await this.hashData(password);
 
@@ -49,18 +49,15 @@ export class AuthenticationService {
     return tokens;
   }
 
-  async login({ password, username, email, fullName, phoneNumber }: LoginDto) {
+  async login({ password, username, email, phoneNumber }: LoginDto) {
     const existUser = await this.userService.findOneByUsername({ username });
     if (!existUser) {
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
     }
 
-    const decryptedPassword = await bcrypt.compare(
-      existUser.password,
-      password,
-    );
+    const isPassCorrect = await bcrypt.compare(password, existUser.password);
 
-    if (!decryptedPassword)
+    if (!isPassCorrect)
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
 
     const tokens = await this.createTokens({ userId: existUser.id });

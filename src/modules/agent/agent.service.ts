@@ -111,7 +111,7 @@ export class AgentService {
 
           await tx.webMetric.create({
             data: {
-              recordedAt: timestampDate,
+              recordedAt: timestampDate.toString(),
               vpsNodeId: vpsTarget.id,
               websiteId: website.id,
               concurrentRequests: siteData.peakConcurrentRequests,
@@ -123,8 +123,11 @@ export class AgentService {
             vpsNodeId: vpsTarget.id,
             websiteId: website.id,
             domain: siteData.domain,
-            concurrentRequests: siteData.peakConcurrentRequests,
-            timestamp: timestampDate,
+            metrics: {
+              concurrentRequests: siteData.peakConcurrentRequests,
+            },
+            // concurrentRequests: siteData.peakConcurrentRequests,
+            timestamp: timestampDate?.toString(),
           });
         }
       }

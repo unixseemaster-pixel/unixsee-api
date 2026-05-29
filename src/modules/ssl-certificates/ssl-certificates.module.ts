@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { SslCertificatesService } from './services/ssl-certificates.service';
+
+import { SslCertificatesService } from './services/ssl-certificates.service.js';
 
 @Module({
-  providers: [SslCertificatesService]
+  providers: [SslCertificatesService],
 })
 export class SslCertificatesModule {}
