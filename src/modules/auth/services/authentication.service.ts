@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -14,6 +15,7 @@ import { ERROR_MESSAGES } from '#/utils/error-messages.js';
 import type { LoginDto } from '../dto/login.dto.js';
 import type { Tokens } from '../types/tokens.types.js';
 import type { RegisterDto } from '../dto/register.dto.js';
+import { MESSAGES } from '@nestjs/core/constants.js';
 
 @Injectable()
 export class AuthenticationService {
@@ -63,6 +65,18 @@ export class AuthenticationService {
     const tokens = await this.createTokens({ userId: existUser.id });
 
     return tokens;
+  }
+
+  async refresh(userId: string, refreshToken: string) {
+    const user = await this.userService.findOneById(userId);
+    if (!user || !user.hashedRt)
+      throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
+
+    const isRtValid = await bcrypt.compare(refreshToken, user.hashedRt);
+    if (!isRtValid)
+      throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
+
+    return this.createTokens({ userId: user.id });
   }
 
   private async createTokens({ userId }: { userId: string }): Promise<Tokens> {

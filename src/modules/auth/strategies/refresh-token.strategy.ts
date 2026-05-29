@@ -5,9 +5,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import type { Request } from 'express';
 
 import type { AppConfigType } from '#/utils/config/app.config.js';
-
 import { ERROR_MESSAGES } from '#/utils/error-messages.js';
-import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
+import { UserService } from '#/modules/user/services/user/user.service.js';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
@@ -16,7 +15,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
 ) {
   constructor(
     private readonly config: ConfigService<AppConfigType, true>,
-    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -24,23 +23,12 @@ export class RefreshTokenStrategy extends PassportStrategy(
       passReqToCallback: true,
       ignoreExpiration: false,
     });
-    // super({
-    //   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    //   ignoreExpiration: false, // default
-    //   passReqToCallback: true, // get back jwt
-    //   secretOrKey:
-    //     configService.get<string>('NODE_ENV') === 'test'
-    //       ? 'testSecretKey'
-    //       : configService.get<string>('JWT_REFRESH_TOKEN_KEY'),
-    // });
   }
 
   async validate(req: Request, payload: any) {
     const refreshToken = req.get('authorization')?.replace('Bearer', '').trim();
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: payload.sub },
-    });
+    const user = await this.userService.findOneById(payload?.sub);
 
     if (!user?.hashedRt)
       new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);

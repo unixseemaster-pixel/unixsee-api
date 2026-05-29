@@ -1,9 +1,22 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 
 import { AuthenticationService } from '../services/authentication.service.js';
 import { Public } from '#/modules/auth/decorators/public.decorator.js';
 import { RegisterDto } from '../dto/register.dto.js';
 import { LoginDto } from '../dto/login.dto.js';
+import { RtGuard } from '../guards/rt-guard.js';
+import { CurrentUser } from '../decorators/current-user.decorator.js';
+import type { CurrentUserType } from '#/@types/express/index.js';
+import { RefreshTokenDto } from '../dto/refresh-token.dto.js';
+import { ERROR_MESSAGES } from '#/utils/error-messages.js';
 
 @Controller('v1/auth')
 export class AuthenticationController {
@@ -19,5 +32,21 @@ export class AuthenticationController {
   @Post('login')
   login(@Body() body: LoginDto) {
     return this.authService.login({ ...body });
+  }
+
+  @Public()
+  @UseGuards(RtGuard)
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(
+    @CurrentUser() user: CurrentUserType,
+    @Body() body: RefreshTokenDto,
+  ) {
+    if (user.refreshToken !== body.refreshToken) {
+      return new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
+    }
+
+    const tokens = await this.authService.refresh(user.sub, body.refreshToken);
+    return tokens;
   }
 }

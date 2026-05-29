@@ -4,6 +4,7 @@ export type CurrentUserType = Omit<PrismaUser, 'password'> & {
   sub: string;
   iat: number;
   exp: number;
+  refreshToken?: string | null;
 };
 
 declare global {
