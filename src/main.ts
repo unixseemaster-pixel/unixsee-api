@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
+import { GlobalExceptionFilter } from './common/http/filters/global-exception.filter.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,6 +11,8 @@ async function bootstrap() {
   //   origin: ['http://localhost:3000'],
   //   credentials: true,
   // });
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   app.setGlobalPrefix('api');
 
