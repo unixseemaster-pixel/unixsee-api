@@ -14,6 +14,8 @@ const appConfig = registerAs('app', () => {
     nodeEnv: env.NODE_ENV,
     port: env.PORT,
     databaseUrl: env.DATABASE_URL,
+    otpExpiredTime: env.OTP_EXPIRED_TIME_KEY,
+    otpRetryTime: env.OTP_RETRY_TIME,
     jwt: {
       accessSecret: env.JWT_ACCESS_SECRET,
       accessExpiresIn: env.JWT_ACCESS_EXPIRES_IN,

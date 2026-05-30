@@ -57,3 +57,8 @@ export type SSLCertificate = Prisma.SSLCertificateModel
  * 
  */
 export type Alert = Prisma.AlertModel
+/**
+ * Model Otp
+ * 
+ */
+export type Otp = Prisma.OtpModel

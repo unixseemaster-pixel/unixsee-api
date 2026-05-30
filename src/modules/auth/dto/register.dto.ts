@@ -1,6 +1,9 @@
 import { VALIDATE_PHONE_NUMBER_REGEX } from '#/utils/constants.js';
+import { toEnglishDigits } from '#/utils/helpers.js';
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
+  IsMobilePhone,
   IsNumber,
   IsOptional,
   IsString,
@@ -24,10 +27,11 @@ export class RegisterDto {
   @IsOptional()
   fullName?: string;
 
-  @IsOptional()
   @IsString()
-  @Matches(VALIDATE_PHONE_NUMBER_REGEX, {
-    message: 'Invalid phone number.',
+  @Transform(({ obj }) => {
+    const englishDigits = toEnglishDigits(obj?.phoneNumber);
+    return englishDigits;
   })
-  phoneNumber?: string;
+  @IsMobilePhone()
+  phoneNumber!: string;
 }

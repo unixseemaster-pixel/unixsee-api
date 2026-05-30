@@ -6,6 +6,7 @@ import { AuthenticationService } from './services/authentication.service.js';
 import { UserService } from '../user/services/user/user.service.js';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy.js';
 import { AccessTokenStrategy } from './strategies/access-token.strategy.js';
+import { OtpService } from './services/otp-service.js';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AccessTokenStrategy } from './strategies/access-token.strategy.js';
     JwtService,
     AccessTokenStrategy,
     RefreshTokenStrategy,
+    OtpService,
   ],
 })
 export class AuthModule {}

@@ -16,11 +16,11 @@ enum Role {
 
 model User {
   id          String  @id @default(uuid()) @db.Uuid
+  phoneNumber String  @unique @map("phone_number")
   email       String? @unique
-  username    String  @unique
-  password    String
+  username    String? @unique
+  password    String?
   fullName    String? @map("full_name")
-  phoneNumber String? @map("phone_number")
   role        Role    @default(USER)
   hashedRt    String? @map("hashed_rt")
 
@@ -186,6 +186,20 @@ model Alert {
   @@map("alerts")
 }
 
+model Otp {
+  id                String      @id @default(uuid())
+  otp               String      @unique
+  phoneNumber       String?     @unique @map("phone_number")
+  expiredTime       DateTime    @map("expired_time")
+  identifier        String?     @unique
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+  lastRequestedTime DateTime?   @map("last_requested_time")
+  context           OtpContext? @default(LOGIN)
+
+  @@map("otps")
+}
+
 enum AlertSeverity {
   MONITORING
   WARNING
@@ -195,4 +209,9 @@ enum AlertSeverity {
 enum AlertStatus {
   ACTIVE
   RESOLVED
+}
+
+enum OtpContext {
+  LOGIN
+  LOGIN_MONITORING
 }

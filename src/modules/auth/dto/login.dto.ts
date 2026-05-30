@@ -1,7 +1,6 @@
 import { VALIDATE_PHONE_NUMBER_REGEX } from '#/utils/constants.js';
 import {
   IsEmail,
-  IsNumber,
   IsOptional,
   IsString,
   Matches,

@@ -34,3 +34,11 @@ export const AlertStatus = {
 } as const
 
 export type AlertStatus = (typeof AlertStatus)[keyof typeof AlertStatus]
+
+
+export const OtpContext = {
+  LOGIN: 'LOGIN',
+  LOGIN_MONITORING: 'LOGIN_MONITORING'
+} as const
+
+export type OtpContext = (typeof OtpContext)[keyof typeof OtpContext]

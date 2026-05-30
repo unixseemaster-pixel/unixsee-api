@@ -17,6 +17,8 @@ import { CurrentUser } from '../decorators/current-user.decorator.js';
 import type { CurrentUserType } from '#/@types/express/index.js';
 import { RefreshTokenDto } from '../dto/refresh-token.dto.js';
 import { ERROR_MESSAGES } from '#/utils/error-messages.js';
+import { SendOtpDto } from '../dto/sent-otp.dto.js';
+import { ValidateOtpDto } from '../dto/validate-otp.dto.js';
 
 @Controller('v1/auth')
 export class AuthenticationController {
@@ -48,5 +50,25 @@ export class AuthenticationController {
 
     const tokens = await this.authService.refresh(user.sub, body.refreshToken);
     return tokens;
+  }
+
+  @Public()
+  @Post('otp/request')
+  @HttpCode(HttpStatus.OK)
+  async sendOtp(@Body() body: SendOtpDto) {
+    return this.authService.sendOtp({
+      phoneNumber: body.phoneNumber,
+      context: 'LOGIN',
+    });
+  }
+
+  @Public()
+  @Post('otp/validate')
+  @HttpCode(HttpStatus.OK)
+  async validateOtp(@Body() body: ValidateOtpDto) {
+    return this.authService.sendOtp({
+      phoneNumber: body.phoneNumber,
+      context: 'LOGIN',
+    });
   }
 }

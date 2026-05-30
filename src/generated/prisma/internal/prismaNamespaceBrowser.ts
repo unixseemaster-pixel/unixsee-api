@@ -58,7 +58,8 @@ export const ModelName = {
   Website: 'Website',
   WebMetric: 'WebMetric',
   SSLCertificate: 'SSLCertificate',
-  Alert: 'Alert'
+  Alert: 'Alert',
+  Otp: 'Otp'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -79,11 +80,11 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
+  phoneNumber: 'phoneNumber',
   email: 'email',
   username: 'username',
   password: 'password',
   fullName: 'fullName',
-  phoneNumber: 'phoneNumber',
   role: 'role',
   hashedRt: 'hashedRt',
   createdAt: 'createdAt',
@@ -200,6 +201,21 @@ export const AlertScalarFieldEnum = {
 } as const
 
 export type AlertScalarFieldEnum = (typeof AlertScalarFieldEnum)[keyof typeof AlertScalarFieldEnum]
+
+
+export const OtpScalarFieldEnum = {
+  id: 'id',
+  otp: 'otp',
+  phoneNumber: 'phoneNumber',
+  expiredTime: 'expiredTime',
+  identifier: 'identifier',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastRequestedTime: 'lastRequestedTime',
+  context: 'context'
+} as const
+
+export type OtpScalarFieldEnum = (typeof OtpScalarFieldEnum)[keyof typeof OtpScalarFieldEnum]
 
 
 export const SortOrder = {

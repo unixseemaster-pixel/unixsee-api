@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -16,6 +17,9 @@ import type { LoginDto } from '../dto/login.dto.js';
 import type { Tokens } from '../types/tokens.types.js';
 import type { RegisterDto } from '../dto/register.dto.js';
 import { MESSAGES } from '@nestjs/core/constants.js';
+import { OtpContext } from '#/generated/prisma/enums.js';
+import { User } from '#/generated/prisma/client.js';
+import { OtpService } from './otp-service.js';
 
 @Injectable()
 export class AuthenticationService {
@@ -23,6 +27,7 @@ export class AuthenticationService {
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly otpService: OtpService,
     private readonly config: ConfigService<AppConfigType, true>,
   ) {}
 
@@ -57,6 +62,11 @@ export class AuthenticationService {
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
     }
 
+    if (!existUser?.password)
+      throw new BadRequestException(
+        "You didn't set password for your account.",
+      );
+
     const isPassCorrect = await bcrypt.compare(password, existUser.password);
 
     if (!isPassCorrect)
@@ -77,6 +87,66 @@ export class AuthenticationService {
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
 
     return this.createTokens({ userId: user.id });
+  }
+
+  async sendOtp({
+    phoneNumber,
+    context,
+  }: {
+    phoneNumber: string;
+    context?: OtpContext;
+  }) {
+    const otp = await this.otpService.createAndOverwrite({
+      length: 6,
+      phoneNumber,
+      context,
+    });
+
+    return { status: 'success', otp };
+  }
+
+  async validateOtp({
+    otp,
+    phoneNumber,
+  }: {
+    phoneNumber: string;
+    otp: string;
+  }) {
+    const isOtpValid = await this.otpService.validateOtp({
+      phoneNumber,
+      otp,
+    });
+
+    if (!isOtpValid) throw new UnauthorizedException('wrong credentials.');
+
+    let userToSignIn: Omit<User, 'password' | 'hashedRt'>;
+    const userExist = await this.userService.findOneByPhoneNumber(phoneNumber);
+
+    if (!userExist) {
+      userToSignIn = await this.userService.create({
+        phoneNumber,
+        role: 'USER',
+      });
+    } else {
+      userToSignIn = userExist;
+    }
+    const tokens = await this.createTokens({
+      userId: userToSignIn.id,
+    });
+
+    const updateRtHashPromise = this.userService.updateRtHash({
+      userId: userToSignIn.id,
+      rt: tokens.refreshToken,
+    });
+
+    const removeOtpPromise = this.otpService.remove(otp);
+
+    await Promise.all([updateRtHashPromise, removeOtpPromise]);
+
+    return {
+      ...tokens,
+      ...userToSignIn,
+    };
   }
 
   private async createTokens({ userId }: { userId: string }): Promise<Tokens> {

@@ -20,6 +20,8 @@ export const envSchema = z.object({
     .min(32, 'JWT_REFRESH_SECRET must be at least 32 characters'),
 
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
+  OTP_EXPIRED_TIME_KEY: z.coerce.number().int().positive(),
+  OTP_RETRY_TIME: z.coerce.number().int().positive(),
 
   // FRONTEND_URL: z.url(),
 });

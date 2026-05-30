@@ -1,9 +1,10 @@
+import { Injectable } from '@nestjs/common';
+
 import { AlertsService } from '#/modules/alerts/services/alerts.service.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
 import { MetricsOverviewService } from '#/modules/metrics/services/metrics-overview.service.js';
 import { SslCertificatesService } from '#/modules/ssl-certificates/services/ssl-certificates.service.js';
 import { WebsitesService } from '#/modules/websites/services/websites.service.js';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class DashboardService {
