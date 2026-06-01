@@ -19,8 +19,9 @@ export class AtGuard extends AuthGuard('jwt') {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     if (this.isPublic(context)) return true;
-    // return true;
+
     const canActivate = (await super.canActivate(context)) as boolean;
+
     if (!canActivate) return false;
 
     const request = context.switchToHttp().getRequest();

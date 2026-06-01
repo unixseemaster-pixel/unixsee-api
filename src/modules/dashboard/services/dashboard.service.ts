@@ -78,6 +78,8 @@ export class DashboardService {
     };
   }
 
+  async getMonitoring(userId: string) {}
+
   private resolveStatusMessage(status: string) {
     if (status === 'healthy') return 'All systems operational';
     if (status === 'monitoring') return 'Increased activity detected';

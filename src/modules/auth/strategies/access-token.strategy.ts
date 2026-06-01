@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 
 import { AppConfigType } from '#/utils/config/app.config.js';
 import { UserService } from '#/modules/user/services/user/user.service.js';
+import { ERROR_MESSAGES } from '#/utils/error-messages.js';
 
 type JwtPayload = {
   sub: string;
@@ -31,10 +32,15 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   // async validate(payload: JwtPayload) {
   async validate(payload: JwtPayload) {
     const user = await this.userService.findOneById(payload?.sub);
+    if (!user?.hashedRt) {
+      throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
+    }
+
+    const { hashedRt, ...restUser } = user;
 
     return {
       ...payload,
-      ...user,
+      ...restUser,
     };
   }
 }

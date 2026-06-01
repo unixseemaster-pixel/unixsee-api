@@ -18,9 +18,11 @@ const appConfig = registerAs('app', () => {
     otpRetryTime: env.OTP_RETRY_TIME,
     jwt: {
       accessSecret: env.JWT_ACCESS_SECRET,
-      accessExpiresIn: env.JWT_ACCESS_EXPIRES_IN,
       refreshSecret: env.JWT_REFRESH_SECRET,
-      refreshExpiresIn: env.JWT_REFRESH_EXPIRES_IN,
+      accessExpiresIn: env.JWT_ACCESS_TOKEN_EXPIRATION,
+      refreshExpiresIn: env.JWT_REFRESH_TOKEN_EXPIRATION,
+      monitoringAccessSecret: env.JWT_MONITORING_ACCESS_SECRET,
+      monitoringAccessExpiresIn: env.JWT_MONITORING_ACCESS_TOKEN_EXPIRATION,
     },
   };
 });

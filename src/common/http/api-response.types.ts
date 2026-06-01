@@ -1,6 +1,7 @@
-export type ApiResponse<T> = {
-  success: boolean;
+export interface ApiResponse<T> {
   statusCode: number;
+  success: boolean;
+  message: string;
   data: T | null;
   error: {
     code: string;
@@ -8,4 +9,4 @@ export type ApiResponse<T> = {
     details?: unknown;
   } | null;
   meta?: unknown;
-};
+}

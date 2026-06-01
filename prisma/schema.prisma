@@ -213,5 +213,5 @@ enum AlertStatus {
 
 enum OtpContext {
   LOGIN
-  LOGIN_MONITORING
+  MONITORING_ACCESS
 }

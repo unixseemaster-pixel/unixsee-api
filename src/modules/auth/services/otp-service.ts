@@ -12,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
 interface SaveOtpToDbParams {
   otp: string;
   phoneNumber: string;
+  context?: OtpContext;
 }
 
 // interface CreateOtpWithIdParams {
@@ -62,7 +63,7 @@ export class OtpService {
         : true;
       if (retryAllowed !== true) {
         const minText =
-          retryAllowed.minutes > 0 ? `${retryAllowed.minutes} and` : '';
+          retryAllowed.minutes > 0 ? `${retryAllowed.minutes}minutes and` : '';
         const secText =
           retryAllowed.seconds > 0 ? `${retryAllowed.seconds} seconds` : '';
 
@@ -135,11 +136,16 @@ export class OtpService {
     }
   }
 
-  async validateOtp({ otp, phoneNumber }: SaveOtpToDbParams) {
+  async validateOtp({
+    otp,
+    phoneNumber,
+    context = 'LOGIN',
+  }: SaveOtpToDbParams) {
     const existOtp = await this.prisma.otp.findFirst({
       where: {
         phoneNumber,
         otp,
+        context,
       },
     });
 

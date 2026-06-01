@@ -19,7 +19,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: config.get('app', { infer: true }).jwt.accessSecret,
+      secretOrKey: config.get('app', { infer: true }).jwt.refreshSecret,
       passReqToCallback: true,
       ignoreExpiration: false,
     });
@@ -30,9 +30,9 @@ export class RefreshTokenStrategy extends PassportStrategy(
 
     const user = await this.userService.findOneById(payload?.sub);
 
-    if (!user?.hashedRt)
-      new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
-
+    if (!user?.hashedRt) {
+      throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
+    }
     return {
       ...payload,
       refreshToken,

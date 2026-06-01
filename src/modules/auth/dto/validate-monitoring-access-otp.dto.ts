@@ -2,15 +2,14 @@ import { Transform } from 'class-transformer';
 import {
   IsEnum,
   IsMobilePhone,
+  IsNumberString,
   IsString,
-  Min,
-  MinLength,
 } from 'class-validator';
 
 import { toEnglishDigits } from '#/utils/helpers.js';
 import { OtpContext } from '#/generated/prisma/enums.js';
 
-export class SendOtpDto {
+export class ValidateMonitoringAccessOtpDto {
   @IsString()
   @Transform(({ obj }) => {
     const englishDigits = toEnglishDigits(obj?.phoneNumber);
@@ -20,6 +19,13 @@ export class SendOtpDto {
   phoneNumber!: string;
 
   @IsString()
-  @IsEnum(OtpContext)
-  context!: OtpContext;
+  @Transform(({ obj }) => {
+    const englishDigits = toEnglishDigits(obj?.otp);
+    return englishDigits;
+  })
+  otp!: string;
+
+  @IsString()
+  @IsEnum([OtpContext.MONITORING_ACCESS])
+  context!: 'MONITORING_ACCESS';
 }
