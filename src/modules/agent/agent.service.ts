@@ -125,12 +125,18 @@ export class AgentService {
             domain: siteData.domain,
             metrics: {
               concurrentRequests: siteData.peakConcurrentRequests,
+              requestRate: 0,
             },
             // concurrentRequests: siteData.peakConcurrentRequests,
             timestamp: timestampDate?.toString(),
           });
         }
       }
+    });
+
+    this.eventDispatcher.dispatchMetricsIngested({
+      vpsNodeId: vpsTarget.id,
+      batch: payload.batch,
     });
 
     for (const event of emittedEvents) {

@@ -4,6 +4,7 @@ export interface WebsiteMetricsEvaluatedEvent {
   domain: string;
   metrics: {
     concurrentRequests: number;
+    requestRate?: number;
   };
 
   timestamp: string;

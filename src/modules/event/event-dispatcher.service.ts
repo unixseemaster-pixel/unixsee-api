@@ -14,6 +14,10 @@ export interface MetricsIngestedEventPayload {
 export class EventDispatcherService {
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
+  dispatchMetricsIngested(payload: MetricsIngestedEventPayload): void {
+    this.eventEmitter.emit(EVENT_NAMES.METRICS_INGESTED, payload);
+  }
+
   dispatchWebsiteMetricsEvaluated(payload: WebsiteMetricsEvaluatedEvent): void {
     this.eventEmitter.emit(EVENT_NAMES.WEBSITE_METRICS_EVALUATED, payload);
   }

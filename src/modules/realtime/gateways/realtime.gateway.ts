@@ -44,8 +44,10 @@ export class RealtimeGateway
 
   private async initializeSocketSession(client: Socket): Promise<void> {
     const token = client.handshake.auth?.token;
+    const monitoringAccessToken =
+      client.handshake.auth?.monitoringAccessToken;
 
-    if (!token) {
+    if (!token || !monitoringAccessToken) {
       client.disconnect(true);
       return;
     }
@@ -53,6 +55,17 @@ export class RealtimeGateway
     const user = await this.realtimeService.verifySocketToken(token);
 
     if (!user) {
+      client.disconnect(true);
+      return;
+    }
+
+    const hasMonitoringAccess =
+      await this.realtimeService.verifyMonitoringAccessToken(
+        monitoringAccessToken,
+        user.id,
+      );
+
+    if (!hasMonitoringAccess) {
       client.disconnect(true);
       return;
     }
@@ -92,7 +105,7 @@ export class RealtimeGateway
       const { vpsNodeId, batch } = event;
 
       for (const entry of batch) {
-        this.server.to(`vps:${vpsNodeId}`).emit('vps:live_tick', {
+        const payload = {
           vpsNodeId,
           timestamp: entry.timestamp,
           metrics: {
@@ -100,9 +113,20 @@ export class RealtimeGateway
             memoryUsedMB: entry.metrics.ramMeanMB,
             memoryTotalMB: entry.metrics.ramTotalMB,
             liteSpeedConnections: entry.metrics.lsConnectionsPeak,
+            diskReadBytesPerSecond:
+              entry.metrics.diskReadBytesPerSecondMean,
+            diskWriteBytesPerSecond:
+              entry.metrics.diskWriteBytesPerSecondMean,
             diskIops: entry.metrics.diskIopsMean,
+            storageTotalMB: entry.metrics.storageTotalMB,
+            storageAvailableMB: entry.metrics.storageAvailableMB,
           },
-        });
+        };
+
+        this.server.to(`vps:${vpsNodeId}`).emit('vps:live_tick', payload);
+        this.server
+          .to(`vps:${vpsNodeId}`)
+          .emit(EVENT_NAMES.MONITORING_VPS_TICK, payload);
       }
     } catch (error: any) {
       this.logger.error(`VPS live tick error: ${error.message}`);
@@ -117,14 +141,30 @@ export class RealtimeGateway
     event: WebsiteMetricsEvaluatedEvent,
   ): Promise<void> {
     try {
+      const payload = {
+        vpsNodeId: event.vpsNodeId,
+        websiteId: event.websiteId,
+        domain: event.domain,
+        timestamp: event.timestamp,
+        traffic: {
+          activeVisitors: event.metrics.concurrentRequests,
+          requestRate: event.metrics.requestRate ?? 0,
+        },
+      };
+
       this.server
         .to(`website:${event.websiteId}`)
         .emit(EVENT_NAMES.WEBSITE_METRICS_EVALUATED, {
-          websiteId: event.websiteId,
-          domain: event.domain,
-          concurrentRequests: event.metrics.concurrentRequests,
-          timestamp: event.timestamp,
+          websiteId: payload.websiteId,
+          domain: payload.domain,
+          concurrentRequests: payload.traffic.activeVisitors,
+          requestRate: payload.traffic.requestRate,
+          timestamp: payload.timestamp,
         });
+
+      this.server
+        .to(`website:${event.websiteId}`)
+        .emit(EVENT_NAMES.MONITORING_WEBSITE_TICK, payload);
     } catch (error: any) {
       this.logger.error(`Website metrics stream error: ${error.message}`);
     }
