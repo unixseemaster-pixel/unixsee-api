@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: docker.arvancloud.ir/postgres:16
+    container_name: unixsee-postgres
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./docker-data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U unixsee -d unixsee']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: unixsee-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.production
+
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: unixsee-prisma-studio
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env.production
+    command: pnpm prisma studio --hostname 0.0.0.0 --port 51212 --browser none
+    ports:
+      - '127.0.0.1:51212:51212'
