@@ -41,7 +41,7 @@ module.exports = {
     {
       name: 'unixsee-api',
       cwd,
-      script: 'dist/main.js',
+      script: 'dist/src/main.js',
       interpreter: 'node',
       exec_mode: 'fork',
       instances: 1,
