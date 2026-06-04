@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const cwd = '/var/www/core.unixsee.com';
+const cwd = __dirname;
 const envPath = path.join(cwd, '.env.production');
 
 function loadEnvFile(filePath) {
@@ -39,10 +39,10 @@ const port = productionEnv.PORT || '4000';
 module.exports = {
   apps: [
     {
-      name: 'core-unixsee',
+      name: 'unixsee-api',
       cwd,
-      script: 'node_modules/next/dist/bin/next',
-      args: `start -H 0.0.0.0 -p ${port}`,
+      script: 'dist/main.js',
+      interpreter: 'node',
       exec_mode: 'fork',
       instances: 1,
       env: {
