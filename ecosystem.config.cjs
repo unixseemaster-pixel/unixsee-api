@@ -1,40 +1,13 @@
 const fs = require('fs');
 const path = require('path');
+const dotenv = require('dotenv');
 
 const cwd = __dirname;
 const envPath = path.join(cwd, '.env.production');
 
-function loadEnvFile(filePath) {
-  if (!fs.existsSync(filePath)) {
-    return {};
-  }
-
-  return fs
-    .readFileSync(filePath, 'utf8')
-    .split(/\r?\n/)
-    .reduce((env, line) => {
-      const trimmed = line.trim();
-
-      if (!trimmed || trimmed.startsWith('#')) {
-        return env;
-      }
-
-      const separatorIndex = trimmed.indexOf('=');
-
-      if (separatorIndex === -1) {
-        return env;
-      }
-
-      const key = trimmed.slice(0, separatorIndex).trim();
-      const value = trimmed.slice(separatorIndex + 1).trim();
-
-      env[key] = value.replace(/^["']|["']$/g, '');
-      return env;
-    }, {});
-}
-
-const productionEnv = loadEnvFile(envPath);
-const port = productionEnv.PORT || '4000';
+const productionEnv = fs.existsSync(envPath)
+  ? dotenv.parse(fs.readFileSync(envPath))
+  : {};
 
 module.exports = {
   apps: [
@@ -48,7 +21,7 @@ module.exports = {
       env: {
         ...productionEnv,
         NODE_ENV: 'production',
-        PORT: port,
+        PORT: productionEnv.PORT || '4000',
       },
       time: true,
       autorestart: true,
