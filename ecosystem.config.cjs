@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 const cwd = '/var/www/core.unixsee.com';
 const envPath = path.join(cwd, '.env.production');
