@@ -30,7 +30,15 @@ export const envSchema = z.object({
   OTP_EXPIRED_TIME_KEY: z.coerce.number().int().positive(),
   OTP_RETRY_TIME: z.coerce.number().int().positive(),
 
-  // FRONTEND_URL: z.url(),
+  CORS_ALLOWED_ORIGINS: z
+    .string()
+    .default('http://localhost:3000,http://localhost:3001')
+    .transform((origins) =>
+      origins
+        .split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean),
+    ),
 });
 
 export type Env = z.infer<typeof envSchema>;
