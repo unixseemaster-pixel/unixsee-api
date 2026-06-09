@@ -24,6 +24,14 @@ import type { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metri
 export class RealtimeGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
+  private readonly authorizationChecks = new Map<
+    string,
+    ReturnType<typeof setInterval>
+  >();
+  private readonly expirationTimers = new Map<
+    string,
+    ReturnType<typeof setTimeout>
+  >();
   private readonly logger = new Logger(RealtimeGateway.name);
 
   @WebSocketServer()
@@ -39,38 +47,44 @@ export class RealtimeGateway
   }
 
   handleDisconnect(client: Socket): void {
+    this.clearAuthorizationTimers(client.id);
     this.logger.log(`Socket disconnected: ${client.id}`);
   }
 
   private async initializeSocketSession(client: Socket): Promise<void> {
-    const token = client.handshake.auth?.token;
+    const token =
+      this.normalizeToken(client.handshake.auth?.token) ??
+      this.normalizeToken(client.handshake.headers.authorization);
     const monitoringAccessToken =
-      client.handshake.auth?.monitoringAccessToken;
+      this.normalizeToken(client.handshake.auth?.monitoringAccessToken) ??
+      this.normalizeToken(
+        client.handshake.headers['monitoring-access-token'],
+      ) ??
+      this.normalizeToken(client.handshake.headers['monitor-access-token']);
 
     if (!token || !monitoringAccessToken) {
       client.disconnect(true);
       return;
     }
 
-    const user = await this.realtimeService.verifySocketToken(token);
+    const session = await this.realtimeService.authorizeSocket(
+      token,
+      monitoringAccessToken,
+    );
 
-    if (!user) {
+    if (!session) {
       client.disconnect(true);
       return;
     }
 
-    const hasMonitoringAccess =
-      await this.realtimeService.verifyMonitoringAccessToken(
-        monitoringAccessToken,
-        user.id,
-      );
-
-    if (!hasMonitoringAccess) {
-      client.disconnect(true);
-      return;
-    }
-
+    const { user } = session;
     client.data.user = user;
+    this.scheduleAuthorizationChecks(
+      client,
+      token,
+      monitoringAccessToken,
+      session.expiresAt,
+    );
 
     const vpsNodeIds = await this.realtimeService.getAllowedVpsNodeIdsForUser(
       user.id,
@@ -89,9 +103,87 @@ export class RealtimeGateway
 
     await client.join(`user:${user.id}`);
 
+    const snapshot = await this.realtimeService.getMonitoringSnapshot(user.id);
+    client.emit(EVENT_NAMES.MONITORING_SNAPSHOT, snapshot);
+
     this.logger.log(
       `User ${user.id} connected | VPS: ${vpsNodeIds.length} | Websites: ${websiteIds.length}`,
     );
+  }
+
+  private scheduleAuthorizationChecks(
+    client: Socket,
+    token: string,
+    monitoringAccessToken: string,
+    expiresAt: Date,
+  ): void {
+    this.clearAuthorizationTimers(client.id);
+
+    const authorizationCheck = setInterval(() => {
+      this.revalidateSocket(client, token, monitoringAccessToken).catch(
+        (error: Error) => {
+          this.logger.error(
+            `Socket authorization check failed: ${error.message}`,
+          );
+          client.disconnect(true);
+        },
+      );
+    }, 30_000);
+
+    const expirationTimer = setTimeout(
+      () => client.disconnect(true),
+      Math.max(0, expiresAt.getTime() - Date.now()),
+    );
+
+    authorizationCheck.unref();
+    expirationTimer.unref();
+    this.authorizationChecks.set(client.id, authorizationCheck);
+    this.expirationTimers.set(client.id, expirationTimer);
+  }
+
+  private async revalidateSocket(
+    client: Socket,
+    token: string,
+    monitoringAccessToken: string,
+  ): Promise<void> {
+    if (!client.connected) {
+      this.clearAuthorizationTimers(client.id);
+      return;
+    }
+
+    const session = await this.realtimeService.authorizeSocket(
+      token,
+      monitoringAccessToken,
+    );
+
+    if (!session || session.user.id !== client.data.user?.id) {
+      client.disconnect(true);
+    }
+  }
+
+  private clearAuthorizationTimers(clientId: string): void {
+    const authorizationCheck = this.authorizationChecks.get(clientId);
+    const expirationTimer = this.expirationTimers.get(clientId);
+
+    if (authorizationCheck) {
+      clearInterval(authorizationCheck);
+      this.authorizationChecks.delete(clientId);
+    }
+
+    if (expirationTimer) {
+      clearTimeout(expirationTimer);
+      this.expirationTimers.delete(clientId);
+    }
+  }
+
+  private normalizeToken(value: unknown): string | null {
+    const token = Array.isArray(value) ? value[0] : value;
+
+    if (typeof token !== 'string' || token.trim().length === 0) {
+      return null;
+    }
+
+    return token.replace(/^Bearer\s+/i, '').trim();
   }
 
   // =========================================================
@@ -113,10 +205,8 @@ export class RealtimeGateway
             memoryUsedMB: entry.metrics.ramMeanMB,
             memoryTotalMB: entry.metrics.ramTotalMB,
             liteSpeedConnections: entry.metrics.lsConnectionsPeak,
-            diskReadBytesPerSecond:
-              entry.metrics.diskReadBytesPerSecondMean,
-            diskWriteBytesPerSecond:
-              entry.metrics.diskWriteBytesPerSecondMean,
+            diskReadBytesPerSecond: entry.metrics.diskReadBytesPerSecondMean,
+            diskWriteBytesPerSecond: entry.metrics.diskWriteBytesPerSecondMean,
             diskIops: entry.metrics.diskIopsMean,
             storageTotalMB: entry.metrics.storageTotalMB,
             storageAvailableMB: entry.metrics.storageAvailableMB,
@@ -124,9 +214,15 @@ export class RealtimeGateway
         };
 
         this.server.to(`vps:${vpsNodeId}`).emit('vps:live_tick', payload);
+      }
+
+      const monitoringSnapshot =
+        await this.realtimeService.getVpsMonitoringSnapshot(vpsNodeId);
+
+      if (monitoringSnapshot) {
         this.server
           .to(`vps:${vpsNodeId}`)
-          .emit(EVENT_NAMES.MONITORING_VPS_TICK, payload);
+          .emit(EVENT_NAMES.MONITORING_VPS_TICK, monitoringSnapshot);
       }
     } catch (error: any) {
       this.logger.error(`VPS live tick error: ${error.message}`);
@@ -162,9 +258,16 @@ export class RealtimeGateway
           timestamp: payload.timestamp,
         });
 
-      this.server
-        .to(`website:${event.websiteId}`)
-        .emit(EVENT_NAMES.MONITORING_WEBSITE_TICK, payload);
+      const monitoringSnapshot =
+        await this.realtimeService.getWebsiteMonitoringSnapshot(
+          event.websiteId,
+        );
+
+      if (monitoringSnapshot) {
+        this.server
+          .to(`website:${event.websiteId}`)
+          .emit(EVENT_NAMES.MONITORING_WEBSITE_TICK, monitoringSnapshot);
+      }
     } catch (error: any) {
       this.logger.error(`Website metrics stream error: ${error.message}`);
     }

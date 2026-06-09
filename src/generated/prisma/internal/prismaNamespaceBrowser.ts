@@ -54,9 +54,14 @@ export const ModelName = {
   User: 'User',
   Server: 'Server',
   VpsNode: 'VpsNode',
-  VpsMetric: 'VpsMetric',
   Website: 'Website',
+  VpsMetric: 'VpsMetric',
   WebMetric: 'WebMetric',
+  WebsiteProbeMetric: 'WebsiteProbeMetric',
+  WebsiteSslMetric: 'WebsiteSslMetric',
+  VpsFilesystemMetric: 'VpsFilesystemMetric',
+  VpsNetworkInterfaceMetric: 'VpsNetworkInterfaceMetric',
+  VpsServiceMetric: 'VpsServiceMetric',
   SSLCertificate: 'SSLCertificate',
   Alert: 'Alert',
   Otp: 'Otp'
@@ -112,6 +117,14 @@ export const VpsNodeScalarFieldEnum = {
   machineId: 'machineId',
   name: 'name',
   secretKey: 'secretKey',
+  status: 'status',
+  hostname: 'hostname',
+  publicIp: 'publicIp',
+  osName: 'osName',
+  osVersion: 'osVersion',
+  kernelVersion: 'kernelVersion',
+  agentVersion: 'agentVersion',
+  lastSeenAt: 'lastSeenAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -119,12 +132,42 @@ export const VpsNodeScalarFieldEnum = {
 export type VpsNodeScalarFieldEnum = (typeof VpsNodeScalarFieldEnum)[keyof typeof VpsNodeScalarFieldEnum]
 
 
+export const WebsiteScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  vpsNodeId: 'vpsNodeId',
+  domain: 'domain',
+  displayName: 'displayName',
+  directAdminUser: 'directAdminUser',
+  homeDirectory: 'homeDirectory',
+  documentRoot: 'documentRoot',
+  isActive: 'isActive',
+  lastIsUp: 'lastIsUp',
+  lastStatusCode: 'lastStatusCode',
+  lastResponseTimeMs: 'lastResponseTimeMs',
+  lastProbeAt: 'lastProbeAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WebsiteScalarFieldEnum = (typeof WebsiteScalarFieldEnum)[keyof typeof WebsiteScalarFieldEnum]
+
+
 export const VpsMetricScalarFieldEnum = {
   recordedAt: 'recordedAt',
   vpsNodeId: 'vpsNodeId',
   cpuUsagePercent: 'cpuUsagePercent',
+  cpuCoreCount: 'cpuCoreCount',
+  load1: 'load1',
+  load5: 'load5',
+  load15: 'load15',
   memoryTotalMB: 'memoryTotalMB',
   memoryUsedMB: 'memoryUsedMB',
+  memoryAvailableMB: 'memoryAvailableMB',
+  swapTotalMB: 'swapTotalMB',
+  swapUsedMB: 'swapUsedMB',
+  processCount: 'processCount',
+  uptimeSeconds: 'uptimeSeconds',
   liteSpeedConnections: 'liteSpeedConnections',
   diskReadBytesPerSecond: 'diskReadBytesPerSecond',
   diskWriteBytesPerSecond: 'diskWriteBytesPerSecond',
@@ -133,24 +176,10 @@ export const VpsMetricScalarFieldEnum = {
   storageAvailableMB: 'storageAvailableMB',
   networkRxBytesPerSecond: 'networkRxBytesPerSecond',
   networkTxBytesPerSecond: 'networkTxBytesPerSecond',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  ingestedAt: 'ingestedAt'
 } as const
 
 export type VpsMetricScalarFieldEnum = (typeof VpsMetricScalarFieldEnum)[keyof typeof VpsMetricScalarFieldEnum]
-
-
-export const WebsiteScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  vpsNodeId: 'vpsNodeId',
-  domain: 'domain',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type WebsiteScalarFieldEnum = (typeof WebsiteScalarFieldEnum)[keyof typeof WebsiteScalarFieldEnum]
 
 
 export const WebMetricScalarFieldEnum = {
@@ -159,11 +188,92 @@ export const WebMetricScalarFieldEnum = {
   websiteId: 'websiteId',
   concurrentRequests: 'concurrentRequests',
   requestRate: 'requestRate',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  activeConnections: 'activeConnections',
+  processingRequests: 'processingRequests',
+  bytesInPerSecond: 'bytesInPerSecond',
+  bytesOutPerSecond: 'bytesOutPerSecond',
+  ingestedAt: 'ingestedAt'
 } as const
 
 export type WebMetricScalarFieldEnum = (typeof WebMetricScalarFieldEnum)[keyof typeof WebMetricScalarFieldEnum]
+
+
+export const WebsiteProbeMetricScalarFieldEnum = {
+  recordedAt: 'recordedAt',
+  websiteId: 'websiteId',
+  probeSource: 'probeSource',
+  isUp: 'isUp',
+  statusCode: 'statusCode',
+  responseTimeMs: 'responseTimeMs',
+  ttfbMs: 'ttfbMs',
+  errorMessage: 'errorMessage',
+  ingestedAt: 'ingestedAt'
+} as const
+
+export type WebsiteProbeMetricScalarFieldEnum = (typeof WebsiteProbeMetricScalarFieldEnum)[keyof typeof WebsiteProbeMetricScalarFieldEnum]
+
+
+export const WebsiteSslMetricScalarFieldEnum = {
+  recordedAt: 'recordedAt',
+  websiteId: 'websiteId',
+  isValid: 'isValid',
+  validFrom: 'validFrom',
+  validTo: 'validTo',
+  daysRemaining: 'daysRemaining',
+  issuer: 'issuer',
+  subject: 'subject',
+  serialNumber: 'serialNumber',
+  statusMessage: 'statusMessage',
+  ingestedAt: 'ingestedAt'
+} as const
+
+export type WebsiteSslMetricScalarFieldEnum = (typeof WebsiteSslMetricScalarFieldEnum)[keyof typeof WebsiteSslMetricScalarFieldEnum]
+
+
+export const VpsFilesystemMetricScalarFieldEnum = {
+  recordedAt: 'recordedAt',
+  vpsNodeId: 'vpsNodeId',
+  mountPoint: 'mountPoint',
+  filesystem: 'filesystem',
+  totalMB: 'totalMB',
+  usedMB: 'usedMB',
+  availableMB: 'availableMB',
+  usagePercent: 'usagePercent',
+  ingestedAt: 'ingestedAt'
+} as const
+
+export type VpsFilesystemMetricScalarFieldEnum = (typeof VpsFilesystemMetricScalarFieldEnum)[keyof typeof VpsFilesystemMetricScalarFieldEnum]
+
+
+export const VpsNetworkInterfaceMetricScalarFieldEnum = {
+  recordedAt: 'recordedAt',
+  vpsNodeId: 'vpsNodeId',
+  interfaceName: 'interfaceName',
+  rxBytesPerSecond: 'rxBytesPerSecond',
+  txBytesPerSecond: 'txBytesPerSecond',
+  rxPacketsPerSecond: 'rxPacketsPerSecond',
+  txPacketsPerSecond: 'txPacketsPerSecond',
+  rxErrors: 'rxErrors',
+  txErrors: 'txErrors',
+  rxDrops: 'rxDrops',
+  txDrops: 'txDrops',
+  ingestedAt: 'ingestedAt'
+} as const
+
+export type VpsNetworkInterfaceMetricScalarFieldEnum = (typeof VpsNetworkInterfaceMetricScalarFieldEnum)[keyof typeof VpsNetworkInterfaceMetricScalarFieldEnum]
+
+
+export const VpsServiceMetricScalarFieldEnum = {
+  recordedAt: 'recordedAt',
+  vpsNodeId: 'vpsNodeId',
+  serviceName: 'serviceName',
+  isActive: 'isActive',
+  status: 'status',
+  memoryMB: 'memoryMB',
+  ingestedAt: 'ingestedAt'
+} as const
+
+export type VpsServiceMetricScalarFieldEnum = (typeof VpsServiceMetricScalarFieldEnum)[keyof typeof VpsServiceMetricScalarFieldEnum]
 
 
 export const SSLCertificateScalarFieldEnum = {
@@ -209,10 +319,10 @@ export const OtpScalarFieldEnum = {
   phoneNumber: 'phoneNumber',
   expiredTime: 'expiredTime',
   identifier: 'identifier',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
   lastRequestedTime: 'lastRequestedTime',
-  context: 'context'
+  context: 'context',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type OtpScalarFieldEnum = (typeof OtpScalarFieldEnum)[keyof typeof OtpScalarFieldEnum]

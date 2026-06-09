@@ -29,11 +29,19 @@ export type AggregateWebMetric = {
 export type WebMetricAvgAggregateOutputType = {
   concurrentRequests: number | null
   requestRate: number | null
+  activeConnections: number | null
+  processingRequests: number | null
+  bytesInPerSecond: number | null
+  bytesOutPerSecond: number | null
 }
 
 export type WebMetricSumAggregateOutputType = {
   concurrentRequests: number | null
   requestRate: number | null
+  activeConnections: number | null
+  processingRequests: number | null
+  bytesInPerSecond: bigint | null
+  bytesOutPerSecond: bigint | null
 }
 
 export type WebMetricMinAggregateOutputType = {
@@ -42,8 +50,11 @@ export type WebMetricMinAggregateOutputType = {
   websiteId: string | null
   concurrentRequests: number | null
   requestRate: number | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  activeConnections: number | null
+  processingRequests: number | null
+  bytesInPerSecond: bigint | null
+  bytesOutPerSecond: bigint | null
+  ingestedAt: Date | null
 }
 
 export type WebMetricMaxAggregateOutputType = {
@@ -52,8 +63,11 @@ export type WebMetricMaxAggregateOutputType = {
   websiteId: string | null
   concurrentRequests: number | null
   requestRate: number | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  activeConnections: number | null
+  processingRequests: number | null
+  bytesInPerSecond: bigint | null
+  bytesOutPerSecond: bigint | null
+  ingestedAt: Date | null
 }
 
 export type WebMetricCountAggregateOutputType = {
@@ -62,8 +76,11 @@ export type WebMetricCountAggregateOutputType = {
   websiteId: number
   concurrentRequests: number
   requestRate: number
-  createdAt: number
-  updatedAt: number
+  activeConnections: number
+  processingRequests: number
+  bytesInPerSecond: number
+  bytesOutPerSecond: number
+  ingestedAt: number
   _all: number
 }
 
@@ -71,11 +88,19 @@ export type WebMetricCountAggregateOutputType = {
 export type WebMetricAvgAggregateInputType = {
   concurrentRequests?: true
   requestRate?: true
+  activeConnections?: true
+  processingRequests?: true
+  bytesInPerSecond?: true
+  bytesOutPerSecond?: true
 }
 
 export type WebMetricSumAggregateInputType = {
   concurrentRequests?: true
   requestRate?: true
+  activeConnections?: true
+  processingRequests?: true
+  bytesInPerSecond?: true
+  bytesOutPerSecond?: true
 }
 
 export type WebMetricMinAggregateInputType = {
@@ -84,8 +109,11 @@ export type WebMetricMinAggregateInputType = {
   websiteId?: true
   concurrentRequests?: true
   requestRate?: true
-  createdAt?: true
-  updatedAt?: true
+  activeConnections?: true
+  processingRequests?: true
+  bytesInPerSecond?: true
+  bytesOutPerSecond?: true
+  ingestedAt?: true
 }
 
 export type WebMetricMaxAggregateInputType = {
@@ -94,8 +122,11 @@ export type WebMetricMaxAggregateInputType = {
   websiteId?: true
   concurrentRequests?: true
   requestRate?: true
-  createdAt?: true
-  updatedAt?: true
+  activeConnections?: true
+  processingRequests?: true
+  bytesInPerSecond?: true
+  bytesOutPerSecond?: true
+  ingestedAt?: true
 }
 
 export type WebMetricCountAggregateInputType = {
@@ -104,8 +135,11 @@ export type WebMetricCountAggregateInputType = {
   websiteId?: true
   concurrentRequests?: true
   requestRate?: true
-  createdAt?: true
-  updatedAt?: true
+  activeConnections?: true
+  processingRequests?: true
+  bytesInPerSecond?: true
+  bytesOutPerSecond?: true
+  ingestedAt?: true
   _all?: true
 }
 
@@ -201,8 +235,11 @@ export type WebMetricGroupByOutputType = {
   websiteId: string
   concurrentRequests: number
   requestRate: number
-  createdAt: Date
-  updatedAt: Date
+  activeConnections: number | null
+  processingRequests: number | null
+  bytesInPerSecond: bigint | null
+  bytesOutPerSecond: bigint | null
+  ingestedAt: Date
   _count: WebMetricCountAggregateOutputType | null
   _avg: WebMetricAvgAggregateOutputType | null
   _sum: WebMetricSumAggregateOutputType | null
@@ -234,8 +271,11 @@ export type WebMetricWhereInput = {
   websiteId?: Prisma.UuidFilter<"WebMetric"> | string
   concurrentRequests?: Prisma.IntFilter<"WebMetric"> | number
   requestRate?: Prisma.IntFilter<"WebMetric"> | number
-  createdAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
+  activeConnections?: Prisma.IntNullableFilter<"WebMetric"> | number | null
+  processingRequests?: Prisma.IntNullableFilter<"WebMetric"> | number | null
+  bytesInPerSecond?: Prisma.BigIntNullableFilter<"WebMetric"> | bigint | number | null
+  bytesOutPerSecond?: Prisma.BigIntNullableFilter<"WebMetric"> | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
   vpsNode?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
   website?: Prisma.XOR<Prisma.WebsiteScalarRelationFilter, Prisma.WebsiteWhereInput>
 }
@@ -246,8 +286,11 @@ export type WebMetricOrderByWithRelationInput = {
   websiteId?: Prisma.SortOrder
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  activeConnections?: Prisma.SortOrderInput | Prisma.SortOrder
+  processingRequests?: Prisma.SortOrderInput | Prisma.SortOrder
+  bytesInPerSecond?: Prisma.SortOrderInput | Prisma.SortOrder
+  bytesOutPerSecond?: Prisma.SortOrderInput | Prisma.SortOrder
+  ingestedAt?: Prisma.SortOrder
   vpsNode?: Prisma.VpsNodeOrderByWithRelationInput
   website?: Prisma.WebsiteOrderByWithRelationInput
 }
@@ -262,8 +305,11 @@ export type WebMetricWhereUniqueInput = Prisma.AtLeast<{
   websiteId?: Prisma.UuidFilter<"WebMetric"> | string
   concurrentRequests?: Prisma.IntFilter<"WebMetric"> | number
   requestRate?: Prisma.IntFilter<"WebMetric"> | number
-  createdAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
+  activeConnections?: Prisma.IntNullableFilter<"WebMetric"> | number | null
+  processingRequests?: Prisma.IntNullableFilter<"WebMetric"> | number | null
+  bytesInPerSecond?: Prisma.BigIntNullableFilter<"WebMetric"> | bigint | number | null
+  bytesOutPerSecond?: Prisma.BigIntNullableFilter<"WebMetric"> | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
   vpsNode?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
   website?: Prisma.XOR<Prisma.WebsiteScalarRelationFilter, Prisma.WebsiteWhereInput>
 }, "recordedAt_websiteId">
@@ -274,8 +320,11 @@ export type WebMetricOrderByWithAggregationInput = {
   websiteId?: Prisma.SortOrder
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  activeConnections?: Prisma.SortOrderInput | Prisma.SortOrder
+  processingRequests?: Prisma.SortOrderInput | Prisma.SortOrder
+  bytesInPerSecond?: Prisma.SortOrderInput | Prisma.SortOrder
+  bytesOutPerSecond?: Prisma.SortOrderInput | Prisma.SortOrder
+  ingestedAt?: Prisma.SortOrder
   _count?: Prisma.WebMetricCountOrderByAggregateInput
   _avg?: Prisma.WebMetricAvgOrderByAggregateInput
   _max?: Prisma.WebMetricMaxOrderByAggregateInput
@@ -292,16 +341,22 @@ export type WebMetricScalarWhereWithAggregatesInput = {
   websiteId?: Prisma.UuidWithAggregatesFilter<"WebMetric"> | string
   concurrentRequests?: Prisma.IntWithAggregatesFilter<"WebMetric"> | number
   requestRate?: Prisma.IntWithAggregatesFilter<"WebMetric"> | number
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"WebMetric"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"WebMetric"> | Date | string
+  activeConnections?: Prisma.IntNullableWithAggregatesFilter<"WebMetric"> | number | null
+  processingRequests?: Prisma.IntNullableWithAggregatesFilter<"WebMetric"> | number | null
+  bytesInPerSecond?: Prisma.BigIntNullableWithAggregatesFilter<"WebMetric"> | bigint | number | null
+  bytesOutPerSecond?: Prisma.BigIntNullableWithAggregatesFilter<"WebMetric"> | bigint | number | null
+  ingestedAt?: Prisma.DateTimeWithAggregatesFilter<"WebMetric"> | Date | string
 }
 
 export type WebMetricCreateInput = {
   recordedAt?: Date | string
-  concurrentRequests: number
+  concurrentRequests?: number
   requestRate?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  activeConnections?: number | null
+  processingRequests?: number | null
+  bytesInPerSecond?: bigint | number | null
+  bytesOutPerSecond?: bigint | number | null
+  ingestedAt?: Date | string
   vpsNode: Prisma.VpsNodeCreateNestedOneWithoutWebMetricsInput
   website: Prisma.WebsiteCreateNestedOneWithoutMetricsInput
 }
@@ -310,18 +365,24 @@ export type WebMetricUncheckedCreateInput = {
   recordedAt?: Date | string
   vpsNodeId: string
   websiteId: string
-  concurrentRequests: number
+  concurrentRequests?: number
   requestRate?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  activeConnections?: number | null
+  processingRequests?: number | null
+  bytesInPerSecond?: bigint | number | null
+  bytesOutPerSecond?: bigint | number | null
+  ingestedAt?: Date | string
 }
 
 export type WebMetricUpdateInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeConnections?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processingRequests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bytesInPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  bytesOutPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNode?: Prisma.VpsNodeUpdateOneRequiredWithoutWebMetricsNestedInput
   website?: Prisma.WebsiteUpdateOneRequiredWithoutMetricsNestedInput
 }
@@ -332,26 +393,35 @@ export type WebMetricUncheckedUpdateInput = {
   websiteId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeConnections?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processingRequests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bytesInPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  bytesOutPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebMetricCreateManyInput = {
   recordedAt?: Date | string
   vpsNodeId: string
   websiteId: string
-  concurrentRequests: number
+  concurrentRequests?: number
   requestRate?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  activeConnections?: number | null
+  processingRequests?: number | null
+  bytesInPerSecond?: bigint | number | null
+  bytesOutPerSecond?: bigint | number | null
+  ingestedAt?: Date | string
 }
 
 export type WebMetricUpdateManyMutationInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeConnections?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processingRequests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bytesInPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  bytesOutPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebMetricUncheckedUpdateManyInput = {
@@ -360,8 +430,11 @@ export type WebMetricUncheckedUpdateManyInput = {
   websiteId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeConnections?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processingRequests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bytesInPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  bytesOutPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebMetricListRelationFilter = {
@@ -385,13 +458,20 @@ export type WebMetricCountOrderByAggregateInput = {
   websiteId?: Prisma.SortOrder
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  activeConnections?: Prisma.SortOrder
+  processingRequests?: Prisma.SortOrder
+  bytesInPerSecond?: Prisma.SortOrder
+  bytesOutPerSecond?: Prisma.SortOrder
+  ingestedAt?: Prisma.SortOrder
 }
 
 export type WebMetricAvgOrderByAggregateInput = {
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
+  activeConnections?: Prisma.SortOrder
+  processingRequests?: Prisma.SortOrder
+  bytesInPerSecond?: Prisma.SortOrder
+  bytesOutPerSecond?: Prisma.SortOrder
 }
 
 export type WebMetricMaxOrderByAggregateInput = {
@@ -400,8 +480,11 @@ export type WebMetricMaxOrderByAggregateInput = {
   websiteId?: Prisma.SortOrder
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  activeConnections?: Prisma.SortOrder
+  processingRequests?: Prisma.SortOrder
+  bytesInPerSecond?: Prisma.SortOrder
+  bytesOutPerSecond?: Prisma.SortOrder
+  ingestedAt?: Prisma.SortOrder
 }
 
 export type WebMetricMinOrderByAggregateInput = {
@@ -410,13 +493,20 @@ export type WebMetricMinOrderByAggregateInput = {
   websiteId?: Prisma.SortOrder
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  activeConnections?: Prisma.SortOrder
+  processingRequests?: Prisma.SortOrder
+  bytesInPerSecond?: Prisma.SortOrder
+  bytesOutPerSecond?: Prisma.SortOrder
+  ingestedAt?: Prisma.SortOrder
 }
 
 export type WebMetricSumOrderByAggregateInput = {
   concurrentRequests?: Prisma.SortOrder
   requestRate?: Prisma.SortOrder
+  activeConnections?: Prisma.SortOrder
+  processingRequests?: Prisma.SortOrder
+  bytesInPerSecond?: Prisma.SortOrder
+  bytesOutPerSecond?: Prisma.SortOrder
 }
 
 export type WebMetricCreateNestedManyWithoutVpsNodeInput = {
@@ -505,20 +595,26 @@ export type WebMetricUncheckedUpdateManyWithoutWebsiteNestedInput = {
 
 export type WebMetricCreateWithoutVpsNodeInput = {
   recordedAt?: Date | string
-  concurrentRequests: number
+  concurrentRequests?: number
   requestRate?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  activeConnections?: number | null
+  processingRequests?: number | null
+  bytesInPerSecond?: bigint | number | null
+  bytesOutPerSecond?: bigint | number | null
+  ingestedAt?: Date | string
   website: Prisma.WebsiteCreateNestedOneWithoutMetricsInput
 }
 
 export type WebMetricUncheckedCreateWithoutVpsNodeInput = {
   recordedAt?: Date | string
   websiteId: string
-  concurrentRequests: number
+  concurrentRequests?: number
   requestRate?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  activeConnections?: number | null
+  processingRequests?: number | null
+  bytesInPerSecond?: bigint | number | null
+  bytesOutPerSecond?: bigint | number | null
+  ingestedAt?: Date | string
 }
 
 export type WebMetricCreateOrConnectWithoutVpsNodeInput = {
@@ -556,26 +652,35 @@ export type WebMetricScalarWhereInput = {
   websiteId?: Prisma.UuidFilter<"WebMetric"> | string
   concurrentRequests?: Prisma.IntFilter<"WebMetric"> | number
   requestRate?: Prisma.IntFilter<"WebMetric"> | number
-  createdAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
+  activeConnections?: Prisma.IntNullableFilter<"WebMetric"> | number | null
+  processingRequests?: Prisma.IntNullableFilter<"WebMetric"> | number | null
+  bytesInPerSecond?: Prisma.BigIntNullableFilter<"WebMetric"> | bigint | number | null
+  bytesOutPerSecond?: Prisma.BigIntNullableFilter<"WebMetric"> | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFilter<"WebMetric"> | Date | string
 }
 
 export type WebMetricCreateWithoutWebsiteInput = {
   recordedAt?: Date | string
-  concurrentRequests: number
+  concurrentRequests?: number
   requestRate?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  activeConnections?: number | null
+  processingRequests?: number | null
+  bytesInPerSecond?: bigint | number | null
+  bytesOutPerSecond?: bigint | number | null
+  ingestedAt?: Date | string
   vpsNode: Prisma.VpsNodeCreateNestedOneWithoutWebMetricsInput
 }
 
 export type WebMetricUncheckedCreateWithoutWebsiteInput = {
   recordedAt?: Date | string
   vpsNodeId: string
-  concurrentRequests: number
+  concurrentRequests?: number
   requestRate?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  activeConnections?: number | null
+  processingRequests?: number | null
+  bytesInPerSecond?: bigint | number | null
+  bytesOutPerSecond?: bigint | number | null
+  ingestedAt?: Date | string
 }
 
 export type WebMetricCreateOrConnectWithoutWebsiteInput = {
@@ -607,18 +712,24 @@ export type WebMetricUpdateManyWithWhereWithoutWebsiteInput = {
 export type WebMetricCreateManyVpsNodeInput = {
   recordedAt?: Date | string
   websiteId: string
-  concurrentRequests: number
+  concurrentRequests?: number
   requestRate?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  activeConnections?: number | null
+  processingRequests?: number | null
+  bytesInPerSecond?: bigint | number | null
+  bytesOutPerSecond?: bigint | number | null
+  ingestedAt?: Date | string
 }
 
 export type WebMetricUpdateWithoutVpsNodeInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeConnections?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processingRequests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bytesInPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  bytesOutPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   website?: Prisma.WebsiteUpdateOneRequiredWithoutMetricsNestedInput
 }
 
@@ -627,8 +738,11 @@ export type WebMetricUncheckedUpdateWithoutVpsNodeInput = {
   websiteId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeConnections?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processingRequests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bytesInPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  bytesOutPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebMetricUncheckedUpdateManyWithoutVpsNodeInput = {
@@ -636,25 +750,34 @@ export type WebMetricUncheckedUpdateManyWithoutVpsNodeInput = {
   websiteId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeConnections?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processingRequests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bytesInPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  bytesOutPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebMetricCreateManyWebsiteInput = {
   recordedAt?: Date | string
   vpsNodeId: string
-  concurrentRequests: number
+  concurrentRequests?: number
   requestRate?: number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  activeConnections?: number | null
+  processingRequests?: number | null
+  bytesInPerSecond?: bigint | number | null
+  bytesOutPerSecond?: bigint | number | null
+  ingestedAt?: Date | string
 }
 
 export type WebMetricUpdateWithoutWebsiteInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeConnections?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processingRequests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bytesInPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  bytesOutPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNode?: Prisma.VpsNodeUpdateOneRequiredWithoutWebMetricsNestedInput
 }
 
@@ -663,8 +786,11 @@ export type WebMetricUncheckedUpdateWithoutWebsiteInput = {
   vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeConnections?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processingRequests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bytesInPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  bytesOutPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type WebMetricUncheckedUpdateManyWithoutWebsiteInput = {
@@ -672,8 +798,11 @@ export type WebMetricUncheckedUpdateManyWithoutWebsiteInput = {
   vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   concurrentRequests?: Prisma.IntFieldUpdateOperationsInput | number
   requestRate?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activeConnections?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processingRequests?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  bytesInPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  bytesOutPerSecond?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -684,8 +813,11 @@ export type WebMetricSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   websiteId?: boolean
   concurrentRequests?: boolean
   requestRate?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  activeConnections?: boolean
+  processingRequests?: boolean
+  bytesInPerSecond?: boolean
+  bytesOutPerSecond?: boolean
+  ingestedAt?: boolean
   vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["webMetric"]>
@@ -696,8 +828,11 @@ export type WebMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   websiteId?: boolean
   concurrentRequests?: boolean
   requestRate?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  activeConnections?: boolean
+  processingRequests?: boolean
+  bytesInPerSecond?: boolean
+  bytesOutPerSecond?: boolean
+  ingestedAt?: boolean
   vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["webMetric"]>
@@ -708,8 +843,11 @@ export type WebMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   websiteId?: boolean
   concurrentRequests?: boolean
   requestRate?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  activeConnections?: boolean
+  processingRequests?: boolean
+  bytesInPerSecond?: boolean
+  bytesOutPerSecond?: boolean
+  ingestedAt?: boolean
   vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["webMetric"]>
@@ -720,11 +858,14 @@ export type WebMetricSelectScalar = {
   websiteId?: boolean
   concurrentRequests?: boolean
   requestRate?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  activeConnections?: boolean
+  processingRequests?: boolean
+  bytesInPerSecond?: boolean
+  bytesOutPerSecond?: boolean
+  ingestedAt?: boolean
 }
 
-export type WebMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"recordedAt" | "vpsNodeId" | "websiteId" | "concurrentRequests" | "requestRate" | "createdAt" | "updatedAt", ExtArgs["result"]["webMetric"]>
+export type WebMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"recordedAt" | "vpsNodeId" | "websiteId" | "concurrentRequests" | "requestRate" | "activeConnections" | "processingRequests" | "bytesInPerSecond" | "bytesOutPerSecond" | "ingestedAt", ExtArgs["result"]["webMetric"]>
 export type WebMetricInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
   website?: boolean | Prisma.WebsiteDefaultArgs<ExtArgs>
@@ -750,8 +891,11 @@ export type $WebMetricPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     websiteId: string
     concurrentRequests: number
     requestRate: number
-    createdAt: Date
-    updatedAt: Date
+    activeConnections: number | null
+    processingRequests: number | null
+    bytesInPerSecond: bigint | null
+    bytesOutPerSecond: bigint | null
+    ingestedAt: Date
   }, ExtArgs["result"]["webMetric"]>
   composites: {}
 }
@@ -1182,8 +1326,11 @@ export interface WebMetricFieldRefs {
   readonly websiteId: Prisma.FieldRef<"WebMetric", 'String'>
   readonly concurrentRequests: Prisma.FieldRef<"WebMetric", 'Int'>
   readonly requestRate: Prisma.FieldRef<"WebMetric", 'Int'>
-  readonly createdAt: Prisma.FieldRef<"WebMetric", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"WebMetric", 'DateTime'>
+  readonly activeConnections: Prisma.FieldRef<"WebMetric", 'Int'>
+  readonly processingRequests: Prisma.FieldRef<"WebMetric", 'Int'>
+  readonly bytesInPerSecond: Prisma.FieldRef<"WebMetric", 'BigInt'>
+  readonly bytesOutPerSecond: Prisma.FieldRef<"WebMetric", 'BigInt'>
+  readonly ingestedAt: Prisma.FieldRef<"WebMetric", 'DateTime'>
 }
     
 

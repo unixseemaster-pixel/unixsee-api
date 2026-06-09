@@ -19,6 +19,25 @@ export const Role = {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
+export const VpsNodeStatus = {
+  UNKNOWN: 'UNKNOWN',
+  ONLINE: 'ONLINE',
+  DEGRADED: 'DEGRADED',
+  OFFLINE: 'OFFLINE'
+} as const
+
+export type VpsNodeStatus = (typeof VpsNodeStatus)[keyof typeof VpsNodeStatus]
+
+
+export const WebsiteProbeSource = {
+  AGENT: 'AGENT',
+  BACKEND: 'BACKEND',
+  EXTERNAL: 'EXTERNAL'
+} as const
+
+export type WebsiteProbeSource = (typeof WebsiteProbeSource)[keyof typeof WebsiteProbeSource]
+
+
 export const AlertSeverity = {
   MONITORING: 'MONITORING',
   WARNING: 'WARNING',

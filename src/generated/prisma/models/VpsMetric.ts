@@ -28,8 +28,17 @@ export type AggregateVpsMetric = {
 
 export type VpsMetricAvgAggregateOutputType = {
   cpuUsagePercent: number | null
+  cpuCoreCount: number | null
+  load1: number | null
+  load5: number | null
+  load15: number | null
   memoryTotalMB: number | null
   memoryUsedMB: number | null
+  memoryAvailableMB: number | null
+  swapTotalMB: number | null
+  swapUsedMB: number | null
+  processCount: number | null
+  uptimeSeconds: number | null
   liteSpeedConnections: number | null
   diskReadBytesPerSecond: number | null
   diskWriteBytesPerSecond: number | null
@@ -42,8 +51,17 @@ export type VpsMetricAvgAggregateOutputType = {
 
 export type VpsMetricSumAggregateOutputType = {
   cpuUsagePercent: number | null
+  cpuCoreCount: number | null
+  load1: number | null
+  load5: number | null
+  load15: number | null
   memoryTotalMB: number | null
   memoryUsedMB: number | null
+  memoryAvailableMB: number | null
+  swapTotalMB: number | null
+  swapUsedMB: number | null
+  processCount: number | null
+  uptimeSeconds: bigint | null
   liteSpeedConnections: number | null
   diskReadBytesPerSecond: bigint | null
   diskWriteBytesPerSecond: bigint | null
@@ -58,8 +76,17 @@ export type VpsMetricMinAggregateOutputType = {
   recordedAt: Date | null
   vpsNodeId: string | null
   cpuUsagePercent: number | null
+  cpuCoreCount: number | null
+  load1: number | null
+  load5: number | null
+  load15: number | null
   memoryTotalMB: number | null
   memoryUsedMB: number | null
+  memoryAvailableMB: number | null
+  swapTotalMB: number | null
+  swapUsedMB: number | null
+  processCount: number | null
+  uptimeSeconds: bigint | null
   liteSpeedConnections: number | null
   diskReadBytesPerSecond: bigint | null
   diskWriteBytesPerSecond: bigint | null
@@ -68,16 +95,24 @@ export type VpsMetricMinAggregateOutputType = {
   storageAvailableMB: number | null
   networkRxBytesPerSecond: bigint | null
   networkTxBytesPerSecond: bigint | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  ingestedAt: Date | null
 }
 
 export type VpsMetricMaxAggregateOutputType = {
   recordedAt: Date | null
   vpsNodeId: string | null
   cpuUsagePercent: number | null
+  cpuCoreCount: number | null
+  load1: number | null
+  load5: number | null
+  load15: number | null
   memoryTotalMB: number | null
   memoryUsedMB: number | null
+  memoryAvailableMB: number | null
+  swapTotalMB: number | null
+  swapUsedMB: number | null
+  processCount: number | null
+  uptimeSeconds: bigint | null
   liteSpeedConnections: number | null
   diskReadBytesPerSecond: bigint | null
   diskWriteBytesPerSecond: bigint | null
@@ -86,16 +121,24 @@ export type VpsMetricMaxAggregateOutputType = {
   storageAvailableMB: number | null
   networkRxBytesPerSecond: bigint | null
   networkTxBytesPerSecond: bigint | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  ingestedAt: Date | null
 }
 
 export type VpsMetricCountAggregateOutputType = {
   recordedAt: number
   vpsNodeId: number
   cpuUsagePercent: number
+  cpuCoreCount: number
+  load1: number
+  load5: number
+  load15: number
   memoryTotalMB: number
   memoryUsedMB: number
+  memoryAvailableMB: number
+  swapTotalMB: number
+  swapUsedMB: number
+  processCount: number
+  uptimeSeconds: number
   liteSpeedConnections: number
   diskReadBytesPerSecond: number
   diskWriteBytesPerSecond: number
@@ -104,16 +147,24 @@ export type VpsMetricCountAggregateOutputType = {
   storageAvailableMB: number
   networkRxBytesPerSecond: number
   networkTxBytesPerSecond: number
-  createdAt: number
-  updatedAt: number
+  ingestedAt: number
   _all: number
 }
 
 
 export type VpsMetricAvgAggregateInputType = {
   cpuUsagePercent?: true
+  cpuCoreCount?: true
+  load1?: true
+  load5?: true
+  load15?: true
   memoryTotalMB?: true
   memoryUsedMB?: true
+  memoryAvailableMB?: true
+  swapTotalMB?: true
+  swapUsedMB?: true
+  processCount?: true
+  uptimeSeconds?: true
   liteSpeedConnections?: true
   diskReadBytesPerSecond?: true
   diskWriteBytesPerSecond?: true
@@ -126,8 +177,17 @@ export type VpsMetricAvgAggregateInputType = {
 
 export type VpsMetricSumAggregateInputType = {
   cpuUsagePercent?: true
+  cpuCoreCount?: true
+  load1?: true
+  load5?: true
+  load15?: true
   memoryTotalMB?: true
   memoryUsedMB?: true
+  memoryAvailableMB?: true
+  swapTotalMB?: true
+  swapUsedMB?: true
+  processCount?: true
+  uptimeSeconds?: true
   liteSpeedConnections?: true
   diskReadBytesPerSecond?: true
   diskWriteBytesPerSecond?: true
@@ -142,8 +202,17 @@ export type VpsMetricMinAggregateInputType = {
   recordedAt?: true
   vpsNodeId?: true
   cpuUsagePercent?: true
+  cpuCoreCount?: true
+  load1?: true
+  load5?: true
+  load15?: true
   memoryTotalMB?: true
   memoryUsedMB?: true
+  memoryAvailableMB?: true
+  swapTotalMB?: true
+  swapUsedMB?: true
+  processCount?: true
+  uptimeSeconds?: true
   liteSpeedConnections?: true
   diskReadBytesPerSecond?: true
   diskWriteBytesPerSecond?: true
@@ -152,16 +221,24 @@ export type VpsMetricMinAggregateInputType = {
   storageAvailableMB?: true
   networkRxBytesPerSecond?: true
   networkTxBytesPerSecond?: true
-  createdAt?: true
-  updatedAt?: true
+  ingestedAt?: true
 }
 
 export type VpsMetricMaxAggregateInputType = {
   recordedAt?: true
   vpsNodeId?: true
   cpuUsagePercent?: true
+  cpuCoreCount?: true
+  load1?: true
+  load5?: true
+  load15?: true
   memoryTotalMB?: true
   memoryUsedMB?: true
+  memoryAvailableMB?: true
+  swapTotalMB?: true
+  swapUsedMB?: true
+  processCount?: true
+  uptimeSeconds?: true
   liteSpeedConnections?: true
   diskReadBytesPerSecond?: true
   diskWriteBytesPerSecond?: true
@@ -170,16 +247,24 @@ export type VpsMetricMaxAggregateInputType = {
   storageAvailableMB?: true
   networkRxBytesPerSecond?: true
   networkTxBytesPerSecond?: true
-  createdAt?: true
-  updatedAt?: true
+  ingestedAt?: true
 }
 
 export type VpsMetricCountAggregateInputType = {
   recordedAt?: true
   vpsNodeId?: true
   cpuUsagePercent?: true
+  cpuCoreCount?: true
+  load1?: true
+  load5?: true
+  load15?: true
   memoryTotalMB?: true
   memoryUsedMB?: true
+  memoryAvailableMB?: true
+  swapTotalMB?: true
+  swapUsedMB?: true
+  processCount?: true
+  uptimeSeconds?: true
   liteSpeedConnections?: true
   diskReadBytesPerSecond?: true
   diskWriteBytesPerSecond?: true
@@ -188,8 +273,7 @@ export type VpsMetricCountAggregateInputType = {
   storageAvailableMB?: true
   networkRxBytesPerSecond?: true
   networkTxBytesPerSecond?: true
-  createdAt?: true
-  updatedAt?: true
+  ingestedAt?: true
   _all?: true
 }
 
@@ -283,8 +367,17 @@ export type VpsMetricGroupByOutputType = {
   recordedAt: Date
   vpsNodeId: string
   cpuUsagePercent: number
+  cpuCoreCount: number | null
+  load1: number | null
+  load5: number | null
+  load15: number | null
   memoryTotalMB: number
   memoryUsedMB: number
+  memoryAvailableMB: number | null
+  swapTotalMB: number | null
+  swapUsedMB: number | null
+  processCount: number | null
+  uptimeSeconds: bigint | null
   liteSpeedConnections: number
   diskReadBytesPerSecond: bigint
   diskWriteBytesPerSecond: bigint
@@ -293,8 +386,7 @@ export type VpsMetricGroupByOutputType = {
   storageAvailableMB: number
   networkRxBytesPerSecond: bigint
   networkTxBytesPerSecond: bigint
-  createdAt: Date
-  updatedAt: Date
+  ingestedAt: Date
   _count: VpsMetricCountAggregateOutputType | null
   _avg: VpsMetricAvgAggregateOutputType | null
   _sum: VpsMetricSumAggregateOutputType | null
@@ -324,8 +416,17 @@ export type VpsMetricWhereInput = {
   recordedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   vpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
   cpuUsagePercent?: Prisma.FloatFilter<"VpsMetric"> | number
+  cpuCoreCount?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  load1?: Prisma.FloatNullableFilter<"VpsMetric"> | number | null
+  load5?: Prisma.FloatNullableFilter<"VpsMetric"> | number | null
+  load15?: Prisma.FloatNullableFilter<"VpsMetric"> | number | null
   memoryTotalMB?: Prisma.IntFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntFilter<"VpsMetric"> | number
+  memoryAvailableMB?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  swapTotalMB?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  swapUsedMB?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  processCount?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  uptimeSeconds?: Prisma.BigIntNullableFilter<"VpsMetric"> | bigint | number | null
   liteSpeedConnections?: Prisma.IntFilter<"VpsMetric"> | number
   diskReadBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
@@ -334,8 +435,7 @@ export type VpsMetricWhereInput = {
   storageAvailableMB?: Prisma.IntFilter<"VpsMetric"> | number
   networkRxBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
-  createdAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
+  ingestedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   vpsNode?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
 }
 
@@ -343,8 +443,17 @@ export type VpsMetricOrderByWithRelationInput = {
   recordedAt?: Prisma.SortOrder
   vpsNodeId?: Prisma.SortOrder
   cpuUsagePercent?: Prisma.SortOrder
+  cpuCoreCount?: Prisma.SortOrderInput | Prisma.SortOrder
+  load1?: Prisma.SortOrderInput | Prisma.SortOrder
+  load5?: Prisma.SortOrderInput | Prisma.SortOrder
+  load15?: Prisma.SortOrderInput | Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
+  memoryAvailableMB?: Prisma.SortOrderInput | Prisma.SortOrder
+  swapTotalMB?: Prisma.SortOrderInput | Prisma.SortOrder
+  swapUsedMB?: Prisma.SortOrderInput | Prisma.SortOrder
+  processCount?: Prisma.SortOrderInput | Prisma.SortOrder
+  uptimeSeconds?: Prisma.SortOrderInput | Prisma.SortOrder
   liteSpeedConnections?: Prisma.SortOrder
   diskReadBytesPerSecond?: Prisma.SortOrder
   diskWriteBytesPerSecond?: Prisma.SortOrder
@@ -353,8 +462,7 @@ export type VpsMetricOrderByWithRelationInput = {
   storageAvailableMB?: Prisma.SortOrder
   networkRxBytesPerSecond?: Prisma.SortOrder
   networkTxBytesPerSecond?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  ingestedAt?: Prisma.SortOrder
   vpsNode?: Prisma.VpsNodeOrderByWithRelationInput
 }
 
@@ -366,8 +474,17 @@ export type VpsMetricWhereUniqueInput = Prisma.AtLeast<{
   recordedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   vpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
   cpuUsagePercent?: Prisma.FloatFilter<"VpsMetric"> | number
+  cpuCoreCount?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  load1?: Prisma.FloatNullableFilter<"VpsMetric"> | number | null
+  load5?: Prisma.FloatNullableFilter<"VpsMetric"> | number | null
+  load15?: Prisma.FloatNullableFilter<"VpsMetric"> | number | null
   memoryTotalMB?: Prisma.IntFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntFilter<"VpsMetric"> | number
+  memoryAvailableMB?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  swapTotalMB?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  swapUsedMB?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  processCount?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  uptimeSeconds?: Prisma.BigIntNullableFilter<"VpsMetric"> | bigint | number | null
   liteSpeedConnections?: Prisma.IntFilter<"VpsMetric"> | number
   diskReadBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
@@ -376,8 +493,7 @@ export type VpsMetricWhereUniqueInput = Prisma.AtLeast<{
   storageAvailableMB?: Prisma.IntFilter<"VpsMetric"> | number
   networkRxBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
-  createdAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
+  ingestedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   vpsNode?: Prisma.XOR<Prisma.VpsNodeScalarRelationFilter, Prisma.VpsNodeWhereInput>
 }, "recordedAt_vpsNodeId">
 
@@ -385,8 +501,17 @@ export type VpsMetricOrderByWithAggregationInput = {
   recordedAt?: Prisma.SortOrder
   vpsNodeId?: Prisma.SortOrder
   cpuUsagePercent?: Prisma.SortOrder
+  cpuCoreCount?: Prisma.SortOrderInput | Prisma.SortOrder
+  load1?: Prisma.SortOrderInput | Prisma.SortOrder
+  load5?: Prisma.SortOrderInput | Prisma.SortOrder
+  load15?: Prisma.SortOrderInput | Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
+  memoryAvailableMB?: Prisma.SortOrderInput | Prisma.SortOrder
+  swapTotalMB?: Prisma.SortOrderInput | Prisma.SortOrder
+  swapUsedMB?: Prisma.SortOrderInput | Prisma.SortOrder
+  processCount?: Prisma.SortOrderInput | Prisma.SortOrder
+  uptimeSeconds?: Prisma.SortOrderInput | Prisma.SortOrder
   liteSpeedConnections?: Prisma.SortOrder
   diskReadBytesPerSecond?: Prisma.SortOrder
   diskWriteBytesPerSecond?: Prisma.SortOrder
@@ -395,8 +520,7 @@ export type VpsMetricOrderByWithAggregationInput = {
   storageAvailableMB?: Prisma.SortOrder
   networkRxBytesPerSecond?: Prisma.SortOrder
   networkTxBytesPerSecond?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  ingestedAt?: Prisma.SortOrder
   _count?: Prisma.VpsMetricCountOrderByAggregateInput
   _avg?: Prisma.VpsMetricAvgOrderByAggregateInput
   _max?: Prisma.VpsMetricMaxOrderByAggregateInput
@@ -411,8 +535,17 @@ export type VpsMetricScalarWhereWithAggregatesInput = {
   recordedAt?: Prisma.DateTimeWithAggregatesFilter<"VpsMetric"> | Date | string
   vpsNodeId?: Prisma.UuidWithAggregatesFilter<"VpsMetric"> | string
   cpuUsagePercent?: Prisma.FloatWithAggregatesFilter<"VpsMetric"> | number
+  cpuCoreCount?: Prisma.IntNullableWithAggregatesFilter<"VpsMetric"> | number | null
+  load1?: Prisma.FloatNullableWithAggregatesFilter<"VpsMetric"> | number | null
+  load5?: Prisma.FloatNullableWithAggregatesFilter<"VpsMetric"> | number | null
+  load15?: Prisma.FloatNullableWithAggregatesFilter<"VpsMetric"> | number | null
   memoryTotalMB?: Prisma.IntWithAggregatesFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntWithAggregatesFilter<"VpsMetric"> | number
+  memoryAvailableMB?: Prisma.IntNullableWithAggregatesFilter<"VpsMetric"> | number | null
+  swapTotalMB?: Prisma.IntNullableWithAggregatesFilter<"VpsMetric"> | number | null
+  swapUsedMB?: Prisma.IntNullableWithAggregatesFilter<"VpsMetric"> | number | null
+  processCount?: Prisma.IntNullableWithAggregatesFilter<"VpsMetric"> | number | null
+  uptimeSeconds?: Prisma.BigIntNullableWithAggregatesFilter<"VpsMetric"> | bigint | number | null
   liteSpeedConnections?: Prisma.IntWithAggregatesFilter<"VpsMetric"> | number
   diskReadBytesPerSecond?: Prisma.BigIntWithAggregatesFilter<"VpsMetric"> | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntWithAggregatesFilter<"VpsMetric"> | bigint | number
@@ -421,16 +554,24 @@ export type VpsMetricScalarWhereWithAggregatesInput = {
   storageAvailableMB?: Prisma.IntWithAggregatesFilter<"VpsMetric"> | number
   networkRxBytesPerSecond?: Prisma.BigIntWithAggregatesFilter<"VpsMetric"> | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntWithAggregatesFilter<"VpsMetric"> | bigint | number
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"VpsMetric"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"VpsMetric"> | Date | string
+  ingestedAt?: Prisma.DateTimeWithAggregatesFilter<"VpsMetric"> | Date | string
 }
 
 export type VpsMetricCreateInput = {
   recordedAt?: Date | string
   cpuUsagePercent: number
+  cpuCoreCount?: number | null
+  load1?: number | null
+  load5?: number | null
+  load15?: number | null
   memoryTotalMB: number
   memoryUsedMB: number
-  liteSpeedConnections: number
+  memoryAvailableMB?: number | null
+  swapTotalMB?: number | null
+  swapUsedMB?: number | null
+  processCount?: number | null
+  uptimeSeconds?: bigint | number | null
+  liteSpeedConnections?: number
   diskReadBytesPerSecond: bigint | number
   diskWriteBytesPerSecond: bigint | number
   diskIops: number
@@ -438,8 +579,7 @@ export type VpsMetricCreateInput = {
   storageAvailableMB: number
   networkRxBytesPerSecond: bigint | number
   networkTxBytesPerSecond: bigint | number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  ingestedAt?: Date | string
   vpsNode: Prisma.VpsNodeCreateNestedOneWithoutVpsMetricsInput
 }
 
@@ -447,9 +587,18 @@ export type VpsMetricUncheckedCreateInput = {
   recordedAt?: Date | string
   vpsNodeId: string
   cpuUsagePercent: number
+  cpuCoreCount?: number | null
+  load1?: number | null
+  load5?: number | null
+  load15?: number | null
   memoryTotalMB: number
   memoryUsedMB: number
-  liteSpeedConnections: number
+  memoryAvailableMB?: number | null
+  swapTotalMB?: number | null
+  swapUsedMB?: number | null
+  processCount?: number | null
+  uptimeSeconds?: bigint | number | null
+  liteSpeedConnections?: number
   diskReadBytesPerSecond: bigint | number
   diskWriteBytesPerSecond: bigint | number
   diskIops: number
@@ -457,15 +606,23 @@ export type VpsMetricUncheckedCreateInput = {
   storageAvailableMB: number
   networkRxBytesPerSecond: bigint | number
   networkTxBytesPerSecond: bigint | number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  ingestedAt?: Date | string
 }
 
 export type VpsMetricUpdateInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cpuCoreCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  load1?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load5?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load15?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
+  memoryAvailableMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapTotalMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapUsedMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  uptimeSeconds?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
   diskReadBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
@@ -474,8 +631,7 @@ export type VpsMetricUpdateInput = {
   storageAvailableMB?: Prisma.IntFieldUpdateOperationsInput | number
   networkRxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNode?: Prisma.VpsNodeUpdateOneRequiredWithoutVpsMetricsNestedInput
 }
 
@@ -483,8 +639,17 @@ export type VpsMetricUncheckedUpdateInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cpuCoreCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  load1?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load5?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load15?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
+  memoryAvailableMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapTotalMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapUsedMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  uptimeSeconds?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
   diskReadBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
@@ -493,17 +658,25 @@ export type VpsMetricUncheckedUpdateInput = {
   storageAvailableMB?: Prisma.IntFieldUpdateOperationsInput | number
   networkRxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type VpsMetricCreateManyInput = {
   recordedAt?: Date | string
   vpsNodeId: string
   cpuUsagePercent: number
+  cpuCoreCount?: number | null
+  load1?: number | null
+  load5?: number | null
+  load15?: number | null
   memoryTotalMB: number
   memoryUsedMB: number
-  liteSpeedConnections: number
+  memoryAvailableMB?: number | null
+  swapTotalMB?: number | null
+  swapUsedMB?: number | null
+  processCount?: number | null
+  uptimeSeconds?: bigint | number | null
+  liteSpeedConnections?: number
   diskReadBytesPerSecond: bigint | number
   diskWriteBytesPerSecond: bigint | number
   diskIops: number
@@ -511,15 +684,23 @@ export type VpsMetricCreateManyInput = {
   storageAvailableMB: number
   networkRxBytesPerSecond: bigint | number
   networkTxBytesPerSecond: bigint | number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  ingestedAt?: Date | string
 }
 
 export type VpsMetricUpdateManyMutationInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cpuCoreCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  load1?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load5?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load15?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
+  memoryAvailableMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapTotalMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapUsedMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  uptimeSeconds?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
   diskReadBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
@@ -528,16 +709,24 @@ export type VpsMetricUpdateManyMutationInput = {
   storageAvailableMB?: Prisma.IntFieldUpdateOperationsInput | number
   networkRxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type VpsMetricUncheckedUpdateManyInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNodeId?: Prisma.StringFieldUpdateOperationsInput | string
   cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cpuCoreCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  load1?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load5?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load15?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
+  memoryAvailableMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapTotalMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapUsedMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  uptimeSeconds?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
   diskReadBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
@@ -546,8 +735,7 @@ export type VpsMetricUncheckedUpdateManyInput = {
   storageAvailableMB?: Prisma.IntFieldUpdateOperationsInput | number
   networkRxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type VpsMetricListRelationFilter = {
@@ -569,8 +757,17 @@ export type VpsMetricCountOrderByAggregateInput = {
   recordedAt?: Prisma.SortOrder
   vpsNodeId?: Prisma.SortOrder
   cpuUsagePercent?: Prisma.SortOrder
+  cpuCoreCount?: Prisma.SortOrder
+  load1?: Prisma.SortOrder
+  load5?: Prisma.SortOrder
+  load15?: Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
+  memoryAvailableMB?: Prisma.SortOrder
+  swapTotalMB?: Prisma.SortOrder
+  swapUsedMB?: Prisma.SortOrder
+  processCount?: Prisma.SortOrder
+  uptimeSeconds?: Prisma.SortOrder
   liteSpeedConnections?: Prisma.SortOrder
   diskReadBytesPerSecond?: Prisma.SortOrder
   diskWriteBytesPerSecond?: Prisma.SortOrder
@@ -579,14 +776,22 @@ export type VpsMetricCountOrderByAggregateInput = {
   storageAvailableMB?: Prisma.SortOrder
   networkRxBytesPerSecond?: Prisma.SortOrder
   networkTxBytesPerSecond?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  ingestedAt?: Prisma.SortOrder
 }
 
 export type VpsMetricAvgOrderByAggregateInput = {
   cpuUsagePercent?: Prisma.SortOrder
+  cpuCoreCount?: Prisma.SortOrder
+  load1?: Prisma.SortOrder
+  load5?: Prisma.SortOrder
+  load15?: Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
+  memoryAvailableMB?: Prisma.SortOrder
+  swapTotalMB?: Prisma.SortOrder
+  swapUsedMB?: Prisma.SortOrder
+  processCount?: Prisma.SortOrder
+  uptimeSeconds?: Prisma.SortOrder
   liteSpeedConnections?: Prisma.SortOrder
   diskReadBytesPerSecond?: Prisma.SortOrder
   diskWriteBytesPerSecond?: Prisma.SortOrder
@@ -601,8 +806,17 @@ export type VpsMetricMaxOrderByAggregateInput = {
   recordedAt?: Prisma.SortOrder
   vpsNodeId?: Prisma.SortOrder
   cpuUsagePercent?: Prisma.SortOrder
+  cpuCoreCount?: Prisma.SortOrder
+  load1?: Prisma.SortOrder
+  load5?: Prisma.SortOrder
+  load15?: Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
+  memoryAvailableMB?: Prisma.SortOrder
+  swapTotalMB?: Prisma.SortOrder
+  swapUsedMB?: Prisma.SortOrder
+  processCount?: Prisma.SortOrder
+  uptimeSeconds?: Prisma.SortOrder
   liteSpeedConnections?: Prisma.SortOrder
   diskReadBytesPerSecond?: Prisma.SortOrder
   diskWriteBytesPerSecond?: Prisma.SortOrder
@@ -611,16 +825,24 @@ export type VpsMetricMaxOrderByAggregateInput = {
   storageAvailableMB?: Prisma.SortOrder
   networkRxBytesPerSecond?: Prisma.SortOrder
   networkTxBytesPerSecond?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  ingestedAt?: Prisma.SortOrder
 }
 
 export type VpsMetricMinOrderByAggregateInput = {
   recordedAt?: Prisma.SortOrder
   vpsNodeId?: Prisma.SortOrder
   cpuUsagePercent?: Prisma.SortOrder
+  cpuCoreCount?: Prisma.SortOrder
+  load1?: Prisma.SortOrder
+  load5?: Prisma.SortOrder
+  load15?: Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
+  memoryAvailableMB?: Prisma.SortOrder
+  swapTotalMB?: Prisma.SortOrder
+  swapUsedMB?: Prisma.SortOrder
+  processCount?: Prisma.SortOrder
+  uptimeSeconds?: Prisma.SortOrder
   liteSpeedConnections?: Prisma.SortOrder
   diskReadBytesPerSecond?: Prisma.SortOrder
   diskWriteBytesPerSecond?: Prisma.SortOrder
@@ -629,14 +851,22 @@ export type VpsMetricMinOrderByAggregateInput = {
   storageAvailableMB?: Prisma.SortOrder
   networkRxBytesPerSecond?: Prisma.SortOrder
   networkTxBytesPerSecond?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  ingestedAt?: Prisma.SortOrder
 }
 
 export type VpsMetricSumOrderByAggregateInput = {
   cpuUsagePercent?: Prisma.SortOrder
+  cpuCoreCount?: Prisma.SortOrder
+  load1?: Prisma.SortOrder
+  load5?: Prisma.SortOrder
+  load15?: Prisma.SortOrder
   memoryTotalMB?: Prisma.SortOrder
   memoryUsedMB?: Prisma.SortOrder
+  memoryAvailableMB?: Prisma.SortOrder
+  swapTotalMB?: Prisma.SortOrder
+  swapUsedMB?: Prisma.SortOrder
+  processCount?: Prisma.SortOrder
+  uptimeSeconds?: Prisma.SortOrder
   liteSpeedConnections?: Prisma.SortOrder
   diskReadBytesPerSecond?: Prisma.SortOrder
   diskWriteBytesPerSecond?: Prisma.SortOrder
@@ -697,12 +927,28 @@ export type FloatFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type NullableBigIntFieldUpdateOperationsInput = {
+  set?: bigint | number | null
+  increment?: bigint | number
+  decrement?: bigint | number
+  multiply?: bigint | number
+  divide?: bigint | number
 }
 
 export type BigIntFieldUpdateOperationsInput = {
@@ -716,9 +962,18 @@ export type BigIntFieldUpdateOperationsInput = {
 export type VpsMetricCreateWithoutVpsNodeInput = {
   recordedAt?: Date | string
   cpuUsagePercent: number
+  cpuCoreCount?: number | null
+  load1?: number | null
+  load5?: number | null
+  load15?: number | null
   memoryTotalMB: number
   memoryUsedMB: number
-  liteSpeedConnections: number
+  memoryAvailableMB?: number | null
+  swapTotalMB?: number | null
+  swapUsedMB?: number | null
+  processCount?: number | null
+  uptimeSeconds?: bigint | number | null
+  liteSpeedConnections?: number
   diskReadBytesPerSecond: bigint | number
   diskWriteBytesPerSecond: bigint | number
   diskIops: number
@@ -726,16 +981,24 @@ export type VpsMetricCreateWithoutVpsNodeInput = {
   storageAvailableMB: number
   networkRxBytesPerSecond: bigint | number
   networkTxBytesPerSecond: bigint | number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  ingestedAt?: Date | string
 }
 
 export type VpsMetricUncheckedCreateWithoutVpsNodeInput = {
   recordedAt?: Date | string
   cpuUsagePercent: number
+  cpuCoreCount?: number | null
+  load1?: number | null
+  load5?: number | null
+  load15?: number | null
   memoryTotalMB: number
   memoryUsedMB: number
-  liteSpeedConnections: number
+  memoryAvailableMB?: number | null
+  swapTotalMB?: number | null
+  swapUsedMB?: number | null
+  processCount?: number | null
+  uptimeSeconds?: bigint | number | null
+  liteSpeedConnections?: number
   diskReadBytesPerSecond: bigint | number
   diskWriteBytesPerSecond: bigint | number
   diskIops: number
@@ -743,8 +1006,7 @@ export type VpsMetricUncheckedCreateWithoutVpsNodeInput = {
   storageAvailableMB: number
   networkRxBytesPerSecond: bigint | number
   networkTxBytesPerSecond: bigint | number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  ingestedAt?: Date | string
 }
 
 export type VpsMetricCreateOrConnectWithoutVpsNodeInput = {
@@ -780,8 +1042,17 @@ export type VpsMetricScalarWhereInput = {
   recordedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
   vpsNodeId?: Prisma.UuidFilter<"VpsMetric"> | string
   cpuUsagePercent?: Prisma.FloatFilter<"VpsMetric"> | number
+  cpuCoreCount?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  load1?: Prisma.FloatNullableFilter<"VpsMetric"> | number | null
+  load5?: Prisma.FloatNullableFilter<"VpsMetric"> | number | null
+  load15?: Prisma.FloatNullableFilter<"VpsMetric"> | number | null
   memoryTotalMB?: Prisma.IntFilter<"VpsMetric"> | number
   memoryUsedMB?: Prisma.IntFilter<"VpsMetric"> | number
+  memoryAvailableMB?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  swapTotalMB?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  swapUsedMB?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  processCount?: Prisma.IntNullableFilter<"VpsMetric"> | number | null
+  uptimeSeconds?: Prisma.BigIntNullableFilter<"VpsMetric"> | bigint | number | null
   liteSpeedConnections?: Prisma.IntFilter<"VpsMetric"> | number
   diskReadBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
@@ -790,16 +1061,24 @@ export type VpsMetricScalarWhereInput = {
   storageAvailableMB?: Prisma.IntFilter<"VpsMetric"> | number
   networkRxBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntFilter<"VpsMetric"> | bigint | number
-  createdAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
+  ingestedAt?: Prisma.DateTimeFilter<"VpsMetric"> | Date | string
 }
 
 export type VpsMetricCreateManyVpsNodeInput = {
   recordedAt?: Date | string
   cpuUsagePercent: number
+  cpuCoreCount?: number | null
+  load1?: number | null
+  load5?: number | null
+  load15?: number | null
   memoryTotalMB: number
   memoryUsedMB: number
-  liteSpeedConnections: number
+  memoryAvailableMB?: number | null
+  swapTotalMB?: number | null
+  swapUsedMB?: number | null
+  processCount?: number | null
+  uptimeSeconds?: bigint | number | null
+  liteSpeedConnections?: number
   diskReadBytesPerSecond: bigint | number
   diskWriteBytesPerSecond: bigint | number
   diskIops: number
@@ -807,15 +1086,23 @@ export type VpsMetricCreateManyVpsNodeInput = {
   storageAvailableMB: number
   networkRxBytesPerSecond: bigint | number
   networkTxBytesPerSecond: bigint | number
-  createdAt?: Date | string
-  updatedAt?: Date | string
+  ingestedAt?: Date | string
 }
 
 export type VpsMetricUpdateWithoutVpsNodeInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cpuCoreCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  load1?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load5?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load15?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
+  memoryAvailableMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapTotalMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapUsedMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  uptimeSeconds?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
   diskReadBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
@@ -824,15 +1111,23 @@ export type VpsMetricUpdateWithoutVpsNodeInput = {
   storageAvailableMB?: Prisma.IntFieldUpdateOperationsInput | number
   networkRxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type VpsMetricUncheckedUpdateWithoutVpsNodeInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cpuCoreCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  load1?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load5?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load15?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
+  memoryAvailableMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapTotalMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapUsedMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  uptimeSeconds?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
   diskReadBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
@@ -841,15 +1136,23 @@ export type VpsMetricUncheckedUpdateWithoutVpsNodeInput = {
   storageAvailableMB?: Prisma.IntFieldUpdateOperationsInput | number
   networkRxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type VpsMetricUncheckedUpdateManyWithoutVpsNodeInput = {
   recordedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cpuUsagePercent?: Prisma.FloatFieldUpdateOperationsInput | number
+  cpuCoreCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  load1?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load5?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  load15?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   memoryTotalMB?: Prisma.IntFieldUpdateOperationsInput | number
   memoryUsedMB?: Prisma.IntFieldUpdateOperationsInput | number
+  memoryAvailableMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapTotalMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  swapUsedMB?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  processCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  uptimeSeconds?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   liteSpeedConnections?: Prisma.IntFieldUpdateOperationsInput | number
   diskReadBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   diskWriteBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
@@ -858,8 +1161,7 @@ export type VpsMetricUncheckedUpdateManyWithoutVpsNodeInput = {
   storageAvailableMB?: Prisma.IntFieldUpdateOperationsInput | number
   networkRxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   networkTxBytesPerSecond?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ingestedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -868,8 +1170,17 @@ export type VpsMetricSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   recordedAt?: boolean
   vpsNodeId?: boolean
   cpuUsagePercent?: boolean
+  cpuCoreCount?: boolean
+  load1?: boolean
+  load5?: boolean
+  load15?: boolean
   memoryTotalMB?: boolean
   memoryUsedMB?: boolean
+  memoryAvailableMB?: boolean
+  swapTotalMB?: boolean
+  swapUsedMB?: boolean
+  processCount?: boolean
+  uptimeSeconds?: boolean
   liteSpeedConnections?: boolean
   diskReadBytesPerSecond?: boolean
   diskWriteBytesPerSecond?: boolean
@@ -878,8 +1189,7 @@ export type VpsMetricSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   storageAvailableMB?: boolean
   networkRxBytesPerSecond?: boolean
   networkTxBytesPerSecond?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  ingestedAt?: boolean
   vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vpsMetric"]>
 
@@ -887,8 +1197,17 @@ export type VpsMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   recordedAt?: boolean
   vpsNodeId?: boolean
   cpuUsagePercent?: boolean
+  cpuCoreCount?: boolean
+  load1?: boolean
+  load5?: boolean
+  load15?: boolean
   memoryTotalMB?: boolean
   memoryUsedMB?: boolean
+  memoryAvailableMB?: boolean
+  swapTotalMB?: boolean
+  swapUsedMB?: boolean
+  processCount?: boolean
+  uptimeSeconds?: boolean
   liteSpeedConnections?: boolean
   diskReadBytesPerSecond?: boolean
   diskWriteBytesPerSecond?: boolean
@@ -897,8 +1216,7 @@ export type VpsMetricSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   storageAvailableMB?: boolean
   networkRxBytesPerSecond?: boolean
   networkTxBytesPerSecond?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  ingestedAt?: boolean
   vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vpsMetric"]>
 
@@ -906,8 +1224,17 @@ export type VpsMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   recordedAt?: boolean
   vpsNodeId?: boolean
   cpuUsagePercent?: boolean
+  cpuCoreCount?: boolean
+  load1?: boolean
+  load5?: boolean
+  load15?: boolean
   memoryTotalMB?: boolean
   memoryUsedMB?: boolean
+  memoryAvailableMB?: boolean
+  swapTotalMB?: boolean
+  swapUsedMB?: boolean
+  processCount?: boolean
+  uptimeSeconds?: boolean
   liteSpeedConnections?: boolean
   diskReadBytesPerSecond?: boolean
   diskWriteBytesPerSecond?: boolean
@@ -916,8 +1243,7 @@ export type VpsMetricSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   storageAvailableMB?: boolean
   networkRxBytesPerSecond?: boolean
   networkTxBytesPerSecond?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  ingestedAt?: boolean
   vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vpsMetric"]>
 
@@ -925,8 +1251,17 @@ export type VpsMetricSelectScalar = {
   recordedAt?: boolean
   vpsNodeId?: boolean
   cpuUsagePercent?: boolean
+  cpuCoreCount?: boolean
+  load1?: boolean
+  load5?: boolean
+  load15?: boolean
   memoryTotalMB?: boolean
   memoryUsedMB?: boolean
+  memoryAvailableMB?: boolean
+  swapTotalMB?: boolean
+  swapUsedMB?: boolean
+  processCount?: boolean
+  uptimeSeconds?: boolean
   liteSpeedConnections?: boolean
   diskReadBytesPerSecond?: boolean
   diskWriteBytesPerSecond?: boolean
@@ -935,11 +1270,10 @@ export type VpsMetricSelectScalar = {
   storageAvailableMB?: boolean
   networkRxBytesPerSecond?: boolean
   networkTxBytesPerSecond?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
+  ingestedAt?: boolean
 }
 
-export type VpsMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"recordedAt" | "vpsNodeId" | "cpuUsagePercent" | "memoryTotalMB" | "memoryUsedMB" | "liteSpeedConnections" | "diskReadBytesPerSecond" | "diskWriteBytesPerSecond" | "diskIops" | "storageTotalMB" | "storageAvailableMB" | "networkRxBytesPerSecond" | "networkTxBytesPerSecond" | "createdAt" | "updatedAt", ExtArgs["result"]["vpsMetric"]>
+export type VpsMetricOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"recordedAt" | "vpsNodeId" | "cpuUsagePercent" | "cpuCoreCount" | "load1" | "load5" | "load15" | "memoryTotalMB" | "memoryUsedMB" | "memoryAvailableMB" | "swapTotalMB" | "swapUsedMB" | "processCount" | "uptimeSeconds" | "liteSpeedConnections" | "diskReadBytesPerSecond" | "diskWriteBytesPerSecond" | "diskIops" | "storageTotalMB" | "storageAvailableMB" | "networkRxBytesPerSecond" | "networkTxBytesPerSecond" | "ingestedAt", ExtArgs["result"]["vpsMetric"]>
 export type VpsMetricInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vpsNode?: boolean | Prisma.VpsNodeDefaultArgs<ExtArgs>
 }
@@ -959,8 +1293,17 @@ export type $VpsMetricPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     recordedAt: Date
     vpsNodeId: string
     cpuUsagePercent: number
+    cpuCoreCount: number | null
+    load1: number | null
+    load5: number | null
+    load15: number | null
     memoryTotalMB: number
     memoryUsedMB: number
+    memoryAvailableMB: number | null
+    swapTotalMB: number | null
+    swapUsedMB: number | null
+    processCount: number | null
+    uptimeSeconds: bigint | null
     liteSpeedConnections: number
     diskReadBytesPerSecond: bigint
     diskWriteBytesPerSecond: bigint
@@ -969,8 +1312,7 @@ export type $VpsMetricPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     storageAvailableMB: number
     networkRxBytesPerSecond: bigint
     networkTxBytesPerSecond: bigint
-    createdAt: Date
-    updatedAt: Date
+    ingestedAt: Date
   }, ExtArgs["result"]["vpsMetric"]>
   composites: {}
 }
@@ -1398,8 +1740,17 @@ export interface VpsMetricFieldRefs {
   readonly recordedAt: Prisma.FieldRef<"VpsMetric", 'DateTime'>
   readonly vpsNodeId: Prisma.FieldRef<"VpsMetric", 'String'>
   readonly cpuUsagePercent: Prisma.FieldRef<"VpsMetric", 'Float'>
+  readonly cpuCoreCount: Prisma.FieldRef<"VpsMetric", 'Int'>
+  readonly load1: Prisma.FieldRef<"VpsMetric", 'Float'>
+  readonly load5: Prisma.FieldRef<"VpsMetric", 'Float'>
+  readonly load15: Prisma.FieldRef<"VpsMetric", 'Float'>
   readonly memoryTotalMB: Prisma.FieldRef<"VpsMetric", 'Int'>
   readonly memoryUsedMB: Prisma.FieldRef<"VpsMetric", 'Int'>
+  readonly memoryAvailableMB: Prisma.FieldRef<"VpsMetric", 'Int'>
+  readonly swapTotalMB: Prisma.FieldRef<"VpsMetric", 'Int'>
+  readonly swapUsedMB: Prisma.FieldRef<"VpsMetric", 'Int'>
+  readonly processCount: Prisma.FieldRef<"VpsMetric", 'Int'>
+  readonly uptimeSeconds: Prisma.FieldRef<"VpsMetric", 'BigInt'>
   readonly liteSpeedConnections: Prisma.FieldRef<"VpsMetric", 'Int'>
   readonly diskReadBytesPerSecond: Prisma.FieldRef<"VpsMetric", 'BigInt'>
   readonly diskWriteBytesPerSecond: Prisma.FieldRef<"VpsMetric", 'BigInt'>
@@ -1408,8 +1759,7 @@ export interface VpsMetricFieldRefs {
   readonly storageAvailableMB: Prisma.FieldRef<"VpsMetric", 'Int'>
   readonly networkRxBytesPerSecond: Prisma.FieldRef<"VpsMetric", 'BigInt'>
   readonly networkTxBytesPerSecond: Prisma.FieldRef<"VpsMetric", 'BigInt'>
-  readonly createdAt: Prisma.FieldRef<"VpsMetric", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"VpsMetric", 'DateTime'>
+  readonly ingestedAt: Prisma.FieldRef<"VpsMetric", 'DateTime'>
 }
     
 

@@ -33,20 +33,45 @@ export type Server = Prisma.ServerModel
  */
 export type VpsNode = Prisma.VpsNodeModel
 /**
- * Model VpsMetric
- * 
- */
-export type VpsMetric = Prisma.VpsMetricModel
-/**
  * Model Website
  * 
  */
 export type Website = Prisma.WebsiteModel
 /**
+ * Model VpsMetric
+ * 
+ */
+export type VpsMetric = Prisma.VpsMetricModel
+/**
  * Model WebMetric
  * 
  */
 export type WebMetric = Prisma.WebMetricModel
+/**
+ * Model WebsiteProbeMetric
+ * 
+ */
+export type WebsiteProbeMetric = Prisma.WebsiteProbeMetricModel
+/**
+ * Model WebsiteSslMetric
+ * 
+ */
+export type WebsiteSslMetric = Prisma.WebsiteSslMetricModel
+/**
+ * Model VpsFilesystemMetric
+ * 
+ */
+export type VpsFilesystemMetric = Prisma.VpsFilesystemMetricModel
+/**
+ * Model VpsNetworkInterfaceMetric
+ * 
+ */
+export type VpsNetworkInterfaceMetric = Prisma.VpsNetworkInterfaceMetricModel
+/**
+ * Model VpsServiceMetric
+ * 
+ */
+export type VpsServiceMetric = Prisma.VpsServiceMetricModel
 /**
  * Model SSLCertificate
  * 
