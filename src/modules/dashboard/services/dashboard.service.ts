@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { AlertsService } from '#/modules/alerts/services/alerts.service.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
@@ -9,6 +9,8 @@ import { WebsitesService } from '#/modules/websites/services/websites.service.js
 
 @Injectable()
 export class DashboardService {
+  private readonly logger = new Logger(DashboardService.name);
+
   constructor(
     private readonly metricsOverviewService: MetricsOverviewService,
     private readonly alertsService: AlertsService,
@@ -19,22 +21,73 @@ export class DashboardService {
   ) {}
 
   async getOverview(userId: string) {
+    this.logger.log(`Dashboard overview request started, userId: ${userId}`);
+
+    const logOverviewDependency = async <T>(
+      label: string,
+      promise: Promise<T>,
+    ): Promise<T> => {
+      this.logger.log(`Dashboard overview loading ${label}, userId: ${userId}`);
+
+      try {
+        const result = await promise;
+        const count = Array.isArray(result) ? result.length : 'object';
+        this.logger.log(
+          `Dashboard overview loaded ${label}, userId: ${userId}, result: ${count}`,
+        );
+        return result;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        const stack = error instanceof Error ? error.stack : undefined;
+        this.logger.error(
+          `Dashboard overview failed loading ${label}, userId: ${userId}, error: ${message}`,
+          stack,
+        );
+        throw error;
+      }
+    };
+
     const [metricsOverview, recentAlerts, expiringCertificates] =
       await Promise.all([
-        this.metricsOverviewService.getOverview(userId),
-        this.alertsService.getRecentAlerts(userId),
-        this.websitesService.getUserWebsites(userId),
-        this.sslCertificatesService.getExpiringCertificates(userId),
+        logOverviewDependency(
+          'metrics overview',
+          this.metricsOverviewService.getOverview(userId),
+        ),
+        logOverviewDependency(
+          'recent alerts',
+          this.alertsService.getRecentAlerts(userId),
+        ),
+        logOverviewDependency(
+          'user websites',
+          this.websitesService.getUserWebsites(userId),
+        ),
+        logOverviewDependency(
+          'expiring certificates',
+          this.sslCertificatesService.getExpiringCertificates(userId),
+        ),
       ]);
+
+    this.logger.log(
+      `Dashboard overview dependencies loaded, userId: ${userId}, overviewWebsites: ${metricsOverview.websites.length}, alerts: ${recentAlerts.length}, thirdResultCount: ${expiringCertificates.length}`,
+    );
 
     const websiteAlertsMap = new Map<string, typeof recentAlerts>();
 
     for (const alert of recentAlerts) {
-      if (!alert.websiteId) return;
+      if (!alert.websiteId) {
+        this.logger.warn(
+          `Dashboard overview alert without websiteId, userId: ${userId}, alertId: ${alert.id}`,
+        );
+        return;
+      }
 
       const existing = websiteAlertsMap.get(alert.websiteId) ?? [];
       websiteAlertsMap.set(alert.websiteId, [...existing, alert]);
     }
+
+    this.logger.log(
+      `Dashboard overview alert map built, userId: ${userId}, websiteAlertGroups: ${websiteAlertsMap.size}`,
+    );
 
     const websitesView = metricsOverview.websites.map((website) => {
       const websiteAlerts = websiteAlertsMap.get(website.websiteId) ?? [];
@@ -54,7 +107,11 @@ export class DashboardService {
       };
     });
 
-    return {
+    this.logger.log(
+      `Dashboard overview websites view built, userId: ${userId}, websites: ${websitesView.length}`,
+    );
+
+    const overview = {
       status: metricsOverview.status,
 
       message: this.resolveStatusMessage(metricsOverview.status),
@@ -78,6 +135,12 @@ export class DashboardService {
         message: 'All monitoring systems operational',
       },
     };
+
+    this.logger.log(
+      `Dashboard overview response ready, userId: ${userId}, status: ${overview.status}`,
+    );
+
+    return overview;
   }
 
   async getMonitoring(userId: string) {
