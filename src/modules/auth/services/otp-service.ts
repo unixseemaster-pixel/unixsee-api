@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -28,6 +29,8 @@ interface CreateOtpParams {
 
 @Injectable()
 export class OtpService {
+  private readonly logger = new Logger(OtpService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService<AppConfigType, true>,
@@ -44,61 +47,111 @@ export class OtpService {
     phoneNumber,
     context = 'LOGIN',
   }: CreateOtpParams): Promise<Otp> {
-    const otpCode = this.createCode(length);
+    this.logger.log(
+      `createAndOverwrite started, context: ${context}, phoneNumber: ${phoneNumber}, length: ${length}`,
+    );
 
-    const existOtp = await this.prisma.otp.findUnique({
-      where: {
-        phoneNumber,
-        context,
-      },
-    });
+    try {
+      const otpCode = this.createCode(length);
+      this.logger.log(`OTP code generated, context: ${context}`);
 
-    const expTime = this.config.get('app', { infer: true }).otpExpiredTime;
-
-    const retryTime = this.config.get('app', { infer: true }).otpRetryTime;
-
-    if (existOtp) {
-      const retryAllowed = existOtp.lastRequestedTime
-        ? this.isRetryAllowed(existOtp.lastRequestedTime, retryTime)
-        : true;
-      if (retryAllowed !== true) {
-        const minText =
-          retryAllowed.minutes > 0 ? `${retryAllowed.minutes}minutes and` : '';
-        const secText =
-          retryAllowed.seconds > 0 ? `${retryAllowed.seconds} seconds` : '';
-
-        throw new HttpException(
-          `Please wait ${minText} ${secText}`,
-          HttpStatus.TOO_MANY_REQUESTS,
-        );
-      }
-
-      const updatedOtp = await this.prisma.otp.update({
+      this.logger.log(
+        `Searching existing OTP, context: ${context}, phoneNumber: ${phoneNumber}`,
+      );
+      const existOtp = await this.prisma.otp.findUnique({
         where: {
-          phoneNumber: existOtp.phoneNumber || undefined,
+          phoneNumber,
           context,
         },
+      });
+      this.logger.log(
+        `Existing OTP lookup completed, context: ${context}, found: ${Boolean(existOtp)}`,
+      );
+
+      const appConfig = this.config.get('app', { infer: true });
+      const expTime = appConfig.otpExpiredTime;
+      const retryTime = appConfig.otpRetryTime;
+      this.logger.log(
+        `OTP config loaded, context: ${context}, expTime: ${expTime}, retryTime: ${retryTime}`,
+      );
+
+      if (existOtp) {
+        this.logger.log(
+          `Existing OTP found, context: ${context}, otpId: ${existOtp.id}, lastRequestedTime: ${existOtp.lastRequestedTime?.toISOString() ?? 'NULL'}`,
+        );
+        const retryAllowed = existOtp.lastRequestedTime
+          ? this.isRetryAllowed(existOtp.lastRequestedTime, retryTime)
+          : true;
+        this.logger.log(
+          `Retry check completed, context: ${context}, retryAllowed: ${JSON.stringify(retryAllowed)}`,
+        );
+
+        if (retryAllowed !== true) {
+          const minText =
+            retryAllowed.minutes > 0
+              ? `${retryAllowed.minutes}minutes and`
+              : '';
+          const secText =
+            retryAllowed.seconds > 0 ? `${retryAllowed.seconds} seconds` : '';
+
+          this.logger.warn(
+            `OTP retry rejected, context: ${context}, phoneNumber: ${phoneNumber}, wait: ${minText} ${secText}`,
+          );
+          throw new HttpException(
+            `Please wait ${minText} ${secText}`,
+            HttpStatus.TOO_MANY_REQUESTS,
+          );
+        }
+
+        this.logger.log(
+          `Updating existing OTP, context: ${context}, otpId: ${existOtp.id}`,
+        );
+        const updatedOtp = await this.prisma.otp.update({
+          where: {
+            phoneNumber: existOtp.phoneNumber || undefined,
+            context,
+          },
+          data: {
+            otp: otpCode,
+            expiredTime: this.createExpiredDateByMinute(expTime),
+            lastRequestedTime: new Date(),
+          },
+        });
+        this.logger.log(
+          `Existing OTP updated, context: ${context}, otpId: ${updatedOtp.id}`,
+        );
+
+        return updatedOtp;
+      }
+
+      this.logger.log(
+        `Creating new OTP, context: ${context}, phoneNumber: ${phoneNumber}`,
+      );
+      const createdOtp = await this.prisma.otp.create({
         data: {
           otp: otpCode,
+
+          phoneNumber: phoneNumber,
           expiredTime: this.createExpiredDateByMinute(expTime),
           lastRequestedTime: new Date(),
+
+          ...(context && { context }),
         },
       });
+      this.logger.log(
+        `New OTP created, context: ${context}, otpId: ${createdOtp.id}`,
+      );
 
-      return updatedOtp;
+      return createdOtp;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(
+        `createAndOverwrite failed, context: ${context}, phoneNumber: ${phoneNumber}, error: ${message}`,
+        stack,
+      );
+      throw error;
     }
-
-    return this.prisma.otp.create({
-      data: {
-        otp: otpCode,
-
-        phoneNumber: phoneNumber,
-        expiredTime: this.createExpiredDateByMinute(expTime),
-        lastRequestedTime: new Date(),
-
-        ...(context && { context }),
-      },
-    });
   }
 
   async create({ length, phoneNumber }: CreateOtpParams): Promise<Otp> {
