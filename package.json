@@ -29,8 +29,8 @@
     "prisma:migrate:prod": "dotenv -e .env.production -- prisma migrate deploy",
     "prisma:migrate:status:dev": "dotenv -e .env.development -- prisma migrate status",
     "prisma:migrate:status:prod": "dotenv -e .env.production -- prisma migrate status",
-    "prisma:studio:dev": "dotenv -e .env.development -- prisma studio --hostname 127.0.0.1 --port 51212 --browser none",
-    "prisma:studio:prod": "dotenv -e .env.production -- prisma studio --hostname 127.0.0.1 --port 51212 --browser none",
+    "prisma:studio:dev": "dotenv -e .env.development -- prisma studio --port 51212 --browser none",
+    "prisma:studio:prod": "dotenv -e .env.production -- prisma studio --port 51212 --browser none",
     "deploy:prod": "pnpm install --frozen-lockfile && pnpm prisma:generate:prod && pnpm prisma:migrate:prod && pnpm build:prod"
   },
   "dependencies": {
