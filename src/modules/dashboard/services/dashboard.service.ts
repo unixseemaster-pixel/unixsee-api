@@ -68,7 +68,7 @@ export class DashboardService {
       ]);
 
     this.logger.log(
-      `Dashboard overview dependencies loaded, userId: ${userId}, overviewWebsites: ${metricsOverview.websites.length}, alerts: ${recentAlerts.length}, thirdResultCount: ${expiringCertificates.length}`,
+      `Dashboard overview dependencies loaded, userId: ${userId}, websites: ${metricsOverview.websites.length}, alerts: ${recentAlerts.length}, sslExpiring: ${expiringCertificates.length}`,
     );
 
     const websiteAlertsMap = new Map<string, typeof recentAlerts>();

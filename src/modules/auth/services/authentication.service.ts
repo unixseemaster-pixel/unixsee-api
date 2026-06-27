@@ -294,9 +294,13 @@ export class AuthenticationService {
 
     await this.otpService.remove(otp);
 
-    this.logger.log(`Monitoring access token created for user: ${userExist.id}`);
+    this.logger.log(
+      `Monitoring access token created for user: ${userExist.id}`,
+    );
+    const serverTimeInSeconds = Math.floor(Date.now() / 1000);
     return {
       monitoringAccessToken,
+      serverTimeInSeconds,
     };
   }
 
@@ -349,7 +353,9 @@ export class AuthenticationService {
       refreshTokenPromise,
     ]);
 
-    return { accessToken, refreshToken };
+    const serverTimeInSeconds = Math.floor(Date.now() / 1000);
+
+    return { accessToken, refreshToken, serverTimeInSeconds };
   }
 
   private hashData(data: string) {
