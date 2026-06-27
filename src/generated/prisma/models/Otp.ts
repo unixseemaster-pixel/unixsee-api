@@ -30,10 +30,10 @@ export type OtpMinAggregateOutputType = {
   phoneNumber: string | null
   expiredTime: Date | null
   identifier: string | null
-  createdAt: Date | null
-  updatedAt: Date | null
   lastRequestedTime: Date | null
   context: $Enums.OtpContext | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type OtpMaxAggregateOutputType = {
@@ -42,10 +42,10 @@ export type OtpMaxAggregateOutputType = {
   phoneNumber: string | null
   expiredTime: Date | null
   identifier: string | null
-  createdAt: Date | null
-  updatedAt: Date | null
   lastRequestedTime: Date | null
   context: $Enums.OtpContext | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type OtpCountAggregateOutputType = {
@@ -54,10 +54,10 @@ export type OtpCountAggregateOutputType = {
   phoneNumber: number
   expiredTime: number
   identifier: number
-  createdAt: number
-  updatedAt: number
   lastRequestedTime: number
   context: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
@@ -68,10 +68,10 @@ export type OtpMinAggregateInputType = {
   phoneNumber?: true
   expiredTime?: true
   identifier?: true
-  createdAt?: true
-  updatedAt?: true
   lastRequestedTime?: true
   context?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type OtpMaxAggregateInputType = {
@@ -80,10 +80,10 @@ export type OtpMaxAggregateInputType = {
   phoneNumber?: true
   expiredTime?: true
   identifier?: true
-  createdAt?: true
-  updatedAt?: true
   lastRequestedTime?: true
   context?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type OtpCountAggregateInputType = {
@@ -92,10 +92,10 @@ export type OtpCountAggregateInputType = {
   phoneNumber?: true
   expiredTime?: true
   identifier?: true
-  createdAt?: true
-  updatedAt?: true
   lastRequestedTime?: true
   context?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -177,10 +177,10 @@ export type OtpGroupByOutputType = {
   phoneNumber: string | null
   expiredTime: Date
   identifier: string | null
-  createdAt: Date
-  updatedAt: Date
   lastRequestedTime: Date | null
   context: $Enums.OtpContext | null
+  createdAt: Date
+  updatedAt: Date
   _count: OtpCountAggregateOutputType | null
   _min: OtpMinAggregateOutputType | null
   _max: OtpMaxAggregateOutputType | null
@@ -205,15 +205,15 @@ export type OtpWhereInput = {
   AND?: Prisma.OtpWhereInput | Prisma.OtpWhereInput[]
   OR?: Prisma.OtpWhereInput[]
   NOT?: Prisma.OtpWhereInput | Prisma.OtpWhereInput[]
-  id?: Prisma.StringFilter<"Otp"> | string
+  id?: Prisma.UuidFilter<"Otp"> | string
   otp?: Prisma.StringFilter<"Otp"> | string
   phoneNumber?: Prisma.StringNullableFilter<"Otp"> | string | null
   expiredTime?: Prisma.DateTimeFilter<"Otp"> | Date | string
   identifier?: Prisma.StringNullableFilter<"Otp"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
   lastRequestedTime?: Prisma.DateTimeNullableFilter<"Otp"> | Date | string | null
   context?: Prisma.EnumOtpContextNullableFilter<"Otp"> | $Enums.OtpContext | null
+  createdAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
 }
 
 export type OtpOrderByWithRelationInput = {
@@ -222,10 +222,10 @@ export type OtpOrderByWithRelationInput = {
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   expiredTime?: Prisma.SortOrder
   identifier?: Prisma.SortOrderInput | Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
   lastRequestedTime?: Prisma.SortOrderInput | Prisma.SortOrder
   context?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type OtpWhereUniqueInput = Prisma.AtLeast<{
@@ -237,10 +237,10 @@ export type OtpWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.OtpWhereInput[]
   NOT?: Prisma.OtpWhereInput | Prisma.OtpWhereInput[]
   expiredTime?: Prisma.DateTimeFilter<"Otp"> | Date | string
-  createdAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
   lastRequestedTime?: Prisma.DateTimeNullableFilter<"Otp"> | Date | string | null
   context?: Prisma.EnumOtpContextNullableFilter<"Otp"> | $Enums.OtpContext | null
+  createdAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
 }, "id" | "otp" | "phoneNumber" | "identifier">
 
 export type OtpOrderByWithAggregationInput = {
@@ -249,10 +249,10 @@ export type OtpOrderByWithAggregationInput = {
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   expiredTime?: Prisma.SortOrder
   identifier?: Prisma.SortOrderInput | Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
   lastRequestedTime?: Prisma.SortOrderInput | Prisma.SortOrder
   context?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.OtpCountOrderByAggregateInput
   _max?: Prisma.OtpMaxOrderByAggregateInput
   _min?: Prisma.OtpMinOrderByAggregateInput
@@ -262,15 +262,15 @@ export type OtpScalarWhereWithAggregatesInput = {
   AND?: Prisma.OtpScalarWhereWithAggregatesInput | Prisma.OtpScalarWhereWithAggregatesInput[]
   OR?: Prisma.OtpScalarWhereWithAggregatesInput[]
   NOT?: Prisma.OtpScalarWhereWithAggregatesInput | Prisma.OtpScalarWhereWithAggregatesInput[]
-  id?: Prisma.StringWithAggregatesFilter<"Otp"> | string
+  id?: Prisma.UuidWithAggregatesFilter<"Otp"> | string
   otp?: Prisma.StringWithAggregatesFilter<"Otp"> | string
   phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"Otp"> | string | null
   expiredTime?: Prisma.DateTimeWithAggregatesFilter<"Otp"> | Date | string
   identifier?: Prisma.StringNullableWithAggregatesFilter<"Otp"> | string | null
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Otp"> | Date | string
-  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Otp"> | Date | string
   lastRequestedTime?: Prisma.DateTimeNullableWithAggregatesFilter<"Otp"> | Date | string | null
   context?: Prisma.EnumOtpContextNullableWithAggregatesFilter<"Otp"> | $Enums.OtpContext | null
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"Otp"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Otp"> | Date | string
 }
 
 export type OtpCreateInput = {
@@ -279,10 +279,10 @@ export type OtpCreateInput = {
   phoneNumber?: string | null
   expiredTime: Date | string
   identifier?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   lastRequestedTime?: Date | string | null
   context?: $Enums.OtpContext | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type OtpUncheckedCreateInput = {
@@ -291,10 +291,10 @@ export type OtpUncheckedCreateInput = {
   phoneNumber?: string | null
   expiredTime: Date | string
   identifier?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   lastRequestedTime?: Date | string | null
   context?: $Enums.OtpContext | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type OtpUpdateInput = {
@@ -303,10 +303,10 @@ export type OtpUpdateInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   identifier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastRequestedTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   context?: Prisma.NullableEnumOtpContextFieldUpdateOperationsInput | $Enums.OtpContext | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OtpUncheckedUpdateInput = {
@@ -315,10 +315,10 @@ export type OtpUncheckedUpdateInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   identifier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastRequestedTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   context?: Prisma.NullableEnumOtpContextFieldUpdateOperationsInput | $Enums.OtpContext | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OtpCreateManyInput = {
@@ -327,10 +327,10 @@ export type OtpCreateManyInput = {
   phoneNumber?: string | null
   expiredTime: Date | string
   identifier?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
   lastRequestedTime?: Date | string | null
   context?: $Enums.OtpContext | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type OtpUpdateManyMutationInput = {
@@ -339,10 +339,10 @@ export type OtpUpdateManyMutationInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   identifier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastRequestedTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   context?: Prisma.NullableEnumOtpContextFieldUpdateOperationsInput | $Enums.OtpContext | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OtpUncheckedUpdateManyInput = {
@@ -351,10 +351,10 @@ export type OtpUncheckedUpdateManyInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   identifier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lastRequestedTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   context?: Prisma.NullableEnumOtpContextFieldUpdateOperationsInput | $Enums.OtpContext | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OtpCountOrderByAggregateInput = {
@@ -363,10 +363,10 @@ export type OtpCountOrderByAggregateInput = {
   phoneNumber?: Prisma.SortOrder
   expiredTime?: Prisma.SortOrder
   identifier?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
   lastRequestedTime?: Prisma.SortOrder
   context?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type OtpMaxOrderByAggregateInput = {
@@ -375,10 +375,10 @@ export type OtpMaxOrderByAggregateInput = {
   phoneNumber?: Prisma.SortOrder
   expiredTime?: Prisma.SortOrder
   identifier?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
   lastRequestedTime?: Prisma.SortOrder
   context?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type OtpMinOrderByAggregateInput = {
@@ -387,10 +387,10 @@ export type OtpMinOrderByAggregateInput = {
   phoneNumber?: Prisma.SortOrder
   expiredTime?: Prisma.SortOrder
   identifier?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
   lastRequestedTime?: Prisma.SortOrder
   context?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type NullableEnumOtpContextFieldUpdateOperationsInput = {
@@ -405,10 +405,10 @@ export type OtpSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   phoneNumber?: boolean
   expiredTime?: boolean
   identifier?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
   lastRequestedTime?: boolean
   context?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["otp"]>
 
 export type OtpSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -417,10 +417,10 @@ export type OtpSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   phoneNumber?: boolean
   expiredTime?: boolean
   identifier?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
   lastRequestedTime?: boolean
   context?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["otp"]>
 
 export type OtpSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -429,10 +429,10 @@ export type OtpSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   phoneNumber?: boolean
   expiredTime?: boolean
   identifier?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
   lastRequestedTime?: boolean
   context?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["otp"]>
 
 export type OtpSelectScalar = {
@@ -441,13 +441,13 @@ export type OtpSelectScalar = {
   phoneNumber?: boolean
   expiredTime?: boolean
   identifier?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
   lastRequestedTime?: boolean
   context?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type OtpOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "otp" | "phoneNumber" | "expiredTime" | "identifier" | "createdAt" | "updatedAt" | "lastRequestedTime" | "context", ExtArgs["result"]["otp"]>
+export type OtpOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "otp" | "phoneNumber" | "expiredTime" | "identifier" | "lastRequestedTime" | "context" | "createdAt" | "updatedAt", ExtArgs["result"]["otp"]>
 
 export type $OtpPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Otp"
@@ -458,10 +458,10 @@ export type $OtpPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     phoneNumber: string | null
     expiredTime: Date
     identifier: string | null
-    createdAt: Date
-    updatedAt: Date
     lastRequestedTime: Date | null
     context: $Enums.OtpContext | null
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["otp"]>
   composites: {}
 }
@@ -890,10 +890,10 @@ export interface OtpFieldRefs {
   readonly phoneNumber: Prisma.FieldRef<"Otp", 'String'>
   readonly expiredTime: Prisma.FieldRef<"Otp", 'DateTime'>
   readonly identifier: Prisma.FieldRef<"Otp", 'String'>
-  readonly createdAt: Prisma.FieldRef<"Otp", 'DateTime'>
-  readonly updatedAt: Prisma.FieldRef<"Otp", 'DateTime'>
   readonly lastRequestedTime: Prisma.FieldRef<"Otp", 'DateTime'>
   readonly context: Prisma.FieldRef<"Otp", 'OtpContext'>
+  readonly createdAt: Prisma.FieldRef<"Otp", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"Otp", 'DateTime'>
 }
     
 

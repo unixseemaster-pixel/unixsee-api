@@ -14,190 +14,17 @@ enum Role {
   USER
 }
 
-model User {
-  id          String  @id @default(uuid()) @db.Uuid
-  phoneNumber String  @unique @map("phone_number")
-  email       String? @unique
-  username    String? @unique
-  password    String?
-  fullName    String? @map("full_name")
-  role        Role    @default(USER)
-  hashedRt    String? @map("hashed_rt")
-
-  websites Website[]
-  vpsNodes VpsNode[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("users")
+enum VpsNodeStatus {
+  UNKNOWN
+  ONLINE
+  DEGRADED
+  OFFLINE
 }
 
-model Server {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String   @unique
-  ipAddress String   @map("ip_address")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  vpsNodes VpsNode[]
-  alerts   Alert[]
-
-  @@map("servers")
-}
-
-model VpsNode {
-  id        String   @id @default(uuid()) @db.Uuid
-  serverId  String   @map("server_id") @db.Uuid
-  userId    String?  @map("user_id") @db.Uuid
-  machineId String   @unique @map("machine_id") // Extracted from /etc/machine-id
-  name      String
-  secretKey String   @map("secret_key") // Pre-shared key utilized for agent HMAC authentication
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
-  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  websites   Website[]
-  vpsMetrics VpsMetric[]
-  webMetrics WebMetric[]
-  alerts     Alert[]
-
-  @@map("vps_nodes")
-}
-
-// APPEND-ONLY IMMUTABLE TIME-SERIES PROFILE 1: VPS Telemetry
-model VpsMetric {
-  recordedAt              DateTime @default(now()) @map("recorded_at") @db.Timestamptz
-  vpsNodeId               String   @map("vps_nodes_id") @db.Uuid
-  cpuUsagePercent         Float    @map("cpu_usage_percent")
-  memoryTotalMB           Int      @map("memory_total_mb")
-  memoryUsedMB            Int      @map("memory_used_mb")
-  liteSpeedConnections    Int      @map("litespeed_connections") // Global server load telemetry
-  diskReadBytesPerSecond  BigInt   @map("disk_read_bytes_per_second") // Simultaneous download capacity tracking
-  diskWriteBytesPerSecond BigInt   @map("disk_write_bytes_per_second") // Simultaneous upload capacity tracking
-  diskIops                Int      @map("disk_iops") // Raw Admin disk performance check
-  storageTotalMB          Int      @map("storage_total_mb") // Capacity profiles
-  storageAvailableMB      Int      @map("storage_available_mb") // User storage checking limits
-  networkRxBytesPerSecond BigInt   @map("network_rx_bytes_per_second")
-  networkTxBytesPerSecond BigInt   @map("network_tx_bytes_per_second")
-
-  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@id([recordedAt, vpsNodeId]) // Composite Primary Key critical for TimescaleDB Hypertables
-  @@index([vpsNodeId, recordedAt(sort: Desc)])
-  @@map("vps_metrics")
-}
-
-model Website {
-  id        String @id @default(cuid()) @db.Uuid
-  userId    String @map("user_id") @db.Uuid
-  vpsNodeId String @map("vps_nodes_id") @db.Uuid
-  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  domain   String  @unique
-  isActive Boolean @default(true) @map("is_active")
-
-  metrics WebMetric[]
-  ssl     SSLCertificate?
-  vpsNode VpsNode         @relation(fields: [vpsNodeId], references: [id])
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  alerts    Alert[]
-
-  @@map("websites")
-}
-
-model WebMetric {
-  recordedAt         DateTime @default(now()) @map("recorded_at") @db.Timestamptz
-  vpsNodeId          String   @map("vps_nodes_id") @db.Uuid
-  websiteId          String   @map("website_id") @db.Uuid
-  concurrentRequests Int      @map("concurrent_requests") // Scraped live from LiteSpeed virtual host reports
-  requestRate        Int      @default(0) @map("request_rate")
-
-  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
-  website Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@id([recordedAt, websiteId]) // Composite Primary Key critical for TimescaleDB Hypertables
-  @@index([websiteId, recordedAt(sort: Desc)])
-  @@map("web_metrics")
-}
-
-model SSLCertificate {
-  id        String @id @default(uuid()) @db.Uuid
-  websiteId String @unique @map("website_id") @db.Uuid
-
-  // High-Level Data (User & Admin Interface)
-  issuer    String?
-  subject   String?
-  validFrom DateTime? @map("valid_from")
-  validTo   DateTime? @map("valid_to")
-  isValid   Boolean   @default(true) @map("is_valid")
-
-  // Technical Telemetry (Admin Debugging & Automation)
-  serialNumber    String? @map("serial_number")
-  isAutoRenewable Boolean @default(true) @map("is_auto_renewable") // Tracks DirectAdmin integration states
-  statusMessage   String? @map("status_message") // e.g., "CERT_HAS_EXPIRED" or "ERR_TLS_CERT_ALTNAME_INVALID"
-
-  website Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("ssl_certificates")
-}
-
-model Alert {
-  id String @id @default(uuid()) @db.Uuid
-
-  websiteId String? @map("website_id") @db.Uuid
-  vpsNodeId String? @map("vps_node_id") @db.Uuid
-  serverId  String? @map("server_id") @db.Uuid
-
-  title   String
-  message String
-
-  severity AlertSeverity
-  status   AlertStatus   @default(ACTIVE)
-
-  startedAt  DateTime  @default(now()) @map("started_at")
-  resolvedAt DateTime? @map("resolved_at")
-
-  metadata Json?
-
-  website Website? @relation(fields: [websiteId], references: [id], onDelete: Cascade)
-  vpsNode VpsNode? @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
-  server  Server?  @relation(fields: [serverId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@index([websiteId])
-  @@index([status])
-  @@index([severity])
-  @@map("alerts")
-}
-
-model Otp {
-  id                String      @id @default(uuid())
-  otp               String      @unique
-  phoneNumber       String?     @unique @map("phone_number")
-  expiredTime       DateTime    @map("expired_time")
-  identifier        String?     @unique
-  createdAt         DateTime    @default(now()) @map("created_at")
-  updatedAt         DateTime    @updatedAt @map("updated_at")
-  lastRequestedTime DateTime?   @map("last_requested_time")
-  context           OtpContext? @default(LOGIN)
-
-  @@map("otps")
+enum WebsiteProbeSource {
+  AGENT
+  BACKEND
+  EXTERNAL
 }
 
 enum AlertSeverity {
@@ -214,4 +41,404 @@ enum AlertStatus {
 enum OtpContext {
   LOGIN
   MONITORING_ACCESS
+}
+
+model User {
+  id          String  @id @default(uuid()) @db.Uuid
+  phoneNumber String  @unique @map("phone_number")
+  email       String? @unique
+  username    String? @unique
+  password    String?
+  fullName    String? @map("full_name")
+  role        Role    @default(USER)
+  hashedRt    String? @map("hashed_rt")
+
+  websites Website[]
+  vpsNodes VpsNode[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("users")
+}
+
+model Server {
+  id        String @id @default(uuid()) @db.Uuid
+  name      String @unique
+  ipAddress String @map("ip_address")
+
+  vpsNodes VpsNode[]
+  alerts   Alert[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("servers")
+}
+
+model VpsNode {
+  id       String  @id @default(uuid()) @db.Uuid
+  serverId String  @map("server_id") @db.Uuid
+  userId   String? @map("user_id") @db.Uuid
+
+  // Stable identity used by the agent. Usually extracted from /etc/machine-id.
+  machineId String @unique @map("machine_id")
+
+  name      String
+  secretKey String @map("secret_key")
+
+  // Latest agent/server state. These are mutable snapshot fields, not time-series.
+  status        VpsNodeStatus @default(UNKNOWN)
+  hostname      String?
+  publicIp      String?       @map("public_ip")
+  osName        String?       @map("os_name")
+  osVersion     String?       @map("os_version")
+  kernelVersion String?       @map("kernel_version")
+  agentVersion  String?       @map("agent_version")
+  lastSeenAt    DateTime?     @map("last_seen_at") @db.Timestamptz(6)
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  websites Website[]
+
+  // Time-series metrics. Keep append-only for easy TimescaleDB migration later.
+  vpsMetrics              VpsMetric[]
+  webMetrics              WebMetric[]
+  filesystemMetrics       VpsFilesystemMetric[]
+  networkInterfaceMetrics VpsNetworkInterfaceMetric[]
+  serviceMetrics          VpsServiceMetric[]
+
+  alerts Alert[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([serverId])
+  @@index([userId])
+  @@index([status])
+  @@index([lastSeenAt])
+  @@map("vps_nodes")
+}
+
+model Website {
+  id        String @id @default(uuid()) @db.Uuid
+  userId    String @map("user_id") @db.Uuid
+  vpsNodeId String @map("vps_node_id") @db.Uuid
+
+  domain      String  @unique
+  displayName String? @map("display_name")
+
+  // Inventory fields discovered by the agent from DirectAdmin/LiteSpeed.
+  directAdminUser String? @map("direct_admin_user")
+  homeDirectory   String? @map("home_directory")
+  documentRoot    String? @map("document_root")
+
+  isActive Boolean @default(true) @map("is_active")
+
+  // Latest website status snapshot for fast dashboard cards.
+  // Historical probe data is stored in WebsiteProbeMetric.
+  lastIsUp           Boolean?  @map("last_is_up")
+  lastStatusCode     Int?      @map("last_status_code")
+  lastResponseTimeMs Int?      @map("last_response_time_ms")
+  lastProbeAt        DateTime? @map("last_probe_at") @db.Timestamptz(6)
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
+
+  metrics      WebMetric[]
+  probeMetrics WebsiteProbeMetric[]
+  sslMetrics   WebsiteSslMetric[]
+  ssl          SSLCertificate?
+  alerts       Alert[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([userId])
+  @@index([vpsNodeId])
+  @@index([isActive])
+  @@index([lastIsUp])
+  @@map("websites")
+}
+
+// -----------------------------------------------------------------------------
+// APPEND-ONLY TIME-SERIES TABLES
+// -----------------------------------------------------------------------------
+// Rules:
+// 1. Do not use a single serial/uuid id on metric tables.
+// 2. Use recorded_at + entity id as the composite primary key.
+// 3. Do not UPDATE metric rows. Insert new rows only.
+// 4. Keep recorded_at as TIMESTAMP WITH TIME ZONE.
+// 5. Later, convert only these metric tables to TimescaleDB hypertables.
+// -----------------------------------------------------------------------------
+
+model VpsMetric {
+  recordedAt DateTime @default(now()) @map("recorded_at") @db.Timestamptz(6)
+  vpsNodeId  String   @map("vps_node_id") @db.Uuid
+
+  // CPU and load.
+  cpuUsagePercent Float  @map("cpu_usage_percent")
+  cpuCoreCount    Int?   @map("cpu_core_count")
+  load1           Float? @map("load_1")
+  load5           Float? @map("load_5")
+  load15          Float? @map("load_15")
+
+  // Memory and swap.
+  memoryTotalMB     Int  @map("memory_total_mb")
+  memoryUsedMB      Int  @map("memory_used_mb")
+  memoryAvailableMB Int? @map("memory_available_mb")
+  swapTotalMB       Int? @map("swap_total_mb")
+  swapUsedMB        Int? @map("swap_used_mb")
+
+  // Process/system health.
+  processCount  Int?    @map("process_count")
+  uptimeSeconds BigInt? @map("uptime_seconds")
+
+  // LiteSpeed/global webserver pressure.
+  liteSpeedConnections Int @default(0) @map("litespeed_connections")
+
+  // Disk I/O.
+  diskReadBytesPerSecond  BigInt @map("disk_read_bytes_per_second")
+  diskWriteBytesPerSecond BigInt @map("disk_write_bytes_per_second")
+  diskIops                Int    @map("disk_iops")
+
+  // Coarse total storage. Detailed per-mount data is in VpsFilesystemMetric.
+  storageTotalMB     Int @map("storage_total_mb")
+  storageAvailableMB Int @map("storage_available_mb")
+
+  // Coarse total network. Detailed per-interface data is in VpsNetworkInterfaceMetric.
+  networkRxBytesPerSecond BigInt @map("network_rx_bytes_per_second")
+  networkTxBytesPerSecond BigInt @map("network_tx_bytes_per_second")
+
+  // Ingestion timestamp for backend debugging. This is not the metric bucket time.
+  ingestedAt DateTime @default(now()) @map("ingested_at") @db.Timestamptz(6)
+
+  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
+
+  @@id([recordedAt, vpsNodeId])
+  @@index([vpsNodeId, recordedAt(sort: Desc)])
+  @@map("vps_metrics")
+}
+
+model WebMetric {
+  recordedAt DateTime @default(now()) @map("recorded_at") @db.Timestamptz(6)
+  vpsNodeId  String   @map("vps_node_id") @db.Uuid
+  websiteId  String   @map("website_id") @db.Uuid
+
+  // LiteSpeed virtual-host traffic pressure.
+  concurrentRequests Int @default(0) @map("concurrent_requests")
+  requestRate        Int @default(0) @map("request_rate")
+
+  // Optional richer traffic data when the agent can provide it.
+  activeConnections  Int?    @map("active_connections")
+  processingRequests Int?    @map("processing_requests")
+  bytesInPerSecond   BigInt? @map("bytes_in_per_second")
+  bytesOutPerSecond  BigInt? @map("bytes_out_per_second")
+
+  ingestedAt DateTime @default(now()) @map("ingested_at") @db.Timestamptz(6)
+
+  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
+  website Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  @@id([recordedAt, websiteId])
+  @@index([websiteId, recordedAt(sort: Desc)])
+  @@index([vpsNodeId, recordedAt(sort: Desc)])
+  @@map("web_metrics")
+}
+
+model WebsiteProbeMetric {
+  recordedAt  DateTime           @default(now()) @map("recorded_at") @db.Timestamptz(6)
+  websiteId   String             @map("website_id") @db.Uuid
+  probeSource WebsiteProbeSource @default(AGENT) @map("probe_source")
+
+  isUp           Boolean @map("is_up")
+  statusCode     Int?    @map("status_code")
+  responseTimeMs Int?    @map("response_time_ms")
+  ttfbMs         Int?    @map("ttfb_ms")
+
+  // Useful for explaining problems to non-technical website owners.
+  errorMessage String? @map("error_message")
+
+  ingestedAt DateTime @default(now()) @map("ingested_at") @db.Timestamptz(6)
+
+  website Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  @@id([recordedAt, websiteId, probeSource])
+  @@index([websiteId, recordedAt(sort: Desc)])
+  @@index([isUp, recordedAt(sort: Desc)])
+  @@map("website_probe_metrics")
+}
+
+model WebsiteSslMetric {
+  recordedAt DateTime @default(now()) @map("recorded_at") @db.Timestamptz(6)
+  websiteId  String   @map("website_id") @db.Uuid
+
+  isValid       Boolean   @map("is_valid")
+  validFrom     DateTime? @map("valid_from") @db.Timestamptz(6)
+  validTo       DateTime? @map("valid_to") @db.Timestamptz(6)
+  daysRemaining Int?      @map("days_remaining")
+
+  issuer        String?
+  subject       String?
+  serialNumber  String? @map("serial_number")
+  statusMessage String? @map("status_message")
+
+  ingestedAt DateTime @default(now()) @map("ingested_at") @db.Timestamptz(6)
+
+  website Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  @@id([recordedAt, websiteId])
+  @@index([websiteId, recordedAt(sort: Desc)])
+  @@index([isValid, recordedAt(sort: Desc)])
+  @@map("website_ssl_metrics")
+}
+
+model VpsFilesystemMetric {
+  recordedAt DateTime @default(now()) @map("recorded_at") @db.Timestamptz(6)
+  vpsNodeId  String   @map("vps_node_id") @db.Uuid
+
+  mountPoint   String  @map("mount_point")
+  filesystem   String?
+  totalMB      Int     @map("total_mb")
+  usedMB       Int     @map("used_mb")
+  availableMB  Int     @map("available_mb")
+  usagePercent Float   @map("usage_percent")
+
+  ingestedAt DateTime @default(now()) @map("ingested_at") @db.Timestamptz(6)
+
+  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
+
+  @@id([recordedAt, vpsNodeId, mountPoint])
+  @@index([vpsNodeId, recordedAt(sort: Desc)])
+  @@index([vpsNodeId, mountPoint, recordedAt(sort: Desc)])
+  @@map("vps_filesystem_metrics")
+}
+
+model VpsNetworkInterfaceMetric {
+  recordedAt DateTime @default(now()) @map("recorded_at") @db.Timestamptz(6)
+  vpsNodeId  String   @map("vps_node_id") @db.Uuid
+
+  interfaceName String @map("interface_name")
+
+  rxBytesPerSecond BigInt @map("rx_bytes_per_second")
+  txBytesPerSecond BigInt @map("tx_bytes_per_second")
+
+  rxPacketsPerSecond BigInt? @map("rx_packets_per_second")
+  txPacketsPerSecond BigInt? @map("tx_packets_per_second")
+
+  rxErrors Int @default(0) @map("rx_errors")
+  txErrors Int @default(0) @map("tx_errors")
+  rxDrops  Int @default(0) @map("rx_drops")
+  txDrops  Int @default(0) @map("tx_drops")
+
+  ingestedAt DateTime @default(now()) @map("ingested_at") @db.Timestamptz(6)
+
+  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
+
+  @@id([recordedAt, vpsNodeId, interfaceName])
+  @@index([vpsNodeId, recordedAt(sort: Desc)])
+  @@index([vpsNodeId, interfaceName, recordedAt(sort: Desc)])
+  @@map("vps_network_interface_metrics")
+}
+
+model VpsServiceMetric {
+  recordedAt DateTime @default(now()) @map("recorded_at") @db.Timestamptz(6)
+  vpsNodeId  String   @map("vps_node_id") @db.Uuid
+
+  serviceName String  @map("service_name")
+  isActive    Boolean @map("is_active")
+  status      String?
+  memoryMB    Int?    @map("memory_mb")
+
+  ingestedAt DateTime @default(now()) @map("ingested_at") @db.Timestamptz(6)
+
+  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
+
+  @@id([recordedAt, vpsNodeId, serviceName])
+  @@index([vpsNodeId, recordedAt(sort: Desc)])
+  @@index([vpsNodeId, serviceName, recordedAt(sort: Desc)])
+  @@index([isActive, recordedAt(sort: Desc)])
+  @@map("vps_service_metrics")
+}
+
+// -----------------------------------------------------------------------------
+// CURRENT-STATE / BUSINESS TABLES
+// -----------------------------------------------------------------------------
+
+model SSLCertificate {
+  id        String @id @default(uuid()) @db.Uuid
+  websiteId String @unique @map("website_id") @db.Uuid
+
+  // Latest SSL state for dashboard cards.
+  issuer    String?
+  subject   String?
+  validFrom DateTime? @map("valid_from") @db.Timestamptz(6)
+  validTo   DateTime? @map("valid_to") @db.Timestamptz(6)
+  isValid   Boolean   @default(true) @map("is_valid")
+
+  // Technical telemetry for admin debugging and automation.
+  serialNumber    String? @map("serial_number")
+  isAutoRenewable Boolean @default(true) @map("is_auto_renewable")
+  statusMessage   String? @map("status_message")
+
+  website Website @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([validTo])
+  @@index([isValid])
+  @@map("ssl_certificates")
+}
+
+model Alert {
+  id String @id @default(uuid()) @db.Uuid
+
+  websiteId String? @map("website_id") @db.Uuid
+  vpsNodeId String? @map("vps_node_id") @db.Uuid
+  serverId  String? @map("server_id") @db.Uuid
+
+  title   String
+  message String
+
+  severity AlertSeverity
+  status   AlertStatus   @default(ACTIVE)
+
+  startedAt  DateTime  @default(now()) @map("started_at") @db.Timestamptz(6)
+  resolvedAt DateTime? @map("resolved_at") @db.Timestamptz(6)
+
+  metadata Json?
+
+  website Website? @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  vpsNode VpsNode? @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
+  server  Server?  @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([websiteId])
+  @@index([vpsNodeId])
+  @@index([serverId])
+  @@index([status])
+  @@index([severity])
+  @@index([startedAt])
+  @@index([websiteId, startedAt(sort: Desc)])
+  @@index([vpsNodeId, startedAt(sort: Desc)])
+  @@map("alerts")
+}
+
+model Otp {
+  id                String      @id @default(uuid()) @db.Uuid
+  otp               String      @unique
+  phoneNumber       String?     @unique @map("phone_number")
+  expiredTime       DateTime    @map("expired_time") @db.Timestamptz(6)
+  identifier        String?     @unique
+  lastRequestedTime DateTime?   @map("last_requested_time") @db.Timestamptz(6)
+  context           OtpContext? @default(LOGIN)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("otps")
 }

@@ -23,6 +23,11 @@ type SocketMonitoringAccessTokenPayload = SocketAccessTokenPayload & {
   purpose: 'MONITORING_ACCESS';
 };
 
+export interface AuthorizedSocketSession {
+  user: AuthenticatedUserSocketPayload;
+  expiresAt: Date;
+}
+
 @Injectable()
 export class RealtimeService {
   constructor(
@@ -34,63 +39,51 @@ export class RealtimeService {
   // =========================
   // AUTH
   // =========================
+  async authorizeSocket(
+    token: string,
+    monitoringAccessToken: string,
+  ): Promise<AuthorizedSocketSession | null> {
+    const accessPayload = await this.verifyAccessTokenPayload(token);
+
+    if (!accessPayload) {
+      return null;
+    }
+
+    const [user, monitoringPayload] = await Promise.all([
+      this.getAuthenticatedUser(accessPayload.sub),
+      this.verifyMonitoringAccessTokenPayload(monitoringAccessToken),
+    ]);
+
+    if (
+      !user ||
+      !monitoringPayload ||
+      monitoringPayload.sub !== user.id ||
+      monitoringPayload.purpose !== 'MONITORING_ACCESS'
+    ) {
+      return null;
+    }
+
+    return {
+      user,
+      expiresAt: new Date(
+        Math.min(accessPayload.exp, monitoringPayload.exp) * 1000,
+      ),
+    };
+  }
+
   async verifySocketToken(
     token: string,
   ): Promise<AuthenticatedUserSocketPayload | null> {
-    try {
-      const payload = await this.jwtService.verifyAsync<SocketAccessTokenPayload>(
-        token,
-        {
-          secret: this.config.get('app', { infer: true }).jwt.accessSecret,
-        },
-      );
-
-      const user = await this.prisma.user.findUnique({
-        where: {
-          id: payload.sub,
-        },
-        select: {
-          id: true,
-          email: true,
-          username: true,
-          role: true,
-          hashedRt: true,
-        },
-      });
-
-      if (!user?.hashedRt) {
-        return null;
-      }
-
-      return {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        role: user.role,
-      };
-    } catch {
-      return null;
-    }
+    const payload = await this.verifyAccessTokenPayload(token);
+    return payload ? this.getAuthenticatedUser(payload.sub) : null;
   }
 
   async verifyMonitoringAccessToken(
     token: string,
     userId: string,
   ): Promise<boolean> {
-    try {
-      const payload =
-        await this.jwtService.verifyAsync<SocketMonitoringAccessTokenPayload>(
-          token,
-          {
-            secret: this.config.get('app', { infer: true }).jwt
-              .monitoringAccessSecret,
-          },
-        );
-
-      return payload.sub === userId && payload.purpose === 'MONITORING_ACCESS';
-    } catch {
-      return false;
-    }
+    const payload = await this.verifyMonitoringAccessTokenPayload(token);
+    return payload?.sub === userId && payload.purpose === 'MONITORING_ACCESS';
   }
 
   // =========================
@@ -169,5 +162,184 @@ export class RealtimeService {
         requestRate: true,
       },
     });
+  }
+
+  async getMonitoringSnapshot(userId: string) {
+    const [vpsNodeIds, websiteIds] = await Promise.all([
+      this.getAllowedVpsNodeIdsForUser(userId),
+      this.getAllowedWebsiteIdsForUser(userId),
+    ]);
+
+    const [nodes, websites] = await Promise.all([
+      Promise.all(vpsNodeIds.map((id) => this.getVpsMonitoringSnapshot(id))),
+      Promise.all(
+        websiteIds.map((id) => this.getWebsiteMonitoringSnapshot(id)),
+      ),
+    ]);
+
+    return {
+      generatedAt: new Date(),
+      nodes: nodes.filter(Boolean),
+      websites: websites.filter(Boolean),
+    };
+  }
+
+  async getVpsMonitoringSnapshot(vpsNodeId: string) {
+    const node = await this.prisma.vpsNode.findUnique({
+      where: { id: vpsNodeId },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        hostname: true,
+        publicIp: true,
+        osName: true,
+        osVersion: true,
+        kernelVersion: true,
+        agentVersion: true,
+        lastSeenAt: true,
+        vpsMetrics: {
+          orderBy: { recordedAt: 'desc' },
+          take: 1,
+        },
+        filesystemMetrics: {
+          orderBy: { recordedAt: 'desc' },
+          distinct: ['mountPoint'],
+        },
+        networkInterfaceMetrics: {
+          orderBy: { recordedAt: 'desc' },
+          distinct: ['interfaceName'],
+        },
+        serviceMetrics: {
+          orderBy: { recordedAt: 'desc' },
+          distinct: ['serviceName'],
+        },
+        alerts: {
+          where: { status: 'ACTIVE' },
+          orderBy: { startedAt: 'desc' },
+          take: 10,
+        },
+      },
+    });
+
+    if (!node) {
+      return null;
+    }
+
+    return this.toJsonSafe({
+      ...node,
+      latestMetrics: node.vpsMetrics[0] ?? null,
+      vpsMetrics: undefined,
+    });
+  }
+
+  async getWebsiteMonitoringSnapshot(websiteId: string) {
+    const website = await this.prisma.website.findUnique({
+      where: { id: websiteId },
+      select: {
+        id: true,
+        vpsNodeId: true,
+        domain: true,
+        displayName: true,
+        isActive: true,
+        lastIsUp: true,
+        lastStatusCode: true,
+        lastResponseTimeMs: true,
+        lastProbeAt: true,
+        ssl: true,
+        metrics: {
+          orderBy: { recordedAt: 'desc' },
+          take: 1,
+        },
+        probeMetrics: {
+          orderBy: { recordedAt: 'desc' },
+          take: 1,
+        },
+        sslMetrics: {
+          orderBy: { recordedAt: 'desc' },
+          take: 1,
+        },
+        alerts: {
+          where: { status: 'ACTIVE' },
+          orderBy: { startedAt: 'desc' },
+          take: 10,
+        },
+      },
+    });
+
+    if (!website) {
+      return null;
+    }
+
+    return this.toJsonSafe({
+      ...website,
+      latestTraffic: website.metrics[0] ?? null,
+      latestProbe: website.probeMetrics[0] ?? null,
+      latestSslMetric: website.sslMetrics[0] ?? null,
+      metrics: undefined,
+      probeMetrics: undefined,
+      sslMetrics: undefined,
+    });
+  }
+
+  private async verifyAccessTokenPayload(token: string) {
+    try {
+      return await this.jwtService.verifyAsync<SocketAccessTokenPayload>(
+        token,
+        {
+          secret: this.config.get('app', { infer: true }).jwt.accessSecret,
+        },
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  private async verifyMonitoringAccessTokenPayload(token: string) {
+    try {
+      return await this.jwtService.verifyAsync<SocketMonitoringAccessTokenPayload>(
+        token,
+        {
+          secret: this.config.get('app', { infer: true }).jwt
+            .monitoringAccessSecret,
+        },
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  private async getAuthenticatedUser(
+    userId: string,
+  ): Promise<AuthenticatedUserSocketPayload | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        role: true,
+        hashedRt: true,
+      },
+    });
+
+    if (!user?.hashedRt) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+    };
+  }
+
+  private toJsonSafe<T>(value: T): T {
+    return JSON.parse(
+      JSON.stringify(value, (_, item) =>
+        typeof item === 'bigint' ? Number(item) : item,
+      ),
+    ) as T;
   }
 }

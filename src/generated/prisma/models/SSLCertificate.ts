@@ -498,10 +498,6 @@ export type SSLCertificateUncheckedUpdateOneWithoutWebsiteNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SSLCertificateUpdateToOneWithWhereWithoutWebsiteInput, Prisma.SSLCertificateUpdateWithoutWebsiteInput>, Prisma.SSLCertificateUncheckedUpdateWithoutWebsiteInput>
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type SSLCertificateCreateWithoutWebsiteInput = {
   id?: string
   issuer?: string | null

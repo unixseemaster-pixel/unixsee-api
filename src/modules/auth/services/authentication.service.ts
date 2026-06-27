@@ -139,16 +139,34 @@ export class AuthenticationService {
     phoneNumber: string;
     context?: OtpContext;
   }) {
-    this.logger.log(`OTP request for context: ${context ?? 'UNKNOWN'}`);
+    const resolvedContext = context ?? 'LOGIN';
+    this.logger.log(
+      `OTP request for context: ${resolvedContext}, phoneNumber: ${phoneNumber}`,
+    );
 
-    const otp = await this.otpService.createAndOverwrite({
-      length: 6,
-      phoneNumber,
-      context,
-    });
+    try {
+      this.logger.log(
+        `Calling OtpService.createAndOverwrite for context: ${resolvedContext}`,
+      );
+      const otp = await this.otpService.createAndOverwrite({
+        length: 6,
+        phoneNumber,
+        context,
+      });
 
-    this.logger.log(`OTP created for context: ${context ?? 'UNKNOWN'}`);
-    return { otp: otp.otp };
+      this.logger.log(
+        `OTP created for context: ${resolvedContext}, otpId: ${otp.id}`,
+      );
+      return { otp: otp.otp };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      const stack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(
+        `OTP creation failed for context: ${resolvedContext}, phoneNumber: ${phoneNumber}, error: ${message}`,
+        stack,
+      );
+      throw error;
+    }
   }
 
   async validateOtp({
