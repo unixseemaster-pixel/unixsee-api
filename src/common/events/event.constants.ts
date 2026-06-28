@@ -1,6 +1,9 @@
 export const EVENT_NAMES = {
   METRICS_INGESTED: 'metrics.ingested',
   WEBSITE_METRICS_EVALUATED: 'website.metrics.evaluated',
+  OVERVIEW_SNAPSHOT: 'overview:snapshot',
+  OVERVIEW_WEBSITE_TICK: 'overview:website_tick',
+  OVERVIEW_VPS_TICK: 'overview:vps_tick',
   MONITORING_SNAPSHOT: 'monitoring:snapshot',
   MONITORING_VPS_TICK: 'monitoring:vps_tick',
   MONITORING_WEBSITE_TICK: 'monitoring:website_tick',

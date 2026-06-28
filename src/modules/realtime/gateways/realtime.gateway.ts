@@ -103,8 +103,12 @@ export class RealtimeGateway
 
     await client.join(`user:${user.id}`);
 
-    const snapshot = await this.realtimeService.getMonitoringSnapshot(user.id);
-    client.emit(EVENT_NAMES.MONITORING_SNAPSHOT, snapshot);
+    const [monitoringSnapshot, overviewSnapshot] = await Promise.all([
+      this.realtimeService.getMonitoringSnapshot(user.id),
+      this.realtimeService.getOverviewSnapshot(user.id),
+    ]);
+    client.emit(EVENT_NAMES.MONITORING_SNAPSHOT, monitoringSnapshot);
+    client.emit(EVENT_NAMES.OVERVIEW_SNAPSHOT, overviewSnapshot);
 
     this.logger.log(
       `User ${user.id} connected | VPS: ${vpsNodeIds.length} | Websites: ${websiteIds.length}`,
@@ -224,6 +228,26 @@ export class RealtimeGateway
           .to(`vps:${vpsNodeId}`)
           .emit(EVENT_NAMES.MONITORING_VPS_TICK, monitoringSnapshot);
       }
+
+      const overviewUserIds =
+        await this.realtimeService.getUserIdsByVpsNodeId(vpsNodeId);
+
+      await Promise.all(
+        overviewUserIds.map(async (userId) => {
+          const overviewTick = await this.realtimeService.getOverviewVpsTick(
+            userId,
+            vpsNodeId,
+          );
+
+          if (!overviewTick) {
+            return;
+          }
+
+          this.server
+            .to(`user:${userId}`)
+            .emit(EVENT_NAMES.OVERVIEW_VPS_TICK, overviewTick);
+        }),
+      );
     } catch (error: any) {
       this.logger.error(`VPS live tick error: ${error.message}`);
     }
@@ -268,6 +292,16 @@ export class RealtimeGateway
           .to(`website:${event.websiteId}`)
           .emit(EVENT_NAMES.MONITORING_WEBSITE_TICK, monitoringSnapshot);
       }
+
+      const overviewTick = await this.realtimeService.getOverviewWebsiteTick(
+        event.websiteId,
+      );
+
+      if (overviewTick) {
+        this.server
+          .to(`website:${event.websiteId}`)
+          .emit(EVENT_NAMES.OVERVIEW_WEBSITE_TICK, overviewTick);
+      }
     } catch (error: any) {
       this.logger.error(`Website metrics stream error: ${error.message}`);
     }
@@ -287,6 +321,8 @@ export class RealtimeGateway
       this.server
         .to(`website:${event.websiteId}`)
         .emit(EVENT_NAMES.INCIDENT_CREATED, event);
+
+      await this.emitOverviewSnapshotForWebsite(event.websiteId);
     } catch (error: any) {
       this.logger.error(`Incident created stream error: ${error.message}`);
     }
@@ -304,8 +340,27 @@ export class RealtimeGateway
       this.server
         .to(`website:${event.websiteId}`)
         .emit(EVENT_NAMES.INCIDENT_RESOLVED, event);
+
+      await this.emitOverviewSnapshotForWebsite(event.websiteId);
     } catch (error: any) {
       this.logger.error(`Incident resolved stream error: ${error.message}`);
     }
+  }
+
+  private async emitOverviewSnapshotForWebsite(
+    websiteId: string,
+  ): Promise<void> {
+    const userId = await this.realtimeService.getUserIdByWebsiteId(websiteId);
+
+    if (!userId) {
+      return;
+    }
+
+    const overviewSnapshot =
+      await this.realtimeService.getOverviewSnapshot(userId);
+
+    this.server
+      .to(`user:${userId}`)
+      .emit(EVENT_NAMES.OVERVIEW_SNAPSHOT, overviewSnapshot);
   }
 }

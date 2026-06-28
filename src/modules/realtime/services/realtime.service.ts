@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { Role } from '#/generated/prisma/enums.js';
 import type { AppConfigType } from '#/utils/config/app.config.js';
+import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
 
 export interface AuthenticatedUserSocketPayload {
   id: string;
@@ -34,6 +35,7 @@ export class RealtimeService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService<AppConfigType, true>,
+    private readonly systemHealthService: SystemHealthService,
   ) {}
 
   // =========================
@@ -164,6 +166,284 @@ export class RealtimeService {
     });
   }
 
+  async getOverviewSnapshot(userId: string) {
+    const [websites, vpsNodes, recentAlerts, expiringCertificates] =
+      await Promise.all([
+        this.prisma.website.findMany({
+          where: { userId },
+          select: {
+            id: true,
+            metrics: {
+              orderBy: { recordedAt: 'desc' },
+              take: 1,
+              select: {
+                recordedAt: true,
+                concurrentRequests: true,
+                requestRate: true,
+              },
+            },
+          },
+        }),
+        this.prisma.vpsNode.findMany({
+          where: {
+            OR: [
+              { userId },
+              {
+                websites: {
+                  some: {
+                    userId,
+                  },
+                },
+              },
+            ],
+          },
+          distinct: ['id'],
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            hostname: true,
+            publicIp: true,
+            lastSeenAt: true,
+            vpsMetrics: {
+              orderBy: { recordedAt: 'desc' },
+              take: 1,
+              select: {
+                recordedAt: true,
+                cpuUsagePercent: true,
+                memoryTotalMB: true,
+                memoryUsedMB: true,
+                liteSpeedConnections: true,
+                storageTotalMB: true,
+                storageAvailableMB: true,
+              },
+            },
+            websites: {
+              where: { userId },
+              select: {
+                id: true,
+              },
+            },
+            alerts: {
+              where: { status: 'ACTIVE' },
+              orderBy: { startedAt: 'desc' },
+              take: 10,
+            },
+          },
+        }),
+        this.prisma.alert.findMany({
+          where: {
+            OR: [
+              {
+                website: {
+                  userId,
+                },
+              },
+              {
+                vpsNode: {
+                  OR: [
+                    { userId },
+                    {
+                      websites: {
+                        some: {
+                          userId,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 20,
+        }),
+        this.getOverviewExpiringCertificates(userId),
+      ]);
+
+    const websiteCards = websites.map((website) => {
+      const latestMetric = website.metrics[0] ?? null;
+      const activeVisitors = latestMetric?.concurrentRequests ?? 0;
+      const websiteAlerts = recentAlerts.filter(
+        (alert) => alert.websiteId === website.id,
+      );
+
+      return {
+        websiteId: website.id,
+        activeVisitors,
+        requestRate: latestMetric?.requestRate ?? 0,
+        lastCheckedAt: latestMetric?.recordedAt ?? null,
+        status: this.systemHealthService.calculate({
+          activeVisitors,
+          alerts: websiteAlerts.map((alert) => ({
+            status: alert.severity.toLowerCase(),
+          })),
+        }),
+        trafficStatus: this.resolveTrafficLabel(activeVisitors),
+      };
+    });
+
+    const vpsCards = vpsNodes.map((node) => {
+      const latestMetric = node.vpsMetrics[0] ?? null;
+      const memoryUsagePercent = latestMetric
+        ? this.calculatePercent(
+            latestMetric.memoryUsedMB,
+            latestMetric.memoryTotalMB,
+          )
+        : 0;
+      const storageUsagePercent = latestMetric
+        ? this.calculatePercent(
+            latestMetric.storageTotalMB - latestMetric.storageAvailableMB,
+            latestMetric.storageTotalMB,
+          )
+        : 0;
+
+      return {
+        vpsNodeId: node.id,
+        name: node.name,
+        status: this.resolveVpsOverviewStatus({
+          nodeStatus: node.status,
+          alerts: node.alerts,
+        }),
+        nodeStatus: node.status,
+        hostname: node.hostname,
+        publicIp: node.publicIp,
+        lastCheckedAt: latestMetric?.recordedAt ?? node.lastSeenAt,
+        lastSeenAt: node.lastSeenAt,
+        websitesCount: node.websites.length,
+        activeAlertsCount: node.alerts.length,
+        metrics: latestMetric
+          ? {
+              recordedAt: latestMetric.recordedAt,
+              cpuUsagePercent: latestMetric.cpuUsagePercent,
+              memoryUsagePercent,
+              memoryUsedMB: latestMetric.memoryUsedMB,
+              memoryTotalMB: latestMetric.memoryTotalMB,
+              storageUsagePercent,
+              storageTotalMB: latestMetric.storageTotalMB,
+              storageAvailableMB: latestMetric.storageAvailableMB,
+              liteSpeedConnections: latestMetric.liteSpeedConnections,
+            }
+          : null,
+      };
+    });
+
+    const status = this.resolveGlobalOverviewStatus([
+      ...websiteCards,
+      ...vpsCards,
+    ]);
+
+    const overview = {
+      generatedAt: new Date(),
+      status,
+      message: this.resolveOverviewStatusMessage(status),
+      lastCheckedAt: this.getLatestTimestamp(
+        [...websiteCards, ...vpsCards]
+          .filter((item) => Boolean(item.lastCheckedAt))
+          .map((item) => ({ lastCheckedAt: item.lastCheckedAt as Date })),
+      ),
+      websites: websiteCards,
+      vpsNodes: vpsCards,
+      alerts: recentAlerts,
+      ssl: {
+        expiringCount: expiringCertificates.length,
+      },
+      monitoring: {
+        active: true,
+        message: 'All monitoring systems operational',
+      },
+    };
+
+    return this.toJsonSafe(overview);
+  }
+
+  async getOverviewWebsiteTick(websiteId: string) {
+    const website = await this.prisma.website.findUnique({
+      where: { id: websiteId },
+      select: {
+        userId: true,
+      },
+    });
+
+    if (!website) {
+      return null;
+    }
+
+    const overview = await this.getOverviewSnapshot(website.userId);
+    const websiteOverview = overview.websites.find(
+      (item) => item.websiteId === websiteId,
+    );
+
+    if (!websiteOverview) {
+      return null;
+    }
+
+    return {
+      generatedAt: overview.generatedAt,
+      status: overview.status,
+      lastCheckedAt: overview.lastCheckedAt,
+      ssl: overview.ssl,
+      website: websiteOverview,
+    };
+  }
+
+  async getOverviewVpsTick(userId: string, vpsNodeId: string) {
+    const overview = await this.getOverviewSnapshot(userId);
+    const vpsOverview = overview.vpsNodes.find(
+      (item) => item.vpsNodeId === vpsNodeId,
+    );
+
+    if (!vpsOverview) {
+      return null;
+    }
+
+    return {
+      generatedAt: overview.generatedAt,
+      status: overview.status,
+      lastCheckedAt: overview.lastCheckedAt,
+      vpsNode: vpsOverview,
+    };
+  }
+
+  async getUserIdByWebsiteId(websiteId: string) {
+    const website = await this.prisma.website.findUnique({
+      where: { id: websiteId },
+      select: {
+        userId: true,
+      },
+    });
+
+    return website?.userId ?? null;
+  }
+
+  async getUserIdsByVpsNodeId(vpsNodeId: string) {
+    const node = await this.prisma.vpsNode.findUnique({
+      where: { id: vpsNodeId },
+      select: {
+        userId: true,
+        websites: {
+          select: {
+            userId: true,
+          },
+        },
+      },
+    });
+
+    if (!node) {
+      return [];
+    }
+
+    return Array.from(
+      new Set(
+        [node.userId, ...node.websites.map((website) => website.userId)].filter(
+          (userId): userId is string => Boolean(userId),
+        ),
+      ),
+    );
+  }
+
   async getMonitoringSnapshot(userId: string) {
     const [vpsNodeIds, websiteIds] = await Promise.all([
       this.getAllowedVpsNodeIdsForUser(userId),
@@ -182,6 +462,116 @@ export class RealtimeService {
       nodes: nodes.filter(Boolean),
       websites: websites.filter(Boolean),
     };
+  }
+
+  private getOverviewExpiringCertificates(userId: string, daysThreshold = 14) {
+    const now = new Date();
+    const thresholdDate = new Date();
+    thresholdDate.setDate(now.getDate() + daysThreshold);
+
+    return this.prisma.sSLCertificate.findMany({
+      where: {
+        website: {
+          userId,
+        },
+        validTo: {
+          not: null,
+          lte: thresholdDate,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
+  private resolveGlobalOverviewStatus(
+    websites: Array<{
+      status: string;
+    }>,
+  ) {
+    if (websites.some((website) => website.status === 'critical')) {
+      return 'critical';
+    }
+
+    if (websites.some((website) => website.status === 'warning')) {
+      return 'warning';
+    }
+
+    if (websites.some((website) => website.status === 'monitoring')) {
+      return 'monitoring';
+    }
+
+    return 'healthy';
+  }
+
+  private resolveVpsOverviewStatus({
+    nodeStatus,
+    alerts,
+  }: {
+    nodeStatus: string;
+    alerts: Array<{ severity: string }>;
+  }) {
+    if (
+      nodeStatus === 'OFFLINE' ||
+      alerts.some((alert) => alert.severity === 'CRITICAL')
+    ) {
+      return 'critical';
+    }
+
+    if (
+      nodeStatus === 'DEGRADED' ||
+      alerts.some((alert) => alert.severity === 'WARNING')
+    ) {
+      return 'warning';
+    }
+
+    if (
+      nodeStatus === 'UNKNOWN' ||
+      alerts.some((alert) => alert.severity === 'MONITORING')
+    ) {
+      return 'monitoring';
+    }
+
+    return 'healthy';
+  }
+
+  private calculatePercent(used: number, total: number) {
+    if (total <= 0) return 0;
+
+    return Number(((used / total) * 100).toFixed(2));
+  }
+
+  private resolveOverviewStatusMessage(status: string) {
+    if (status === 'healthy') return 'All systems operational';
+    if (status === 'monitoring') return 'Increased activity detected';
+    return 'Attention required';
+  }
+
+  private resolveTrafficLabel(activeVisitors: number) {
+    if (activeVisitors > 500) return 'high';
+    if (activeVisitors > 200) return 'medium';
+    return 'normal';
+  }
+
+  private getLatestTimestamp(
+    websites: Array<{ lastCheckedAt: Date | string }>,
+  ): Date {
+    if (websites.length === 0) {
+      return new Date(0);
+    }
+
+    let latestTimestamp = new Date(websites[0].lastCheckedAt).getTime();
+
+    for (let i = 1; i < websites.length; i++) {
+      const currentTimestamp = new Date(websites[i].lastCheckedAt).getTime();
+
+      if (currentTimestamp > latestTimestamp) {
+        latestTimestamp = currentTimestamp;
+      }
+    }
+
+    return new Date(latestTimestamp);
   }
 
   async getVpsMonitoringSnapshot(vpsNodeId: string) {
