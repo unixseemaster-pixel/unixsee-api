@@ -62,15 +62,12 @@ export class RealtimeGateway
       ) ??
       this.normalizeToken(client.handshake.headers['monitor-access-token']);
 
-    if (!token || !monitoringAccessToken) {
+    if (!token) {
       client.disconnect(true);
       return;
     }
 
-    const session = await this.realtimeService.authorizeSocket(
-      token,
-      monitoringAccessToken,
-    );
+    const session = await this.realtimeService.authorizeOverviewSocket(token);
 
     if (!session) {
       client.disconnect(true);
@@ -79,6 +76,7 @@ export class RealtimeGateway
 
     const { user } = session;
     client.data.user = user;
+    client.data.hasMonitoringAccess = false;
     this.scheduleAuthorizationChecks(
       client,
       token,
@@ -93,32 +91,44 @@ export class RealtimeGateway
       user.id,
     );
 
-    for (const vpsNodeId of vpsNodeIds) {
-      await client.join(`vps:${vpsNodeId}`);
-    }
-
-    for (const websiteId of websiteIds) {
-      await client.join(`website:${websiteId}`);
-    }
-
     await client.join(`user:${user.id}`);
 
-    const [monitoringSnapshot, overviewSnapshot] = await Promise.all([
-      this.realtimeService.getMonitoringSnapshot(user.id),
-      this.realtimeService.getOverviewSnapshot(user.id),
-    ]);
-    client.emit(EVENT_NAMES.MONITORING_SNAPSHOT, monitoringSnapshot);
+    const monitoringSession =
+      await this.realtimeService.authorizeMonitoringSocket(
+        token,
+        monitoringAccessToken,
+      );
+
+    if (monitoringSession?.user.id === user.id) {
+      client.data.hasMonitoringAccess = true;
+
+      for (const vpsNodeId of vpsNodeIds) {
+        await client.join(`vps:${vpsNodeId}`);
+      }
+
+      for (const websiteId of websiteIds) {
+        await client.join(`website:${websiteId}`);
+      }
+
+      const monitoringSnapshot =
+        await this.realtimeService.getMonitoringSnapshot(user.id);
+      client.emit(EVENT_NAMES.MONITORING_SNAPSHOT, monitoringSnapshot);
+    }
+
+    const overviewSnapshot = await this.realtimeService.getOverviewSnapshot(
+      user.id,
+    );
     client.emit(EVENT_NAMES.OVERVIEW_SNAPSHOT, overviewSnapshot);
 
     this.logger.log(
-      `User ${user.id} connected | VPS: ${vpsNodeIds.length} | Websites: ${websiteIds.length}`,
+      `User ${user.id} connected | Overview: true | Monitoring: ${client.data.hasMonitoringAccess} | VPS: ${vpsNodeIds.length} | Websites: ${websiteIds.length}`,
     );
   }
 
   private scheduleAuthorizationChecks(
     client: Socket,
     token: string,
-    monitoringAccessToken: string,
+    monitoringAccessToken: string | null,
     expiresAt: Date,
   ): void {
     this.clearAuthorizationTimers(client.id);
@@ -148,17 +158,19 @@ export class RealtimeGateway
   private async revalidateSocket(
     client: Socket,
     token: string,
-    monitoringAccessToken: string,
+    monitoringAccessToken: string | null,
   ): Promise<void> {
     if (!client.connected) {
       this.clearAuthorizationTimers(client.id);
       return;
     }
 
-    const session = await this.realtimeService.authorizeSocket(
-      token,
-      monitoringAccessToken,
-    );
+    const session = client.data.hasMonitoringAccess
+      ? await this.realtimeService.authorizeMonitoringSocket(
+          token,
+          monitoringAccessToken,
+        )
+      : await this.realtimeService.authorizeOverviewSocket(token);
 
     if (!session || session.user.id !== client.data.user?.id) {
       client.disconnect(true);
@@ -298,8 +310,16 @@ export class RealtimeGateway
       );
 
       if (overviewTick) {
+        const userId = await this.realtimeService.getUserIdByWebsiteId(
+          event.websiteId,
+        );
+
+        if (!userId) {
+          return;
+        }
+
         this.server
-          .to(`website:${event.websiteId}`)
+          .to(`user:${userId}`)
           .emit(EVENT_NAMES.OVERVIEW_WEBSITE_TICK, overviewTick);
       }
     } catch (error: any) {

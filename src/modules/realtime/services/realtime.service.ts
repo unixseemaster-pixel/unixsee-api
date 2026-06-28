@@ -73,6 +73,38 @@ export class RealtimeService {
     };
   }
 
+  async authorizeOverviewSocket(
+    token: string,
+  ): Promise<AuthorizedSocketSession | null> {
+    const accessPayload = await this.verifyAccessTokenPayload(token);
+
+    if (!accessPayload) {
+      return null;
+    }
+
+    const user = await this.getAuthenticatedUser(accessPayload.sub);
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      user,
+      expiresAt: new Date(accessPayload.exp * 1000),
+    };
+  }
+
+  async authorizeMonitoringSocket(
+    token: string,
+    monitoringAccessToken: string | null,
+  ): Promise<AuthorizedSocketSession | null> {
+    if (!monitoringAccessToken) {
+      return null;
+    }
+
+    return this.authorizeSocket(token, monitoringAccessToken);
+  }
+
   async verifySocketToken(
     token: string,
   ): Promise<AuthenticatedUserSocketPayload | null> {
