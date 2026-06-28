@@ -745,7 +745,7 @@ export class RealtimeService {
       },
     });
 
-    if (!user?.hashedRt) {
+    if (!user) {
       return null;
     }
 
