@@ -1,13 +1,16 @@
 import { randomBytes, randomUUID } from 'crypto';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { EventDispatcherService } from '../event/event-dispatcher.service.js';
-import { IngestAgentMetricsDto } from './dto/ingest-agent-metrics.dto.js';
+import { IngestAgentMetricsDto, WebsitePayloadDto } from './dto/ingest-agent-metrics.dto.js';
 import { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
+import type { Website } from '#/generated/prisma/client.js';
 
 @Injectable()
 export class AgentService {
+  private readonly logger = new Logger(AgentService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventDispatcher: EventDispatcherService,
@@ -18,131 +21,291 @@ export class AgentService {
     isFirstProvisioningCycle: boolean,
     clientIp: string,
   ): Promise<{ vpsNodeId: string; assignedSecretKey?: string }> {
+    const startedAt = Date.now();
     const sampleMachineId = payload.batch[0].machineId;
 
-    if (isFirstProvisioningCycle) {
-      const existingNode = await this.prisma.vpsNode.findUnique({
+    try {
+      if (isFirstProvisioningCycle) {
+        const provisioningResult = await this.provisionNodeIfMissing(
+          sampleMachineId,
+          clientIp,
+        );
+
+        if (provisioningResult) {
+          this.logger.log(
+            `Agent node provisioned | machine=${sampleMachineId} | vpsNode=${provisioningResult.vpsNodeId}`,
+          );
+          return provisioningResult;
+        }
+      }
+
+      const vpsTarget = await this.prisma.vpsNode.findUniqueOrThrow({
         where: { machineId: sampleMachineId },
+        include: { websites: true },
       });
 
-      if (!existingNode) {
-        const fallbackServer = await this.prisma.server.upsert({
-          where: { name: `vps-host-${sampleMachineId.substring(0, 8)}` },
-          update: {},
-          create: {
-            name: `vps-host-${sampleMachineId.substring(0, 8)}`,
-            ipAddress: clientIp || '127.0.0.1',
-          },
-        });
+      const websiteMap = await this.ensureWebsites(
+        vpsTarget.id,
+        vpsTarget.userId,
+        vpsTarget.websites,
+        this.getUniqueWebsitePayloads(payload),
+      );
 
-        const structuralSecretKey = randomBytes(32).toString('hex');
+      const vpsMetricResult = await this.prisma.vpsMetric.createMany({
+        data: payload.batch.map((entry) => ({
+          recordedAt: new Date(entry.timestamp),
+          vpsNodeId: vpsTarget.id,
+          cpuUsagePercent: entry.metrics.cpuMean,
+          memoryTotalMB: entry.metrics.ramTotalMB,
+          memoryUsedMB: entry.metrics.ramMeanMB,
+          liteSpeedConnections: entry.metrics.lsConnectionsPeak,
+          diskReadBytesPerSecond: BigInt(
+            entry.metrics.diskReadBytesPerSecondMean,
+          ),
+          diskWriteBytesPerSecond: BigInt(
+            entry.metrics.diskWriteBytesPerSecondMean,
+          ),
+          diskIops: entry.metrics.diskIopsMean,
+          storageTotalMB: entry.metrics.storageTotalMB,
+          storageAvailableMB: entry.metrics.storageAvailableMB,
+          networkRxBytesPerSecond: BigInt(0),
+          networkTxBytesPerSecond: BigInt(0),
+        })),
+        skipDuplicates: true,
+      });
 
-        const newNode = await this.prisma.vpsNode.create({
-          data: {
-            machineId: sampleMachineId,
-            serverId: fallbackServer.id,
-            name: `Auto-Provisioned Node (${sampleMachineId.substring(0, 8)})`,
-            secretKey: structuralSecretKey,
-          },
-        });
+      const webMetricRows = this.buildWebMetricRows(
+        payload,
+        vpsTarget.id,
+        websiteMap,
+      );
 
-        return {
-          vpsNodeId: newNode.id,
-          assignedSecretKey: structuralSecretKey,
-        };
+      const webMetricResult = webMetricRows.length
+        ? await this.prisma.webMetric.createMany({
+            data: webMetricRows,
+            skipDuplicates: true,
+          })
+        : { count: 0 };
+
+      this.dispatchRealtimeEvents(payload, vpsTarget.id, websiteMap);
+
+      this.logger.log(
+        `Agent ingest stored | machine=${sampleMachineId} | batch=${payload.batch.length} | vpsInserted=${vpsMetricResult.count} | webInserted=${webMetricResult.count} | webRows=${webMetricRows.length} | durationMs=${Date.now() - startedAt}`,
+      );
+
+      return { vpsNodeId: vpsTarget.id };
+    } catch (error) {
+      this.logger.error(
+        `Agent ingest failed | machine=${sampleMachineId} | batch=${payload.batch.length} | durationMs=${Date.now() - startedAt} | ${this.formatError(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+
+      throw error;
+    }
+  }
+
+  private async provisionNodeIfMissing(
+    machineId: string,
+    clientIp: string,
+  ): Promise<{ vpsNodeId: string; assignedSecretKey: string } | null> {
+    const existingNode = await this.prisma.vpsNode.findUnique({
+      where: { machineId },
+    });
+
+    if (existingNode) return null;
+
+    const fallbackServer = await this.prisma.server.upsert({
+      where: { name: `vps-host-${machineId.substring(0, 8)}` },
+      update: {},
+      create: {
+        name: `vps-host-${machineId.substring(0, 8)}`,
+        ipAddress: clientIp || '127.0.0.1',
+      },
+    });
+
+    const structuralSecretKey = randomBytes(32).toString('hex');
+
+    const newNode = await this.prisma.vpsNode.create({
+      data: {
+        machineId,
+        serverId: fallbackServer.id,
+        name: `Auto-Provisioned Node (${machineId.substring(0, 8)})`,
+        secretKey: structuralSecretKey,
+      },
+    });
+
+    return {
+      vpsNodeId: newNode.id,
+      assignedSecretKey: structuralSecretKey,
+    };
+  }
+
+  private getUniqueWebsitePayloads(
+    payload: IngestAgentMetricsDto,
+  ): WebsitePayloadDto[] {
+    const websiteMap = new Map<string, WebsitePayloadDto>();
+
+    for (const entry of payload.batch) {
+      for (const website of entry.websites) {
+        websiteMap.set(website.domain, website);
       }
     }
 
-    const vpsTarget = await this.prisma.vpsNode.findUniqueOrThrow({
-      where: { machineId: sampleMachineId },
-      include: { websites: true },
+    return [...websiteMap.values()];
+  }
+
+  private async ensureWebsites(
+    vpsNodeId: string,
+    vpsNodeUserId: string | null,
+    currentWebsites: Website[],
+    discoveredWebsites: WebsitePayloadDto[],
+  ): Promise<Map<string, Website>> {
+    const websiteMap = new Map(currentWebsites.map((website) => [website.domain, website]));
+    const missingWebsites = discoveredWebsites.filter(
+      (website) => !websiteMap.has(website.domain),
+    );
+
+    if (missingWebsites.length === 0) {
+      await this.refreshWebsiteInventory(vpsNodeId, discoveredWebsites);
+
+      const refreshedWebsites = await this.prisma.website.findMany({
+        where: {
+          domain: { in: discoveredWebsites.map((website) => website.domain) },
+        },
+      });
+
+      return new Map(refreshedWebsites.map((website) => [website.domain, website]));
+    }
+
+    const fallbackUserId = vpsNodeUserId ?? (await this.getFallbackUserId());
+
+    await this.prisma.website.createMany({
+      data: missingWebsites.map((website) => ({
+        id: randomUUID(),
+        vpsNodeId,
+        userId: fallbackUserId,
+        domain: website.domain,
+        directAdminUser: website.owner,
+        documentRoot: website.documentRoot,
+        homeDirectory: this.getHomeDirectory(website.documentRoot),
+        isActive: true,
+      })),
+      skipDuplicates: true,
     });
 
-    const websiteMap = new Map(vpsTarget.websites.map((w) => [w.domain, w]));
+    await this.refreshWebsiteInventory(vpsNodeId, discoveredWebsites);
 
+    const refreshedWebsites = await this.prisma.website.findMany({
+      where: {
+        domain: { in: discoveredWebsites.map((website) => website.domain) },
+      },
+    });
+
+    return new Map(refreshedWebsites.map((website) => [website.domain, website]));
+  }
+
+  private async refreshWebsiteInventory(
+    vpsNodeId: string,
+    discoveredWebsites: WebsitePayloadDto[],
+  ): Promise<void> {
+    await Promise.all(
+      discoveredWebsites.map((website) =>
+        this.prisma.website.updateMany({
+          where: { domain: website.domain },
+          data: {
+            vpsNodeId,
+            directAdminUser: website.owner,
+            documentRoot: website.documentRoot,
+            homeDirectory: this.getHomeDirectory(website.documentRoot),
+            isActive: true,
+          },
+        }),
+      ),
+    );
+  }
+
+  private async getFallbackUserId(): Promise<string> {
+    const systemAdminUser = await this.prisma.user.findFirst({
+      where: { OR: [{ role: 'ADMIN' }, { role: 'OPERATOR' }] },
+      select: { id: true },
+    });
+
+    if (!systemAdminUser) {
+      throw new InternalServerErrorException(
+        'Cannot auto-create discovered websites because no ADMIN or OPERATOR user exists.',
+      );
+    }
+
+    return systemAdminUser.id;
+  }
+
+  private buildWebMetricRows(
+    payload: IngestAgentMetricsDto,
+    vpsNodeId: string,
+    websiteMap: Map<string, Website>,
+  ) {
+    return payload.batch.flatMap((entry) => {
+      const recordedAt = new Date(entry.timestamp);
+
+      return entry.websites.flatMap((siteData) => {
+        const website = websiteMap.get(siteData.domain);
+
+        if (!website) return [];
+
+        return {
+          recordedAt,
+          vpsNodeId,
+          websiteId: website.id,
+          concurrentRequests: siteData.peakConcurrentRequests,
+          requestRate: 0,
+        };
+      });
+    });
+  }
+
+  private dispatchRealtimeEvents(
+    payload: IngestAgentMetricsDto,
+    vpsNodeId: string,
+    websiteMap: Map<string, Website>,
+  ): void {
     const emittedEvents: WebsiteMetricsEvaluatedEvent[] = [];
 
-    await this.prisma.$transaction(async (tx) => {
-      for (const entry of payload.batch) {
-        const timestampDate = new Date(entry.timestamp);
-
-        await tx.vpsMetric.create({
-          data: {
-            recordedAt: timestampDate,
-            vpsNodeId: vpsTarget.id,
-            cpuUsagePercent: entry.metrics.cpuMean,
-            memoryTotalMB: entry.metrics.ramTotalMB,
-            memoryUsedMB: entry.metrics.ramMeanMB,
-            liteSpeedConnections: entry.metrics.lsConnectionsPeak,
-            diskReadBytesPerSecond: BigInt(
-              entry.metrics.diskReadBytesPerSecondMean,
-            ),
-            diskWriteBytesPerSecond: BigInt(
-              entry.metrics.diskWriteBytesPerSecondMean,
-            ),
-            diskIops: entry.metrics.diskIopsMean,
-            storageTotalMB: entry.metrics.storageTotalMB,
-            storageAvailableMB: entry.metrics.storageAvailableMB,
-            networkRxBytesPerSecond: BigInt(0),
-            networkTxBytesPerSecond: BigInt(0),
-          },
-        });
-
-        for (const siteData of entry.websites) {
-          let website = websiteMap.get(siteData.domain);
-
-          if (!website) {
-            const systemAdminUser = await tx.user.findFirstOrThrow({
-              where: { OR: [{ role: 'ADMIN' }, { role: 'OPERATOR' }] },
-            });
-
-            website = await tx.website.create({
-              data: {
-                id: randomUUID(),
-                vpsNodeId: vpsTarget.id,
-                userId: vpsTarget.userId || systemAdminUser.id,
-                domain: siteData.domain,
-                isActive: true,
-              },
-            });
-
-            websiteMap.set(siteData.domain, website);
-          }
-
-          await tx.webMetric.create({
-            data: {
-              recordedAt: timestampDate.toString(),
-              vpsNodeId: vpsTarget.id,
-              websiteId: website.id,
-              concurrentRequests: siteData.peakConcurrentRequests,
-              requestRate: 0,
-            },
-          });
-
-          emittedEvents.push({
-            vpsNodeId: vpsTarget.id,
-            websiteId: website.id,
-            domain: siteData.domain,
-            metrics: {
-              concurrentRequests: siteData.peakConcurrentRequests,
-              requestRate: 0,
-            },
-            // concurrentRequests: siteData.peakConcurrentRequests,
-            timestamp: timestampDate?.toString(),
-          });
-        }
-      }
-    });
-
     this.eventDispatcher.dispatchMetricsIngested({
-      vpsNodeId: vpsTarget.id,
+      vpsNodeId,
       batch: payload.batch,
     });
+
+    for (const entry of payload.batch) {
+      for (const siteData of entry.websites) {
+        const website = websiteMap.get(siteData.domain);
+
+        if (!website) continue;
+
+        emittedEvents.push({
+          vpsNodeId,
+          websiteId: website.id,
+          domain: siteData.domain,
+          metrics: {
+            concurrentRequests: siteData.peakConcurrentRequests,
+            requestRate: 0,
+          },
+          timestamp: new Date(entry.timestamp).toISOString(),
+        });
+      }
+    }
 
     for (const event of emittedEvents) {
       this.eventDispatcher.dispatchWebsiteMetricsEvaluated(event);
     }
+  }
 
-    return { vpsNodeId: vpsTarget.id };
+  private getHomeDirectory(documentRoot: string): string | null {
+    const match = documentRoot.match(/^(\/home\/[^/]+)/);
+    return match?.[1] ?? null;
+  }
+
+  private formatError(error: unknown): string {
+    if (error instanceof Error) return `${error.name}: ${error.message}`;
+    return String(error);
   }
 }

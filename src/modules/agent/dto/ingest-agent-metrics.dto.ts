@@ -9,6 +9,7 @@ import {
   IsInt,
   Min,
   ArrayMinSize,
+  IsOptional,
 } from 'class-validator';
 
 export class MetricPayloadDto {
@@ -65,6 +66,19 @@ export class WebsitePayloadDto {
   @IsInt()
   @Min(0)
   peakConcurrentRequests!: number;
+
+  @IsOptional()
+  @IsString()
+  appType?: string;
+
+  @IsOptional()
+  @IsString()
+  source?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  aliases?: string[];
 }
 
 export class TelemetryBatchEntryDto {

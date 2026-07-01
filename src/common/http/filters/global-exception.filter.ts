@@ -4,6 +4,7 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { ApiResponseBuilder } from '../api-response.builder.js';
@@ -25,6 +26,8 @@ type ExceptionResponse = {
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
@@ -39,7 +42,19 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       normalized.details,
     );
 
+    if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
+      this.logger.error(
+        `Unhandled HTTP error ${statusCode}: ${this.getLogMessage(exception)}`,
+        exception instanceof Error ? exception.stack : undefined,
+      );
+    }
+
     return response.status(statusCode).json(body);
+  }
+
+  private getLogMessage(exception: unknown): string {
+    if (exception instanceof Error) return `${exception.name}: ${exception.message}`;
+    return String(exception);
   }
 
   private getStatusCode(exception: unknown): number {
@@ -100,66 +115,3 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     return exception;
   }
 }
-
-// import {
-//   ArgumentsHost,
-//   Catch,
-//   ExceptionFilter,
-//   HttpException,
-//   HttpStatus,
-// } from '@nestjs/common';
-
-// import { ApiResponseBuilder } from '../api-response.builder.js';
-
-// @Catch()
-// export class GlobalExceptionFilter implements ExceptionFilter {
-//   catch(exception: unknown, host: ArgumentsHost) {
-//     const context = host.switchToHttp();
-//     const response = context.getResponse();
-
-//     const statusCode = this.getStatusCode(exception);
-
-//     const error = this.normalize(exception);
-
-//     const body = ApiResponseBuilder['build'](statusCode, null, error);
-
-//     return response.status(statusCode).json(body);
-//   }
-
-//   private getStatusCode(exception: unknown): number {
-//     if (exception instanceof HttpException) {
-//       return exception.getStatus();
-//     }
-
-//     return HttpStatus.INTERNAL_SERVER_ERROR;
-//   }
-
-//   private normalize(exception: unknown) {
-//     if (exception instanceof HttpException) {
-//       const res = exception.getResponse();
-
-//       if (typeof res === 'string') {
-//         return {
-//           code: 'HTTP_EXCEPTION',
-//           message: res,
-//         };
-//       }
-
-//       const message = Array.isArray((res as any)?.message)
-//         ? (res as any).message[0]
-//         : (res as any)?.message;
-
-//       return {
-//         code: (res as any)?.code || 'HTTP_EXCEPTION',
-//         message: message || 'Request failed',
-//         details: res,
-//       };
-//     }
-
-//     return {
-//       code: 'INTERNAL_SERVER_ERROR',
-//       message: 'Unexpected server error',
-//       details: exception instanceof Error ? exception.message : exception,
-//     };
-//   }
-// }

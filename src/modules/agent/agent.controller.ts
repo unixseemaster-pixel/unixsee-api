@@ -4,8 +4,8 @@ import {
   HttpCode,
   HttpStatus,
   Ip,
+  Logger,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 
@@ -17,6 +17,8 @@ import { IsFirstProvisioning } from './decorators/is-first-provisioning.js';
 
 @Controller('internal/agent/v1')
 export class AgentController {
+  private readonly logger = new Logger(AgentController.name);
+
   constructor(private readonly agentService: AgentService) {}
 
   @Public()
@@ -28,7 +30,17 @@ export class AgentController {
     @IsFirstProvisioning() isFirstProvisioningCycle: boolean,
     @Body() payload: IngestAgentMetricsDto,
   ) {
-    console.log('request received.............');
+    const batchSize = payload.batch.length;
+    const websiteEntryCount = payload.batch.reduce(
+      (total, entry) => total + entry.websites.length,
+      0,
+    );
+    const machineId = payload.batch[0]?.machineId ?? 'unknown';
+
+    this.logger.log(
+      `Agent ingest received | machine=${machineId} | batch=${batchSize} | websiteEntries=${websiteEntryCount} | firstProvisioning=${isFirstProvisioningCycle}`,
+    );
+
     const result = await this.agentService.processTelemetryIngestion(
       payload,
       isFirstProvisioningCycle,
