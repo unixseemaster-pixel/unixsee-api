@@ -383,7 +383,7 @@ export class WebsiteUptimeProbeService
             Connection: 'close',
           },
           lookup: (_hostname, _options, callback) => {
-            callback(null, dnsResult.address, dnsResult.family ?? 4);
+            callback(null, dnsResult.address!, dnsResult.family ?? 4);
           },
         },
         (response) => {
@@ -440,7 +440,9 @@ export class WebsiteUptimeProbeService
           errorMessage: this.normalizeErrorMessage(error),
           failurePhase: timeoutTriggered
             ? 'timeout'
-            : tlsHandshakeMs === null && protocol === 'https' && connectMs !== null
+            : tlsHandshakeMs === null &&
+                protocol === 'https' &&
+                connectMs !== null
               ? 'tls'
               : connectMs === null
                 ? 'connect'
@@ -470,9 +472,7 @@ export class WebsiteUptimeProbeService
       const timeoutPromise = new Promise<never>((_, reject) => {
         timeout = setTimeout(() => {
           reject(
-            new Error(
-              `DNS lookup timed out after ${settings.dnsTimeoutMs}ms`,
-            ),
+            new Error(`DNS lookup timed out after ${settings.dnsTimeoutMs}ms`),
           );
         }, settings.dnsTimeoutMs);
       });
@@ -520,7 +520,10 @@ export class WebsiteUptimeProbeService
   }
 
   private normalizeDomain(domain: string): string {
-    const trimmed = domain.trim().replace(/^https?:\/\//i, '').split('/')[0];
+    const trimmed = domain
+      .trim()
+      .replace(/^https?:\/\//i, '')
+      .split('/')[0];
     return trimmed.replace(/\.$/, '');
   }
 
