@@ -9,7 +9,7 @@ import {
 @Injectable()
 export class SystemHealthService {
   calculate(input: SystemHealthInputType): SystemHealthStatusType {
-    if (this.hasCriticalAlert(input.alerts)) {
+    if (input.isUp === false || this.hasCriticalAlert(input.alerts)) {
       return 'critical';
     }
 

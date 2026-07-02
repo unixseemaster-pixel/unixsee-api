@@ -87,9 +87,14 @@ export class DashboardService {
 
     const websitesView = metricsOverview.websites.map((website) => ({
       websiteId: website.websiteId,
+      vpsNodeId: website.vpsNodeId,
+      domain: website.domain,
+      displayName: website.displayName,
+      isActive: website.isActive,
       lastCheckedAt: website.lastCheckedAt,
       status: website.status,
       traffic: website.traffic,
+      availability: website.availability,
     }));
 
     this.logger.log(

@@ -287,6 +287,16 @@ export class RealtimeGateway
         domain: event.domain,
         timestamp: event.timestamp,
         traffic,
+        availability: event.probe
+          ? {
+              isUp: event.probe.isUp,
+              statusCode: event.probe.statusCode,
+              responseTimeMs: event.probe.responseTimeMs,
+              ttfbMs: event.probe.ttfbMs,
+              errorMessage: event.probe.errorMessage,
+              lastProbeAt: event.timestamp,
+            }
+          : null,
       };
 
       this.server
@@ -295,6 +305,7 @@ export class RealtimeGateway
           websiteId: payload.websiteId,
           domain: payload.domain,
           traffic: payload.traffic,
+          availability: payload.availability,
           timestamp: payload.timestamp,
         });
 

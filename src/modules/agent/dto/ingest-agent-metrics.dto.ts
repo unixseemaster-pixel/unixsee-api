@@ -10,6 +10,7 @@ import {
   Min,
   ArrayMinSize,
   IsOptional,
+  IsBoolean,
 } from 'class-validator';
 
 export class MetricPayloadDto {
@@ -50,6 +51,30 @@ export class MetricPayloadDto {
   storageAvailableMB!: number;
 }
 
+export class WebsiteProbePayloadDto {
+  @IsBoolean()
+  isUp!: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  statusCode?: number | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  responseTimeMs?: number | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  ttfbMs?: number | null;
+
+  @IsOptional()
+  @IsString()
+  errorMessage?: string | null;
+}
+
 export class WebsitePayloadDto {
   @IsString()
   @IsNotEmpty()
@@ -68,6 +93,11 @@ export class WebsitePayloadDto {
   peakConcurrentRequests!: number;
 
   @IsOptional()
+  @ValidateNested()
+  @Type(() => WebsiteProbePayloadDto)
+  probe?: WebsiteProbePayloadDto | null;
+
+  @IsOptional()
   @IsString()
   appType?: string;
 
@@ -79,6 +109,14 @@ export class WebsitePayloadDto {
   @IsArray()
   @IsString({ each: true })
   aliases?: string[];
+
+  @IsOptional()
+  @IsString()
+  backendAddress?: string;
+
+  @IsOptional()
+  @IsString()
+  virtualHostName?: string;
 }
 
 export class TelemetryBatchEntryDto {

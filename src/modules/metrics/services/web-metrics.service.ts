@@ -15,17 +15,68 @@ export class WebMetricsService {
 
     return websites.map((website) => ({
       websiteId: website.websiteId,
+      vpsNodeId: website.vpsNodeId,
+      domain: website.domain,
+      displayName: website.displayName,
+      isActive: website.isActive,
       latestMetric: this.mapLatestMetric(website.latest),
+      latestProbe: this.mapLatestProbe({
+        latestProbe: website.latestProbe,
+        lastIsUp: website.lastIsUp,
+        lastStatusCode: website.lastStatusCode,
+        lastResponseTimeMs: website.lastResponseTimeMs,
+        lastProbeAt: website.lastProbeAt,
+      }),
     }));
   }
 
   async getWebsiteOverview(websiteId: string): Promise<WebsiteMetricsType> {
-    const latest =
-      await this.webMetricsRepository.findLatestByWebsiteId(websiteId);
+    const website =
+      await this.webMetricsRepository.findOverviewByWebsiteId(websiteId);
+
+    if (!website) {
+      throw new Error(`Website not found: ${websiteId}`);
+    }
 
     return {
-      websiteId,
-      latestMetric: this.mapLatestMetric(latest),
+      websiteId: website.websiteId,
+      vpsNodeId: website.vpsNodeId,
+      domain: website.domain,
+      displayName: website.displayName,
+      isActive: website.isActive,
+      latestMetric: this.mapLatestMetric(website.latest),
+      latestProbe: this.mapLatestProbe({
+        latestProbe: website.latestProbe,
+        lastIsUp: website.lastIsUp,
+        lastStatusCode: website.lastStatusCode,
+        lastResponseTimeMs: website.lastResponseTimeMs,
+        lastProbeAt: website.lastProbeAt,
+      }),
+    };
+  }
+
+  private mapLatestProbe(input: {
+    latestProbe: {
+      recordedAt: Date;
+      isUp: boolean;
+      statusCode: number | null;
+      responseTimeMs: number | null;
+      ttfbMs: number | null;
+      errorMessage: string | null;
+    } | null;
+    lastIsUp: boolean | null;
+    lastStatusCode: number | null;
+    lastResponseTimeMs: number | null;
+    lastProbeAt: Date | null;
+  }) {
+    return {
+      recordedAt: input.lastProbeAt ?? input.latestProbe?.recordedAt ?? null,
+      isUp: input.lastIsUp ?? input.latestProbe?.isUp ?? null,
+      statusCode: input.lastStatusCode ?? input.latestProbe?.statusCode ?? null,
+      responseTimeMs:
+        input.lastResponseTimeMs ?? input.latestProbe?.responseTimeMs ?? null,
+      ttfbMs: input.latestProbe?.ttfbMs ?? null,
+      errorMessage: input.latestProbe?.errorMessage ?? null,
     };
   }
 

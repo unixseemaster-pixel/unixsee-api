@@ -1,11 +1,30 @@
 import { randomBytes, randomUUID } from 'crypto';
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { EventDispatcherService } from '../event/event-dispatcher.service.js';
-import { IngestAgentMetricsDto, WebsitePayloadDto } from './dto/ingest-agent-metrics.dto.js';
+import {
+  IngestAgentMetricsDto,
+  WebsitePayloadDto,
+} from './dto/ingest-agent-metrics.dto.js';
 import { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
 import type { Website } from '#/generated/prisma/client.js';
+import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
+
+type WebsiteProbeMetricRow = {
+  recordedAt: Date;
+  websiteId: string;
+  probeSource: typeof WebsiteProbeSource.AGENT;
+  isUp: boolean;
+  statusCode: number | null;
+  responseTimeMs: number | null;
+  ttfbMs: number | null;
+  errorMessage: string | null;
+};
 
 @Injectable()
 export class AgentService {
@@ -87,10 +106,24 @@ export class AgentService {
           })
         : { count: 0 };
 
+      const probeMetricRows = this.buildWebsiteProbeMetricRows(
+        payload,
+        websiteMap,
+      );
+
+      const probeMetricResult = probeMetricRows.length
+        ? await this.prisma.websiteProbeMetric.createMany({
+            data: probeMetricRows,
+            skipDuplicates: true,
+          })
+        : { count: 0 };
+
+      await this.refreshLatestWebsiteProbes(probeMetricRows);
+
       this.dispatchRealtimeEvents(payload, vpsTarget.id, websiteMap);
 
       this.logger.log(
-        `Agent ingest stored | machine=${sampleMachineId} | batch=${payload.batch.length} | vpsInserted=${vpsMetricResult.count} | webInserted=${webMetricResult.count} | webRows=${webMetricRows.length} | durationMs=${Date.now() - startedAt}`,
+        `Agent ingest stored | machine=${sampleMachineId} | batch=${payload.batch.length} | vpsInserted=${vpsMetricResult.count} | webInserted=${webMetricResult.count} | probeInserted=${probeMetricResult.count} | webRows=${webMetricRows.length} | probeRows=${probeMetricRows.length} | durationMs=${Date.now() - startedAt}`,
       );
 
       return { vpsNodeId: vpsTarget.id };
@@ -160,7 +193,9 @@ export class AgentService {
     currentWebsites: Website[],
     discoveredWebsites: WebsitePayloadDto[],
   ): Promise<Map<string, Website>> {
-    const websiteMap = new Map(currentWebsites.map((website) => [website.domain, website]));
+    const websiteMap = new Map(
+      currentWebsites.map((website) => [website.domain, website]),
+    );
     const missingWebsites = discoveredWebsites.filter(
       (website) => !websiteMap.has(website.domain),
     );
@@ -174,7 +209,9 @@ export class AgentService {
         },
       });
 
-      return new Map(refreshedWebsites.map((website) => [website.domain, website]));
+      return new Map(
+        refreshedWebsites.map((website) => [website.domain, website]),
+      );
     }
 
     const fallbackUserId = vpsNodeUserId ?? (await this.getFallbackUserId());
@@ -201,7 +238,9 @@ export class AgentService {
       },
     });
 
-    return new Map(refreshedWebsites.map((website) => [website.domain, website]));
+    return new Map(
+      refreshedWebsites.map((website) => [website.domain, website]),
+    );
   }
 
   private async refreshWebsiteInventory(
@@ -263,6 +302,62 @@ export class AgentService {
     });
   }
 
+  private buildWebsiteProbeMetricRows(
+    payload: IngestAgentMetricsDto,
+    websiteMap: Map<string, Website>,
+  ): WebsiteProbeMetricRow[] {
+    return payload.batch.flatMap((entry) => {
+      const recordedAt = new Date(entry.timestamp);
+
+      return entry.websites.flatMap((siteData) => {
+        const website = websiteMap.get(siteData.domain);
+
+        if (!website || !siteData.probe) return [];
+
+        return {
+          recordedAt,
+          websiteId: website.id,
+          probeSource: WebsiteProbeSource.AGENT,
+          isUp: Boolean(siteData.probe.isUp),
+          statusCode: this.normalizeNullableInteger(siteData.probe.statusCode),
+          responseTimeMs: this.normalizeNullableInteger(
+            siteData.probe.responseTimeMs,
+          ),
+          ttfbMs: this.normalizeNullableInteger(siteData.probe.ttfbMs),
+          errorMessage: this.normalizeNullableText(siteData.probe.errorMessage),
+        };
+      });
+    });
+  }
+
+  private async refreshLatestWebsiteProbes(
+    probeRows: WebsiteProbeMetricRow[],
+  ): Promise<void> {
+    const latestProbeByWebsite = new Map<string, (typeof probeRows)[number]>();
+
+    for (const row of probeRows) {
+      const existing = latestProbeByWebsite.get(row.websiteId);
+
+      if (!existing || row.recordedAt > existing.recordedAt) {
+        latestProbeByWebsite.set(row.websiteId, row);
+      }
+    }
+
+    await Promise.all(
+      [...latestProbeByWebsite.values()].map((row) =>
+        this.prisma.website.update({
+          where: { id: row.websiteId },
+          data: {
+            lastIsUp: row.isUp,
+            lastStatusCode: row.statusCode,
+            lastResponseTimeMs: row.responseTimeMs,
+            lastProbeAt: row.recordedAt,
+          },
+        }),
+      ),
+    );
+  }
+
   private dispatchRealtimeEvents(
     payload: IngestAgentMetricsDto,
     vpsNodeId: string,
@@ -289,6 +384,21 @@ export class AgentService {
             concurrentRequests: siteData.peakConcurrentRequests,
             requestRate: 0,
           },
+          probe: siteData.probe
+            ? {
+                isUp: Boolean(siteData.probe.isUp),
+                statusCode: this.normalizeNullableInteger(
+                  siteData.probe.statusCode,
+                ),
+                responseTimeMs: this.normalizeNullableInteger(
+                  siteData.probe.responseTimeMs,
+                ),
+                ttfbMs: this.normalizeNullableInteger(siteData.probe.ttfbMs),
+                errorMessage: this.normalizeNullableText(
+                  siteData.probe.errorMessage,
+                ),
+              }
+            : null,
           timestamp: new Date(entry.timestamp).toISOString(),
         });
       }
@@ -302,6 +412,23 @@ export class AgentService {
   private getHomeDirectory(documentRoot: string): string | null {
     const match = documentRoot.match(/^(\/home\/[^/]+)/);
     return match?.[1] ?? null;
+  }
+
+  private normalizeNullableInteger(
+    value: number | null | undefined,
+  ): number | null {
+    return typeof value === 'number' && Number.isFinite(value)
+      ? Math.max(0, Math.round(value))
+      : null;
+  }
+
+  private normalizeNullableText(
+    value: string | null | undefined,
+  ): string | null {
+    if (typeof value !== 'string') return null;
+
+    const normalized = value.trim();
+    return normalized.length > 0 ? normalized.slice(0, 240) : null;
   }
 
   private formatError(error: unknown): string {

@@ -12,19 +12,99 @@ export class WebMetricsRepository {
       },
       select: {
         id: true,
+        vpsNodeId: true,
+        domain: true,
+        displayName: true,
+        isActive: true,
+        lastIsUp: true,
+        lastStatusCode: true,
+        lastResponseTimeMs: true,
+        lastProbeAt: true,
         metrics: {
           orderBy: {
             recordedAt: 'desc',
           },
           take: 1,
         },
+        probeMetrics: {
+          orderBy: {
+            recordedAt: 'desc',
+          },
+          take: 1,
+          select: {
+            recordedAt: true,
+            isUp: true,
+            statusCode: true,
+            responseTimeMs: true,
+            ttfbMs: true,
+            errorMessage: true,
+          },
+        },
       },
     });
 
     return websites.map((website) => ({
       websiteId: website.id,
+      vpsNodeId: website.vpsNodeId,
+      domain: website.domain,
+      displayName: website.displayName,
+      isActive: website.isActive,
+      lastIsUp: website.lastIsUp,
+      lastStatusCode: website.lastStatusCode,
+      lastResponseTimeMs: website.lastResponseTimeMs,
+      lastProbeAt: website.lastProbeAt,
       latest: website.metrics[0] ?? null,
+      latestProbe: website.probeMetrics[0] ?? null,
     }));
+  }
+
+  async findOverviewByWebsiteId(websiteId: string) {
+    const website = await this.prisma.website.findUnique({
+      where: { id: websiteId },
+      select: {
+        id: true,
+        vpsNodeId: true,
+        domain: true,
+        displayName: true,
+        isActive: true,
+        lastIsUp: true,
+        lastStatusCode: true,
+        lastResponseTimeMs: true,
+        lastProbeAt: true,
+        metrics: {
+          orderBy: { recordedAt: 'desc' },
+          take: 1,
+        },
+        probeMetrics: {
+          orderBy: { recordedAt: 'desc' },
+          take: 1,
+          select: {
+            recordedAt: true,
+            isUp: true,
+            statusCode: true,
+            responseTimeMs: true,
+            ttfbMs: true,
+            errorMessage: true,
+          },
+        },
+      },
+    });
+
+    if (!website) return null;
+
+    return {
+      websiteId: website.id,
+      vpsNodeId: website.vpsNodeId,
+      domain: website.domain,
+      displayName: website.displayName,
+      isActive: website.isActive,
+      lastIsUp: website.lastIsUp,
+      lastStatusCode: website.lastStatusCode,
+      lastResponseTimeMs: website.lastResponseTimeMs,
+      lastProbeAt: website.lastProbeAt,
+      latest: website.metrics[0] ?? null,
+      latestProbe: website.probeMetrics[0] ?? null,
+    };
   }
 
   findLatestByWebsiteId(websiteId: string) {

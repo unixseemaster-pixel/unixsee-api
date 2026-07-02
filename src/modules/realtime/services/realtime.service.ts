@@ -207,6 +207,27 @@ export class RealtimeService {
           where: { userId },
           select: {
             id: true,
+            vpsNodeId: true,
+            domain: true,
+            displayName: true,
+            isActive: true,
+            lastIsUp: true,
+            lastStatusCode: true,
+            lastResponseTimeMs: true,
+            lastProbeAt: true,
+            probeMetrics: {
+              orderBy: { recordedAt: 'desc' },
+              take: 1,
+              select: {
+                recordedAt: true,
+                probeSource: true,
+                isUp: true,
+                statusCode: true,
+                responseTimeMs: true,
+                ttfbMs: true,
+                errorMessage: true,
+              },
+            },
             metrics: {
               orderBy: { recordedAt: 'desc' },
               take: 1,
@@ -313,16 +334,35 @@ export class RealtimeService {
         (alert) => alert.websiteId === website.id,
       );
 
+      const latestProbe = website.probeMetrics[0] ?? null;
+
       return {
         websiteId: website.id,
-        lastCheckedAt: latestMetric?.recordedAt ?? null,
+        vpsNodeId: website.vpsNodeId,
+        domain: website.domain,
+        displayName: website.displayName,
+        isActive: website.isActive,
+        lastCheckedAt:
+          website.lastProbeAt ??
+          latestProbe?.recordedAt ??
+          latestMetric?.recordedAt ??
+          null,
         status: this.systemHealthService.calculate({
           concurrentRequests,
+          isUp: website.lastIsUp,
           alerts: websiteAlerts.map((alert) => ({
             status: alert.severity.toLowerCase(),
           })),
         }),
         traffic,
+        availability: {
+          isUp: website.lastIsUp,
+          statusCode: website.lastStatusCode,
+          responseTimeMs: website.lastResponseTimeMs,
+          ttfbMs: latestProbe?.ttfbMs ?? null,
+          errorMessage: latestProbe?.errorMessage ?? null,
+          lastProbeAt: website.lastProbeAt ?? latestProbe?.recordedAt ?? null,
+        },
       };
     });
 
@@ -406,6 +446,13 @@ export class RealtimeService {
       totals: {
         trafficLoad: totalTraffic.load,
         trafficActivity: totalTraffic.activity,
+        averageResponseTimeMs: this.averageNullable(
+          websites.map((website) => website.lastResponseTimeMs),
+        ),
+        websitesUp: websites.filter((website) => website.lastIsUp === true)
+          .length,
+        websitesChecked: websites.filter((website) => website.lastIsUp !== null)
+          .length,
       },
       vpsNodes: vpsCards,
       alerts: recentAlerts,
@@ -753,6 +800,19 @@ export class RealtimeService {
     } catch {
       return null;
     }
+  }
+
+  private averageNullable(values: Array<number | null | undefined>) {
+    const numericValues = values.filter(
+      (value): value is number => typeof value === 'number',
+    );
+
+    if (numericValues.length === 0) return null;
+
+    return Math.round(
+      numericValues.reduce((total, value) => total + value, 0) /
+        numericValues.length,
+    );
   }
 
   private async getAuthenticatedUser(

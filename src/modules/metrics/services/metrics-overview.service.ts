@@ -38,15 +38,31 @@ export class MetricsOverviewService {
 
       return {
         websiteId: website.websiteId,
+        vpsNodeId: website.vpsNodeId,
+        domain: website.domain,
+        displayName: website.displayName,
+        isActive: website.isActive,
 
-        lastCheckedAt: website.latestMetric.recordedAt,
+        lastCheckedAt:
+          website.latestProbe.recordedAt ?? website.latestMetric.recordedAt,
 
         status: this.systemHealthService.calculate({
           concurrentRequests,
-          alerts: websiteAlerts,
+          isUp: website.latestProbe.isUp,
+          alerts: websiteAlerts.map((alert) => ({
+            status: alert.severity.toLowerCase(),
+          })),
         }),
 
         traffic,
+        availability: {
+          isUp: website.latestProbe.isUp,
+          statusCode: website.latestProbe.statusCode,
+          responseTimeMs: website.latestProbe.responseTimeMs,
+          ttfbMs: website.latestProbe.ttfbMs,
+          errorMessage: website.latestProbe.errorMessage,
+          lastProbeAt: website.latestProbe.recordedAt,
+        },
       };
     });
 
@@ -74,6 +90,15 @@ export class MetricsOverviewService {
       totals: {
         trafficLoad: totalTraffic.load,
         trafficActivity: totalTraffic.activity,
+        averageResponseTimeMs: this.averageNullable(
+          websites.map((website) => website.latestProbe.responseTimeMs),
+        ),
+        websitesUp: websites.filter(
+          (website) => website.latestProbe.isUp === true,
+        ).length,
+        websitesChecked: websites.filter(
+          (website) => website.latestProbe.isUp !== null,
+        ).length,
       },
     };
   }
@@ -96,5 +121,18 @@ export class MetricsOverviewService {
     }
 
     return 'healthy';
+  }
+
+  private averageNullable(values: Array<number | null | undefined>) {
+    const numericValues = values.filter(
+      (value): value is number => typeof value === 'number',
+    );
+
+    if (numericValues.length === 0) return null;
+
+    return Math.round(
+      numericValues.reduce((total, value) => total + value, 0) /
+        numericValues.length,
+    );
   }
 }
