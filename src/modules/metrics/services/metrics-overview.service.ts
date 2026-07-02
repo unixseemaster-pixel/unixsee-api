@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { WebMetricsService } from './web-metrics.service.js';
+import { TrafficLoadService } from './traffic-load.service.js';
 import { AlertsService } from '#/modules/alerts/services/alerts.service.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
 
@@ -10,6 +11,7 @@ export class MetricsOverviewService {
     private readonly webMetricsService: WebMetricsService,
     private readonly systemHealthService: SystemHealthService,
     private readonly alertsService: AlertsService,
+    private readonly trafficLoadService: TrafficLoadService,
   ) {}
 
   async getOverview(userId: string) {
@@ -23,43 +25,57 @@ export class MetricsOverviewService {
         (alert) => alert.websiteId === website.websiteId,
       );
 
-      const activeVisitors = website.latestMetric.activeVisitors ?? 0;
+      const concurrentRequests = website.latestMetric.concurrentRequests ?? 0;
+      const requestRate = website.latestMetric.requestRate ?? 0;
+      const traffic = this.trafficLoadService.resolve(
+        website.latestMetric.recordedAt
+          ? {
+              concurrentRequests,
+              requestRate,
+            }
+          : null,
+      );
 
       return {
         websiteId: website.websiteId,
 
-        activeVisitors,
-
-        requestRate: website.latestMetric.requestRate ?? 0,
-
         lastCheckedAt: website.latestMetric.recordedAt,
 
         status: this.systemHealthService.calculate({
-          activeVisitors,
+          concurrentRequests,
           alerts: websiteAlerts,
         }),
 
-        trafficStatus: this.resolveTrafficStatus(activeVisitors),
+        traffic,
       };
     });
+
+    const totalTraffic = this.trafficLoadService.resolve(
+      websites.some((website) => website.latestMetric.recordedAt)
+        ? {
+            concurrentRequests: websites.reduce(
+              (total, website) =>
+                total + (website.latestMetric.concurrentRequests ?? 0),
+              0,
+            ),
+            requestRate: websites.reduce(
+              (total, website) =>
+                total + (website.latestMetric.requestRate ?? 0),
+              0,
+            ),
+          }
+        : null,
+    );
 
     return {
       status: this.resolveGlobalStatus(websiteOverviews),
 
       websites: websiteOverviews,
+      totals: {
+        trafficLoad: totalTraffic.load,
+        trafficActivity: totalTraffic.activity,
+      },
     };
-  }
-
-  private resolveTrafficStatus(activeVisitors: number) {
-    if (activeVisitors > 500) {
-      return 'high';
-    }
-
-    if (activeVisitors > 200) {
-      return 'medium';
-    }
-
-    return 'normal';
   }
 
   private resolveGlobalStatus(

@@ -5,7 +5,7 @@ export type SystemHealthStatusType =
   | 'critical';
 
 export type SystemHealthInputType = {
-  activeVisitors: number;
+  concurrentRequests: number;
   alerts: { status: string }[];
   metricsStatus?: string;
 };

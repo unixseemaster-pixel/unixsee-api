@@ -3,9 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { AlertsService } from '#/modules/alerts/services/alerts.service.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
 import { MetricsOverviewService } from '#/modules/metrics/services/metrics-overview.service.js';
+import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { SslCertificatesService } from '#/modules/ssl-certificates/services/ssl-certificates.service.js';
-import { WebsitesService } from '#/modules/websites/services/websites.service.js';
 
 @Injectable()
 export class DashboardService {
@@ -14,9 +14,9 @@ export class DashboardService {
   constructor(
     private readonly metricsOverviewService: MetricsOverviewService,
     private readonly alertsService: AlertsService,
-    private readonly websitesService: WebsitesService,
     private readonly sslCertificatesService: SslCertificatesService,
     private readonly systemHealthService: SystemHealthService,
+    private readonly trafficLoadService: TrafficLoadService,
     private readonly prisma: PrismaService,
   ) {}
 
@@ -58,10 +58,6 @@ export class DashboardService {
           this.alertsService.getRecentAlerts(userId),
         ),
         logOverviewDependency(
-          'user websites',
-          this.websitesService.getUserWebsites(userId),
-        ),
-        logOverviewDependency(
           'expiring certificates',
           this.sslCertificatesService.getExpiringCertificates(userId),
         ),
@@ -89,23 +85,12 @@ export class DashboardService {
       `Dashboard overview alert map built, userId: ${userId}, websiteAlertGroups: ${websiteAlertsMap.size}`,
     );
 
-    const websitesView = metricsOverview.websites.map((website) => {
-      const websiteAlerts = websiteAlertsMap.get(website.websiteId) ?? [];
-
-      return {
-        websiteId: website.websiteId,
-        activeVisitors: website.activeVisitors,
-        requestRate: website.requestRate,
-        lastCheckedAt: website.lastCheckedAt,
-
-        status: this.systemHealthService.calculate({
-          activeVisitors: website.activeVisitors,
-          alerts: websiteAlerts,
-        }),
-
-        trafficStatus: this.resolveTrafficLabel(website.activeVisitors),
-      };
-    });
+    const websitesView = metricsOverview.websites.map((website) => ({
+      websiteId: website.websiteId,
+      lastCheckedAt: website.lastCheckedAt,
+      status: website.status,
+      traffic: website.traffic,
+    }));
 
     this.logger.log(
       `Dashboard overview websites view built, userId: ${userId}, websites: ${websitesView.length}`,
@@ -123,6 +108,7 @@ export class DashboardService {
       ),
 
       websites: websitesView,
+      totals: metricsOverview.totals,
 
       alerts: recentAlerts,
 
@@ -368,9 +354,18 @@ export class DashboardService {
       const activeAlerts = website.alerts.filter(
         (alert) => alert.status === 'ACTIVE',
       );
-      const activeVisitors = latestWebMetric?.concurrentRequests ?? 0;
+      const concurrentRequests = latestWebMetric?.concurrentRequests ?? 0;
+      const requestRate = latestWebMetric?.requestRate ?? 0;
+      const traffic = this.trafficLoadService.resolve(
+        latestWebMetric
+          ? {
+              concurrentRequests,
+              requestRate,
+            }
+          : null,
+      );
       const status = this.resolveMonitoringStatus({
-        activeVisitors,
+        concurrentRequests,
         alerts: activeAlerts,
         sslIsValid: website.ssl?.isValid ?? null,
         isUp: website.lastIsUp,
@@ -383,7 +378,6 @@ export class DashboardService {
         displayName: website.displayName,
         isActive: website.isActive,
         status,
-        trafficStatus: this.resolveTrafficLabel(activeVisitors),
         lastCheckedAt:
           website.lastProbeAt ?? latestWebMetric?.recordedAt ?? null,
         createdAt: website.createdAt,
@@ -398,11 +392,13 @@ export class DashboardService {
         },
 
         traffic: {
-          activeVisitors,
-          requestRate: latestWebMetric?.requestRate ?? 0,
+          load: traffic.load,
+          activity: traffic.activity,
+          activeRequests: concurrentRequests,
+          requestRate,
           samples: website.metrics.map((metric) => ({
             recordedAt: metric.recordedAt,
-            activeVisitors: metric.concurrentRequests,
+            activeRequests: metric.concurrentRequests,
             requestRate: metric.requestRate,
             activeConnections: metric.activeConnections,
             processingRequests: metric.processingRequests,
@@ -560,12 +556,6 @@ export class DashboardService {
     return 'Attention required';
   }
 
-  private resolveTrafficLabel(activeVisitors: number) {
-    if (activeVisitors > 500) return 'high';
-    if (activeVisitors > 200) return 'medium';
-    return 'normal';
-  }
-
   private getLatestTimestamp(
     websites: Array<{ lastCheckedAt: Date | string }>,
   ): Date {
@@ -587,12 +577,12 @@ export class DashboardService {
   }
 
   private resolveMonitoringStatus({
-    activeVisitors,
+    concurrentRequests,
     alerts,
     sslIsValid,
     isUp,
   }: {
-    activeVisitors: number;
+    concurrentRequests: number;
     alerts: Array<{ severity: string }>;
     sslIsValid: boolean | null;
     isUp: boolean | null;
@@ -611,7 +601,7 @@ export class DashboardService {
 
     if (
       alerts.some((alert) => alert.severity === 'MONITORING') ||
-      activeVisitors > 500
+      concurrentRequests > 500
     ) {
       return 'monitoring';
     }

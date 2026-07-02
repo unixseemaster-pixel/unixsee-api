@@ -99,7 +99,7 @@ Instead:
 | CPU spike           | High traffic detected   |
 | Load average        | Server under pressure   |
 | RAM usage           | Resource usage elevated |
-| Concurrent requests | Active visitors         |
+| Concurrent requests | Traffic load state      |
 | Bandwidth           | Traffic activity        |
 | Downtime            | Store unavailable       |
 | Disk usage          | Storage nearly full     |
@@ -190,7 +190,7 @@ With:
 
 ---
 
-## 2. Live Visitors
+## 2. Traffic Load
 
 Instead of:
 
@@ -200,7 +200,7 @@ Instead of:
 Show:
 
 ```txt
-127 visitors active right now
+Traffic load: Normal
 ```
 
 This feels business-oriented.

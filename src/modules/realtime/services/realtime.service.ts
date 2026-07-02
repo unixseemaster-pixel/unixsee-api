@@ -6,6 +6,7 @@ import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { Role } from '#/generated/prisma/enums.js';
 import type { AppConfigType } from '#/utils/config/app.config.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
+import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 
 export interface AuthenticatedUserSocketPayload {
   id: string;
@@ -36,6 +37,7 @@ export class RealtimeService {
     private readonly jwtService: JwtService,
     private readonly config: ConfigService<AppConfigType, true>,
     private readonly systemHealthService: SystemHealthService,
+    private readonly trafficLoadService: TrafficLoadService,
   ) {}
 
   // =========================
@@ -297,25 +299,49 @@ export class RealtimeService {
 
     const websiteCards = websites.map((website) => {
       const latestMetric = website.metrics[0] ?? null;
-      const activeVisitors = latestMetric?.concurrentRequests ?? 0;
+      const concurrentRequests = latestMetric?.concurrentRequests ?? 0;
+      const requestRate = latestMetric?.requestRate ?? 0;
+      const traffic = this.trafficLoadService.resolve(
+        latestMetric
+          ? {
+              concurrentRequests,
+              requestRate,
+            }
+          : null,
+      );
       const websiteAlerts = recentAlerts.filter(
         (alert) => alert.websiteId === website.id,
       );
 
       return {
         websiteId: website.id,
-        activeVisitors,
-        requestRate: latestMetric?.requestRate ?? 0,
         lastCheckedAt: latestMetric?.recordedAt ?? null,
         status: this.systemHealthService.calculate({
-          activeVisitors,
+          concurrentRequests,
           alerts: websiteAlerts.map((alert) => ({
             status: alert.severity.toLowerCase(),
           })),
         }),
-        trafficStatus: this.resolveTrafficLabel(activeVisitors),
+        traffic,
       };
     });
+
+    const totalTraffic = this.trafficLoadService.resolve(
+      websites.some((website) => website.metrics[0])
+        ? {
+            concurrentRequests: websites.reduce(
+              (total, website) =>
+                total + (website.metrics[0]?.concurrentRequests ?? 0),
+              0,
+            ),
+            requestRate: websites.reduce(
+              (total, website) =>
+                total + (website.metrics[0]?.requestRate ?? 0),
+              0,
+            ),
+          }
+        : null,
+    );
 
     const vpsCards = vpsNodes.map((node) => {
       const latestMetric = node.vpsMetrics[0] ?? null;
@@ -377,6 +403,10 @@ export class RealtimeService {
           .map((item) => ({ lastCheckedAt: item.lastCheckedAt as Date })),
       ),
       websites: websiteCards,
+      totals: {
+        trafficLoad: totalTraffic.load,
+        trafficActivity: totalTraffic.activity,
+      },
       vpsNodes: vpsCards,
       alerts: recentAlerts,
       ssl: {
@@ -578,12 +608,6 @@ export class RealtimeService {
     if (status === 'healthy') return 'All systems operational';
     if (status === 'monitoring') return 'Increased activity detected';
     return 'Attention required';
-  }
-
-  private resolveTrafficLabel(activeVisitors: number) {
-    if (activeVisitors > 500) return 'high';
-    if (activeVisitors > 200) return 'medium';
-    return 'normal';
   }
 
   private getLatestTimestamp(

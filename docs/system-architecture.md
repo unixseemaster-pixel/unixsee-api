@@ -65,7 +65,7 @@ The core backend exposes an asynchronous HTTPS ingestion endpoint for agents whi
 ### Outbound (Backend to Frontends)
 
 - **HTTPS REST API:** Delivers **Historical & Structural Data**. This handles heavy analytical payloads such as 7-day resource usage charts, 24-hour traffic trends, system log events, and account management details.
-- **WebSockets (Socket.io):** Delivers **Volatile Live Ticks**. This transmits low-latency heartbeat objects containing only instant numbers (e.g., current concurrent visitors or real-time CPU spikes).
+- **WebSockets (Socket.io):** Delivers **Volatile Live Ticks**. This transmits low-latency heartbeat objects containing current traffic load state and real-time CPU spikes without claiming exact online user counts.
 
 ---
 

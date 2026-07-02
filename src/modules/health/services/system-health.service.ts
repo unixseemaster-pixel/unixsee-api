@@ -17,7 +17,7 @@ export class SystemHealthService {
       return 'warning';
     }
 
-    if (this.isUnderHighLoad(input.activeVisitors)) {
+    if (this.isUnderHighLoad(input.concurrentRequests)) {
       return 'monitoring';
     }
 
@@ -32,7 +32,7 @@ export class SystemHealthService {
     return alerts.some((a) => a.status === 'warning');
   }
 
-  private isUnderHighLoad(activeVisitors: number) {
-    return activeVisitors > 500;
+  private isUnderHighLoad(concurrentRequests: number) {
+    return concurrentRequests > 500;
   }
 }

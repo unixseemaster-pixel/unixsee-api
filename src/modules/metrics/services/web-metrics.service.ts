@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { WebMetricsRepository } from '../repositories/web-metrics.repository.js';
-import { MetricsInterpretationService } from './metrics-interpretation.service.js';
 import { WebMetric } from '#/generated/prisma/client.js';
 import { WebsiteMetricsType } from '../types/web-metrics.type.js';
 
@@ -33,13 +32,13 @@ export class WebMetricsService {
   private mapLatestMetric(latest: WebMetric | null) {
     if (!latest) {
       return {
-        activeVisitors: 0,
+        concurrentRequests: 0,
         recordedAt: null,
       };
     }
 
     return {
-      activeVisitors: latest.concurrentRequests ?? 0,
+      concurrentRequests: latest.concurrentRequests ?? 0,
       requestRate: latest.requestRate ?? 0,
       recordedAt: latest.recordedAt,
     };

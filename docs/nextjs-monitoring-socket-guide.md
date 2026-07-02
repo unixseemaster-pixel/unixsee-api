@@ -126,9 +126,9 @@ export function MonitoringSocket({
   domain: string;
   timestamp: string;
   traffic: {
-    activeVisitors: number;
-    requestRate: number;
-  };
+    load: 'idle' | 'normal' | 'busy' | 'high' | 'critical' | 'unknown';
+    activity: 'idle' | 'normal' | 'busy' | 'high' | 'critical' | 'unknown';
+  }
 }
 ```
 
@@ -150,7 +150,7 @@ Use this to patch the matching website from the REST response by `websiteId`.
     diskIops: number;
     storageTotalMB: number;
     storageAvailableMB: number;
-  };
+  }
 }
 ```
 
@@ -165,4 +165,3 @@ Use this to patch every website whose `infrastructure.vpsNode.id` matches `vpsNo
 5. Connect Socket.IO to `/realtime`.
 6. Patch local state from `monitoring:website_tick` and `monitoring:vps_tick`.
 7. Disconnect the socket on route change or component unmount.
-

@@ -10,6 +10,7 @@ import { Server, Socket } from 'socket.io';
 
 import { RealtimeService } from '#/modules/realtime/services/realtime.service.js';
 import { EVENT_NAMES } from '#/common/events/event.constants.js';
+import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 
 import type { MetricsIngestedEventPayload } from '#/modules/event/event-dispatcher.service.js';
 import type { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
@@ -37,7 +38,10 @@ export class RealtimeGateway
   @WebSocketServer()
   server!: Server;
 
-  constructor(private readonly realtimeService: RealtimeService) {}
+  constructor(
+    private readonly realtimeService: RealtimeService,
+    private readonly trafficLoadService: TrafficLoadService,
+  ) {}
 
   handleConnection(client: Socket): void {
     this.initializeSocketSession(client).catch((error) => {
@@ -273,15 +277,16 @@ export class RealtimeGateway
     event: WebsiteMetricsEvaluatedEvent,
   ): Promise<void> {
     try {
+      const traffic = this.trafficLoadService.resolve({
+        concurrentRequests: event.metrics.concurrentRequests,
+        requestRate: event.metrics.requestRate ?? 0,
+      });
       const payload = {
         vpsNodeId: event.vpsNodeId,
         websiteId: event.websiteId,
         domain: event.domain,
         timestamp: event.timestamp,
-        traffic: {
-          activeVisitors: event.metrics.concurrentRequests,
-          requestRate: event.metrics.requestRate ?? 0,
-        },
+        traffic,
       };
 
       this.server
@@ -289,8 +294,7 @@ export class RealtimeGateway
         .emit(EVENT_NAMES.WEBSITE_METRICS_EVALUATED, {
           websiteId: payload.websiteId,
           domain: payload.domain,
-          concurrentRequests: payload.traffic.activeVisitors,
-          requestRate: payload.traffic.requestRate,
+          traffic: payload.traffic,
           timestamp: payload.timestamp,
         });
 

@@ -14,13 +14,13 @@ export class MetricsInterpretationService {
     return { status: 'warning', label: 'Server under pressure' };
   }
 
-  interpretVisitors(count: number) {
+  interpretRequestPressure(count: number) {
     if (count < 50) {
       return { status: 'normal', label: 'Low activity' };
     }
 
     if (count < 200) {
-      return { status: 'monitoring', label: 'Active visitors' };
+      return { status: 'monitoring', label: 'Request activity elevated' };
     }
 
     return { status: 'high', label: 'High traffic detected' };

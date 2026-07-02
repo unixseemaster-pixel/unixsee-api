@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 // Shared domain aggregation utilities for metrics computations across overview, dashboard, and future analytics modules.
-// sum visitors, average visitors, max/min visitors, time-series aggregation
 @Injectable()
 export class MetricsAggregationService {
   sum(values: number[]) {
@@ -23,30 +22,36 @@ export class MetricsAggregationService {
     return Math.min(...values);
   }
 
-  sumActiveVisitors(websites: { latestMetric: { activeVisitors: number } }[]) {
+  sumConcurrentRequests(
+    websites: { latestMetric: { concurrentRequests: number } }[],
+  ) {
     return websites.reduce(
-      (sum, w) => sum + (w.latestMetric.activeVisitors ?? 0),
+      (sum, w) => sum + (w.latestMetric.concurrentRequests ?? 0),
       0,
     );
   }
 
-  averageActiveVisitors(
-    websites: { latestMetric: { activeVisitors: number } }[],
+  averageConcurrentRequests(
+    websites: { latestMetric: { concurrentRequests: number } }[],
   ) {
     if (websites.length === 0) return 0;
 
-    return this.sumActiveVisitors(websites) / websites.length;
+    return this.sumConcurrentRequests(websites) / websites.length;
   }
 
-  getMaxVisitorsPerWebsite(
-    websites: { latestMetric: { activeVisitors: number } }[],
+  getMaxConcurrentRequestsPerWebsite(
+    websites: { latestMetric: { concurrentRequests: number } }[],
   ) {
-    return this.max(websites.map((w) => w.latestMetric.activeVisitors ?? 0));
+    return this.max(
+      websites.map((w) => w.latestMetric.concurrentRequests ?? 0),
+    );
   }
 
-  getMinVisitorsPerWebsite(
-    websites: { latestMetric: { activeVisitors: number } }[],
+  getMinConcurrentRequestsPerWebsite(
+    websites: { latestMetric: { concurrentRequests: number } }[],
   ) {
-    return this.min(websites.map((w) => w.latestMetric.activeVisitors ?? 0));
+    return this.min(
+      websites.map((w) => w.latestMetric.concurrentRequests ?? 0),
+    );
   }
 }

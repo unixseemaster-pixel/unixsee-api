@@ -1,7 +1,7 @@
 export type WebsiteMetricsType = {
   websiteId: string;
   latestMetric: {
-    activeVisitors: number;
+    concurrentRequests: number;
     recordedAt: Date | null;
     requestRate?: undefined | number;
   };
