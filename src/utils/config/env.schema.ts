@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-
 const booleanEnv = z.preprocess((value) => {
   if (typeof value === 'boolean') return value;
   if (typeof value !== 'string') return value;
@@ -12,7 +11,8 @@ const booleanEnv = z.preprocess((value) => {
   return value;
 }, z.boolean());
 
-const acceptedStatusCodesPattern = /^(?:\d{3}(?:\s*-\s*\d{3})?)(?:\s*,\s*\d{3}(?:\s*-\s*\d{3})?)*$/;
+const acceptedStatusCodesPattern =
+  /^(?:\d{3}(?:\s*-\s*\d{3})?)(?:\s*,\s*\d{3}(?:\s*-\s*\d{3})?)*$/;
 
 export const envSchema = z.object({
   NODE_ENV: z
@@ -59,6 +59,8 @@ export const envSchema = z.object({
   UPTIME_PROBE_STARTUP_DELAY_MS: z.coerce.number().int().min(0).default(5000),
   UPTIME_PROBE_TIMEOUT_MS: z.coerce.number().int().positive().default(8000),
   UPTIME_PROBE_DNS_TIMEOUT_MS: z.coerce.number().int().positive().default(3000),
+  UPTIME_PROBE_PROXY_URL: z.url().optional(),
+  UPTIME_PROBE_SKIP_DNS_PREFLIGHT: booleanEnv.default(false),
   UPTIME_PROBE_IP_FAMILY: z.coerce
     .number()
     .pipe(z.union([z.literal(0), z.literal(4), z.literal(6)]))

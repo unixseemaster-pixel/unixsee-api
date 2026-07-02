@@ -55,6 +55,8 @@ const appConfig = registerAs('app', () => {
       startupDelayMs: env.UPTIME_PROBE_STARTUP_DELAY_MS,
       timeoutMs: env.UPTIME_PROBE_TIMEOUT_MS,
       dnsTimeoutMs: env.UPTIME_PROBE_DNS_TIMEOUT_MS,
+      proxyUrl: env.UPTIME_PROBE_PROXY_URL,
+      skipDnsPreflight: env.UPTIME_PROBE_SKIP_DNS_PREFLIGHT,
       ipFamily: env.UPTIME_PROBE_IP_FAMILY,
       debugLogs: env.UPTIME_PROBE_DEBUG_LOGS,
       concurrency: env.UPTIME_PROBE_CONCURRENCY,
