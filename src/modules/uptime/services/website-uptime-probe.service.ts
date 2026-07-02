@@ -160,24 +160,13 @@ export class WebsiteUptimeProbeService
   }
 
   private async probeAndPersist(target: WebsiteProbeTarget): Promise<ProbeResult> {
-    const recordedAt = new Date();
+    const requestedRecordedAt = new Date();
     const result = await this.probeWebsite(target.domain);
-
-    await this.prisma.websiteProbeMetric.createMany({
-      data: [
-        {
-          recordedAt,
-          websiteId: target.id,
-          probeSource: WebsiteProbeSource.BACKEND,
-          isUp: result.isUp,
-          statusCode: result.statusCode,
-          responseTimeMs: result.responseTimeMs,
-          ttfbMs: result.ttfbMs,
-          errorMessage: result.errorMessage,
-        },
-      ],
-      skipDuplicates: true,
-    });
+    const persistedRecordedAt = await this.persistProbeMetric(
+      target,
+      requestedRecordedAt,
+      result,
+    );
 
     await this.prisma.website.update({
       where: { id: target.id },
@@ -185,7 +174,7 @@ export class WebsiteUptimeProbeService
         lastIsUp: result.isUp,
         lastStatusCode: result.statusCode,
         lastResponseTimeMs: result.responseTimeMs,
-        lastProbeAt: recordedAt,
+        lastProbeAt: persistedRecordedAt,
       },
     });
 
@@ -199,12 +188,49 @@ export class WebsiteUptimeProbeService
         responseTimeMs: result.responseTimeMs,
         ttfbMs: result.ttfbMs,
         errorMessage: result.errorMessage,
-        lastProbeAt: recordedAt.toISOString(),
+        lastProbeAt: persistedRecordedAt.toISOString(),
       },
-      timestamp: recordedAt.toISOString(),
+      timestamp: persistedRecordedAt.toISOString(),
     });
 
     return result;
+  }
+
+  private async persistProbeMetric(
+    target: WebsiteProbeTarget,
+    requestedRecordedAt: Date,
+    result: ProbeResult,
+  ): Promise<Date> {
+    let recordedAt = new Date(requestedRecordedAt);
+
+    for (let attempt = 0; attempt < 10; attempt += 1) {
+      try {
+        await this.prisma.websiteProbeMetric.create({
+          data: {
+            recordedAt,
+            websiteId: target.id,
+            probeSource: WebsiteProbeSource.BACKEND,
+            isUp: result.isUp,
+            statusCode: result.statusCode,
+            responseTimeMs: result.responseTimeMs,
+            ttfbMs: result.ttfbMs,
+            errorMessage: result.errorMessage,
+          },
+        });
+
+        return recordedAt;
+      } catch (error) {
+        if (!this.isUniqueConstraintError(error)) {
+          throw error;
+        }
+
+        recordedAt = new Date(recordedAt.getTime() + 1);
+      }
+    }
+
+    throw new Error(
+      `Could not persist public probe metric after timestamp collision retries for website ${target.domain}`,
+    );
   }
 
   private async probeWebsite(domain: string): Promise<ProbeResult> {
@@ -307,6 +333,15 @@ export class WebsiteUptimeProbeService
 
       request.end();
     });
+  }
+
+  private isUniqueConstraintError(error: unknown): boolean {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code?: string }).code === 'P2002'
+    );
   }
 
   private normalizeDomain(domain: string): string {
