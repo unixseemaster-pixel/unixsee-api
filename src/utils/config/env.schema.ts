@@ -1,5 +1,19 @@
 import { z } from 'zod';
 
+
+const booleanEnv = z.preprocess((value) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value !== 'string') return value;
+
+  const normalized = value.trim().toLowerCase();
+  if (['1', 'true', 'yes', 'on'].includes(normalized)) return true;
+  if (['0', 'false', 'no', 'off'].includes(normalized)) return false;
+
+  return value;
+}, z.boolean());
+
+const acceptedStatusCodesPattern = /^(?:\d{3}(?:\s*-\s*\d{3})?)(?:\s*,\s*\d{3}(?:\s*-\s*\d{3})?)*$/;
+
 export const envSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
@@ -39,6 +53,27 @@ export const envSchema = z.object({
         .map((origin) => origin.trim())
         .filter(Boolean),
     ),
+
+  UPTIME_PROBES_ENABLED: booleanEnv.default(true),
+  UPTIME_PROBE_CRON: z.string().trim().min(1).default('* * * * *'),
+  UPTIME_PROBE_STARTUP_DELAY_MS: z.coerce.number().int().min(0).default(5000),
+  UPTIME_PROBE_TIMEOUT_MS: z.coerce.number().int().positive().default(8000),
+  UPTIME_PROBE_CONCURRENCY: z.coerce.number().int().positive().default(10),
+  UPTIME_PROBE_BATCH_SIZE: z.coerce.number().int().positive().default(100),
+  UPTIME_PROBE_ALLOW_HTTP_FALLBACK: booleanEnv.default(false),
+  UPTIME_PROBE_ACCEPT_STATUS_CODES: z
+    .string()
+    .trim()
+    .regex(
+      acceptedStatusCodesPattern,
+      'UPTIME_PROBE_ACCEPT_STATUS_CODES must be a comma-separated list of HTTP codes or ranges, e.g. 200-399,401,403',
+    )
+    .default('200-399,401,403'),
+  UPTIME_PROBE_USER_AGENT: z
+    .string()
+    .trim()
+    .min(1)
+    .default('Unixsee-Uptime-Probe/1.0 (+https://unixsee.com)'),
 });
 
 export type Env = z.infer<typeof envSchema>;

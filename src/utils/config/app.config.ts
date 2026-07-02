@@ -1,6 +1,30 @@
 import { registerAs } from '@nestjs/config';
 import { envSchema } from './env.schema.js';
 
+export type StatusCodeRange = {
+  from: number;
+  to: number;
+};
+
+function parseAcceptedStatusCodeRanges(input: string): StatusCodeRange[] {
+  return input
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const rangeMatch = part.match(/^(\d{3})\s*-\s*(\d{3})$/);
+
+      if (rangeMatch) {
+        const from = Number(rangeMatch[1]);
+        const to = Number(rangeMatch[2]);
+        return from <= to ? { from, to } : { from: to, to: from };
+      }
+
+      const code = Number(part);
+      return { from: code, to: code };
+    });
+}
+
 const appConfig = registerAs('app', () => {
   const result = envSchema.safeParse(process.env);
 
@@ -24,6 +48,19 @@ const appConfig = registerAs('app', () => {
       refreshExpiresIn: env.JWT_REFRESH_TOKEN_EXPIRATION,
       monitoringAccessSecret: env.JWT_MONITORING_ACCESS_SECRET,
       monitoringAccessExpiresIn: env.JWT_MONITORING_ACCESS_TOKEN_EXPIRATION,
+    },
+    uptimeProbes: {
+      enabled: env.UPTIME_PROBES_ENABLED,
+      cronExpression: env.UPTIME_PROBE_CRON,
+      startupDelayMs: env.UPTIME_PROBE_STARTUP_DELAY_MS,
+      timeoutMs: env.UPTIME_PROBE_TIMEOUT_MS,
+      concurrency: env.UPTIME_PROBE_CONCURRENCY,
+      batchSize: env.UPTIME_PROBE_BATCH_SIZE,
+      allowHttpFallback: env.UPTIME_PROBE_ALLOW_HTTP_FALLBACK,
+      acceptedStatusCodeRanges: parseAcceptedStatusCodeRanges(
+        env.UPTIME_PROBE_ACCEPT_STATUS_CODES,
+      ),
+      userAgent: env.UPTIME_PROBE_USER_AGENT,
     },
   };
 });
