@@ -96,3 +96,26 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Public uptime probes
+
+The backend now owns customer-facing uptime, response time, and TTFB checks through the `UptimeModule`.
+
+- `WebsiteProbeMetric.probeSource = BACKEND` is the source of truth for dashboard uptime/performance charts.
+- Agent telemetry is still used for VPS metrics, website discovery, and web-server traffic pressure.
+- Agent-provided probe payloads are accepted only for backward compatibility and are ignored by ingestion.
+- Socket.io emits `website.probe.evaluated` and `overview:website_tick` after each backend public probe result is saved.
+
+Relevant environment options:
+
+```env
+UPTIME_PROBES_ENABLED=true
+UPTIME_PROBE_INTERVAL_MS=60000
+UPTIME_PROBE_STARTUP_DELAY_MS=5000
+UPTIME_PROBE_TIMEOUT_MS=8000
+UPTIME_PROBE_CONCURRENCY=10
+UPTIME_PROBE_BATCH_SIZE=100
+UPTIME_PROBE_ALLOW_HTTP_FALLBACK=false
+UPTIME_PROBE_ACCEPT_STATUS_CODES=200-399,401,403
+UPTIME_PROBE_USER_AGENT=Unixsee-Uptime-Probe/1.0 (+https://unixsee.com)
+```

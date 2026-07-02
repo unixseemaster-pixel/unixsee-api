@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { AlertsService } from '#/modules/alerts/services/alerts.service.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
 import { MetricsOverviewService } from '#/modules/metrics/services/metrics-overview.service.js';
+import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { SslCertificatesService } from '#/modules/ssl-certificates/services/ssl-certificates.service.js';
@@ -167,7 +168,10 @@ export class DashboardService {
             },
           },
           probeMetrics: {
-            where: { recordedAt: { gte: monitoringSince } },
+            where: {
+              probeSource: WebsiteProbeSource.BACKEND,
+              recordedAt: { gte: monitoringSince },
+            },
             orderBy: { recordedAt: 'asc' },
             select: {
               recordedAt: true,
@@ -389,9 +393,12 @@ export class DashboardService {
         updatedAt: website.updatedAt,
 
         availability: {
+          probeSource: WebsiteProbeSource.BACKEND,
           isUp: website.lastIsUp,
           statusCode: website.lastStatusCode,
           responseTimeMs: website.lastResponseTimeMs,
+          ttfbMs: website.probeMetrics.at(-1)?.ttfbMs ?? null,
+          errorMessage: website.probeMetrics.at(-1)?.errorMessage ?? null,
           lastProbeAt: website.lastProbeAt,
           samples: website.probeMetrics,
         },

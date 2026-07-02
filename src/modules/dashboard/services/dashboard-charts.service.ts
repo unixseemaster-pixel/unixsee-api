@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
+import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 
 import type { TrafficLoadType } from '#/modules/metrics/types/traffic-load.type.js';
@@ -347,6 +348,7 @@ export class DashboardChartsService {
     return this.prisma.websiteProbeMetric.findMany({
       where: {
         websiteId: { in: websiteIds },
+        probeSource: WebsiteProbeSource.BACKEND,
         recordedAt: {
           gte: range.from,
           lte: range.to,

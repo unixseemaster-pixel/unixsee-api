@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WebMetricsService } from './web-metrics.service.js';
 import { TrafficLoadService } from './traffic-load.service.js';
 import { AlertsService } from '#/modules/alerts/services/alerts.service.js';
+import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
 
 @Injectable()
@@ -56,6 +57,7 @@ export class MetricsOverviewService {
 
         traffic,
         availability: {
+          probeSource: WebsiteProbeSource.BACKEND,
           isUp: website.latestProbe.isUp,
           statusCode: website.latestProbe.statusCode,
           responseTimeMs: website.latestProbe.responseTimeMs,
@@ -93,6 +95,10 @@ export class MetricsOverviewService {
         averageResponseTimeMs: this.averageNullable(
           websites.map((website) => website.latestProbe.responseTimeMs),
         ),
+        averageTtfbMs: this.averageNullable(
+          websites.map((website) => website.latestProbe.ttfbMs),
+        ),
+        uptimePercent: this.calculateUptimePercent(websites),
         websitesUp: websites.filter(
           (website) => website.latestProbe.isUp === true,
         ).length,
@@ -121,6 +127,22 @@ export class MetricsOverviewService {
     }
 
     return 'healthy';
+  }
+
+  private calculateUptimePercent(
+    websites: Array<{ latestProbe: { isUp: boolean | null } }>,
+  ) {
+    const checked = websites.filter(
+      (website) => website.latestProbe.isUp !== null,
+    );
+
+    if (checked.length === 0) return null;
+
+    return Math.round(
+      (checked.filter((website) => website.latestProbe.isUp === true).length /
+        checked.length) *
+        100,
+    );
   }
 
   private averageNullable(values: Array<number | null | undefined>) {

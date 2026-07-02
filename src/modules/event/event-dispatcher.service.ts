@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { IngestAgentMetricsDto } from '../agent/dto/ingest-agent-metrics.dto.js';
 import { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
+import { WebsiteProbeEvaluatedEvent } from '#/common/events/website-probe-evaluated.event.js';
 import { EVENT_NAMES } from '#/common/events/event.constants.js';
 
 export interface MetricsIngestedEventPayload {
@@ -20,5 +21,9 @@ export class EventDispatcherService {
 
   dispatchWebsiteMetricsEvaluated(payload: WebsiteMetricsEvaluatedEvent): void {
     this.eventEmitter.emit(EVENT_NAMES.WEBSITE_METRICS_EVALUATED, payload);
+  }
+
+  dispatchWebsiteProbeEvaluated(payload: WebsiteProbeEvaluatedEvent): void {
+    this.eventEmitter.emit(EVENT_NAMES.WEBSITE_PROBE_EVALUATED, payload);
   }
 }

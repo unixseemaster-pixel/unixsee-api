@@ -10,7 +10,6 @@ import {
   Min,
   ArrayMinSize,
   IsOptional,
-  IsBoolean,
 } from 'class-validator';
 
 export class MetricPayloadDto {
@@ -51,30 +50,6 @@ export class MetricPayloadDto {
   storageAvailableMB!: number;
 }
 
-export class WebsiteProbePayloadDto {
-  @IsBoolean()
-  isUp!: boolean;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  statusCode?: number | null;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  responseTimeMs?: number | null;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  ttfbMs?: number | null;
-
-  @IsOptional()
-  @IsString()
-  errorMessage?: string | null;
-}
-
 export class WebsitePayloadDto {
   @IsString()
   @IsNotEmpty()
@@ -92,10 +67,10 @@ export class WebsitePayloadDto {
   @Min(0)
   peakConcurrentRequests!: number;
 
+  // Backward-compatible no-op: old agents may still send `probe`, but
+  // public uptime/response probes are now owned by the backend uptime module.
   @IsOptional()
-  @ValidateNested()
-  @Type(() => WebsiteProbePayloadDto)
-  probe?: WebsiteProbePayloadDto | null;
+  probe?: unknown;
 
   @IsOptional()
   @IsString()

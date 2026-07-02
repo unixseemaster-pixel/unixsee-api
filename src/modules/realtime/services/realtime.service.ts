@@ -6,6 +6,7 @@ import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { Role } from '#/generated/prisma/enums.js';
 import type { AppConfigType } from '#/utils/config/app.config.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
+import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 
 export interface AuthenticatedUserSocketPayload {
@@ -216,6 +217,7 @@ export class RealtimeService {
             lastResponseTimeMs: true,
             lastProbeAt: true,
             probeMetrics: {
+              where: { probeSource: WebsiteProbeSource.BACKEND },
               orderBy: { recordedAt: 'desc' },
               take: 1,
               select: {
@@ -356,6 +358,7 @@ export class RealtimeService {
         }),
         traffic,
         availability: {
+          probeSource: WebsiteProbeSource.BACKEND,
           isUp: website.lastIsUp,
           statusCode: website.lastStatusCode,
           responseTimeMs: website.lastResponseTimeMs,
@@ -448,6 +451,12 @@ export class RealtimeService {
         trafficActivity: totalTraffic.activity,
         averageResponseTimeMs: this.averageNullable(
           websites.map((website) => website.lastResponseTimeMs),
+        ),
+        averageTtfbMs: this.averageNullable(
+          websites.map((website) => website.probeMetrics[0]?.ttfbMs ?? null),
+        ),
+        uptimePercent: this.calculateUptimePercent(
+          websites.map((website) => website.lastIsUp),
         ),
         websitesUp: websites.filter((website) => website.lastIsUp === true)
           .length,
@@ -745,6 +754,7 @@ export class RealtimeService {
           take: 1,
         },
         probeMetrics: {
+          where: { probeSource: WebsiteProbeSource.BACKEND },
           orderBy: { recordedAt: 'desc' },
           take: 1,
         },
@@ -800,6 +810,16 @@ export class RealtimeService {
     } catch {
       return null;
     }
+  }
+
+  private calculateUptimePercent(values: Array<boolean | null>) {
+    const checked = values.filter((value): value is boolean => value !== null);
+
+    if (checked.length === 0) return null;
+
+    return Math.round(
+      (checked.filter((value) => value).length / checked.length) * 100,
+    );
   }
 
   private averageNullable(values: Array<number | null | undefined>) {

@@ -14,6 +14,7 @@ import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.serv
 
 import type { MetricsIngestedEventPayload } from '#/modules/event/event-dispatcher.service.js';
 import type { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
+import type { WebsiteProbeEvaluatedEvent } from '#/common/events/website-probe-evaluated.event.js';
 
 @WebSocketGateway({
   namespace: '/realtime',
@@ -287,16 +288,6 @@ export class RealtimeGateway
         domain: event.domain,
         timestamp: event.timestamp,
         traffic,
-        availability: event.probe
-          ? {
-              isUp: event.probe.isUp,
-              statusCode: event.probe.statusCode,
-              responseTimeMs: event.probe.responseTimeMs,
-              ttfbMs: event.probe.ttfbMs,
-              errorMessage: event.probe.errorMessage,
-              lastProbeAt: event.timestamp,
-            }
-          : null,
       };
 
       this.server
@@ -305,7 +296,6 @@ export class RealtimeGateway
           websiteId: payload.websiteId,
           domain: payload.domain,
           traffic: payload.traffic,
-          availability: payload.availability,
           timestamp: payload.timestamp,
         });
 
@@ -339,6 +329,59 @@ export class RealtimeGateway
       }
     } catch (error: any) {
       this.logger.error(`Website metrics stream error: ${error.message}`);
+    }
+  }
+
+  // =========================================================
+  // STEP 2B — PUBLIC WEBSITE UPTIME STREAM (CORE PROBES)
+  // =========================================================
+  @OnEvent(EVENT_NAMES.WEBSITE_PROBE_EVALUATED, { async: true })
+  async handleWebsiteProbeEvaluated(
+    event: WebsiteProbeEvaluatedEvent,
+  ): Promise<void> {
+    try {
+      this.server
+        .to(`website:${event.websiteId}`)
+        .emit(EVENT_NAMES.WEBSITE_PROBE_EVALUATED, {
+          websiteId: event.websiteId,
+          domain: event.domain,
+          probeSource: event.probeSource,
+          availability: event.availability,
+          timestamp: event.timestamp,
+        });
+
+      const monitoringSnapshot =
+        await this.realtimeService.getWebsiteMonitoringSnapshot(
+          event.websiteId,
+        );
+
+      if (monitoringSnapshot) {
+        this.server
+          .to(`website:${event.websiteId}`)
+          .emit(EVENT_NAMES.MONITORING_WEBSITE_TICK, monitoringSnapshot);
+      }
+
+      const overviewTick = await this.realtimeService.getOverviewWebsiteTick(
+        event.websiteId,
+      );
+
+      if (!overviewTick) {
+        return;
+      }
+
+      const userId = await this.realtimeService.getUserIdByWebsiteId(
+        event.websiteId,
+      );
+
+      if (!userId) {
+        return;
+      }
+
+      this.server
+        .to(`user:${userId}`)
+        .emit(EVENT_NAMES.OVERVIEW_WEBSITE_TICK, overviewTick);
+    } catch (error: any) {
+      this.logger.error(`Website probe stream error: ${error.message}`);
     }
   }
 

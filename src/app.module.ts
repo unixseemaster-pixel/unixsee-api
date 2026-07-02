@@ -21,6 +21,7 @@ import { SslCertificatesModule } from './modules/ssl-certificates/ssl-certificat
 import { AlertsModule } from './modules/alerts/alerts.module.js';
 import { DashboardModule } from './modules/dashboard/dashboard.module.js';
 import { HealthModule } from './modules/health/health.module.js';
+import { UptimeModule } from './modules/uptime/uptime.module.js';
 
 @Module({
   imports: [
@@ -40,13 +41,11 @@ import { HealthModule } from './modules/health/health.module.js';
     AgentModule,
     WebsitesModule,
     MetricsModule,
-    WebsitesModule,
-    MetricsModule,
     SslCertificatesModule,
     AlertsModule,
     DashboardModule,
-    AlertsModule,
     HealthModule,
+    UptimeModule,
   ],
   controllers: [AppController],
   providers: [

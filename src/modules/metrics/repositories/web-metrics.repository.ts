@@ -1,5 +1,6 @@
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { Injectable } from '@nestjs/common';
+import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 
 @Injectable()
 export class WebMetricsRepository {
@@ -27,6 +28,7 @@ export class WebMetricsRepository {
           take: 1,
         },
         probeMetrics: {
+          where: { probeSource: WebsiteProbeSource.BACKEND },
           orderBy: {
             recordedAt: 'desc',
           },
@@ -76,6 +78,7 @@ export class WebMetricsRepository {
           take: 1,
         },
         probeMetrics: {
+          where: { probeSource: WebsiteProbeSource.BACKEND },
           orderBy: { recordedAt: 'desc' },
           take: 1,
           select: {
