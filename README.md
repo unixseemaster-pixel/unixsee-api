@@ -110,12 +110,22 @@ Relevant environment options:
 
 ```env
 UPTIME_PROBES_ENABLED=true
-UPTIME_PROBE_INTERVAL_MS=60000
+UPTIME_PROBE_CRON="* * * * *"
 UPTIME_PROBE_STARTUP_DELAY_MS=5000
 UPTIME_PROBE_TIMEOUT_MS=8000
+UPTIME_PROBE_DNS_TIMEOUT_MS=3000
+UPTIME_PROBE_IP_FAMILY=0
+UPTIME_PROBE_DEBUG_LOGS=false
 UPTIME_PROBE_CONCURRENCY=10
 UPTIME_PROBE_BATCH_SIZE=100
 UPTIME_PROBE_ALLOW_HTTP_FALLBACK=false
 UPTIME_PROBE_ACCEPT_STATUS_CODES=200-399,401,403
 UPTIME_PROBE_USER_AGENT=Unixsee-Uptime-Probe/1.0 (+https://unixsee.com)
 ```
+
+Probe behavior:
+
+- The uptime checker treats HTTP response headers as enough for public availability. It does not wait for the full response body.
+- Failed probes are always logged with domain, protocol, URL, DNS time, resolved IP, IP family, connect time, TLS time, failure phase, status, and error.
+- Set `UPTIME_PROBE_DEBUG_LOGS=true` to also log successful probes and the target list for each cycle.
+- Set `UPTIME_PROBE_IP_FAMILY=4` if the server has broken IPv6 routing. Use `0` for automatic IPv4/IPv6 selection.

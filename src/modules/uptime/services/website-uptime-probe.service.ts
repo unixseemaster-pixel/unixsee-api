@@ -1,3 +1,4 @@
+import dns from 'node:dns';
 import http from 'node:http';
 import https from 'node:https';
 import { URL } from 'node:url';
@@ -21,11 +22,37 @@ type WebsiteProbeTarget = {
   domain: string;
 };
 
+type ProbeFailurePhase =
+  | 'dns'
+  | 'connect'
+  | 'tls'
+  | 'timeout'
+  | 'http-status'
+  | 'response'
+  | 'unknown';
+
+type ProbeProtocol = 'http' | 'https';
+
 type ProbeResult = {
   isUp: boolean;
   statusCode: number | null;
   responseTimeMs: number | null;
   ttfbMs: number | null;
+  errorMessage: string | null;
+  protocol?: ProbeProtocol;
+  url?: string;
+  dnsMs?: number | null;
+  resolvedAddress?: string | null;
+  resolvedFamily?: number | null;
+  connectMs?: number | null;
+  tlsHandshakeMs?: number | null;
+  failurePhase?: ProbeFailurePhase | null;
+};
+
+type DnsResolutionResult = {
+  address: string | null;
+  family: number | null;
+  dnsMs: number;
   errorMessage: string | null;
 };
 
@@ -101,6 +128,14 @@ export class WebsiteUptimeProbeService
           domain: true,
         },
       });
+
+      if (settings.debugLogs) {
+        this.logger.debug(
+          `Public uptime probe targets | trigger=${trigger} | count=${targets.length} | domains=${targets
+            .map((target) => target.domain)
+            .join(',')}`,
+        );
+      }
 
       const results = await this.mapWithConcurrency(
         targets,
@@ -186,6 +221,9 @@ export class WebsiteUptimeProbeService
   ): Promise<ProbeResult> {
     const requestedRecordedAt = new Date();
     const result = await this.probeWebsite(target.domain, settings);
+
+    this.logProbeResult(target, result, settings);
+
     const persistedRecordedAt = await this.persistProbeMetric(
       target,
       requestedRecordedAt,
@@ -279,36 +317,73 @@ export class WebsiteUptimeProbeService
     return httpResult.isUp ? httpResult : httpsResult;
   }
 
-  private probeUrl(
+  private async probeUrl(
     url: URL,
     settings: UptimeProbeSettings,
   ): Promise<ProbeResult> {
+    const startedAt = Date.now();
+    const protocol = url.protocol === 'https:' ? 'https' : 'http';
+    const dnsResult = await this.resolveHostname(url.hostname, settings);
+
+    if (!dnsResult.address) {
+      return {
+        isUp: false,
+        statusCode: null,
+        responseTimeMs: Date.now() - startedAt,
+        ttfbMs: null,
+        errorMessage: dnsResult.errorMessage ?? 'DNS lookup failed',
+        protocol,
+        url: url.toString(),
+        dnsMs: dnsResult.dnsMs,
+        resolvedAddress: null,
+        resolvedFamily: null,
+        connectMs: null,
+        tlsHandshakeMs: null,
+        failurePhase: 'dns',
+      };
+    }
+
     return new Promise((resolve) => {
-      const startedAt = Date.now();
       let settled = false;
       let ttfbMs: number | null = null;
-      const client = url.protocol === 'https:' ? https : http;
+      let connectMs: number | null = null;
+      let tlsHandshakeMs: number | null = null;
+      let timeoutTriggered = false;
+      const client = protocol === 'https' ? https : http;
 
       const finish = (result: ProbeResult) => {
         if (settled) return;
         settled = true;
-        resolve(result);
+        resolve({
+          ...result,
+          protocol,
+          url: url.toString(),
+          dnsMs: dnsResult.dnsMs,
+          resolvedAddress: dnsResult.address,
+          resolvedFamily: dnsResult.family,
+          connectMs,
+          tlsHandshakeMs,
+        });
       };
 
       const request = client.request(
         {
           protocol: url.protocol,
           hostname: url.hostname,
-          port: url.port || (url.protocol === 'https:' ? 443 : 80),
+          port: url.port || (protocol === 'https' ? 443 : 80),
           path: `${url.pathname}${url.search}`,
           method: 'GET',
           timeout: settings.timeoutMs,
           servername: url.hostname,
           headers: {
+            Host: url.host,
             'User-Agent': settings.userAgent,
             Accept:
               'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             Connection: 'close',
+          },
+          lookup: (_hostname, _options, callback) => {
+            callback(null, dnsResult.address, dnsResult.family ?? 4);
           },
         },
         (response) => {
@@ -317,40 +392,40 @@ export class WebsiteUptimeProbeService
           const isAccepted = statusCode
             ? this.isAcceptedStatusCode(statusCode, settings)
             : false;
-          let completed = false;
 
-          const complete = () => {
-            if (completed) return;
-            completed = true;
-            finish({
-              isUp: isAccepted,
-              statusCode,
-              responseTimeMs: Date.now() - startedAt,
-              ttfbMs,
-              errorMessage: isAccepted
-                ? null
-                : statusCode
-                  ? `HTTP ${statusCode}`
-                  : 'No HTTP status code returned',
-            });
-          };
-
-          response.once('data', () => complete());
-          response.once('end', () => complete());
-          response.once('error', (error) => {
-            finish({
-              isUp: false,
-              statusCode,
-              responseTimeMs: Date.now() - startedAt,
-              ttfbMs,
-              errorMessage: this.normalizeErrorMessage(error),
-            });
-          });
+          // For public uptime, HTTP response headers are enough to prove the
+          // website is reachable. Do not wait for the full HTML/body; large or
+          // streaming responses can make an actually reachable website look down.
           response.resume();
+          response.destroy();
+
+          finish({
+            isUp: isAccepted,
+            statusCode,
+            responseTimeMs: ttfbMs,
+            ttfbMs,
+            errorMessage: isAccepted
+              ? null
+              : statusCode
+                ? `HTTP ${statusCode}`
+                : 'No HTTP status code returned',
+            failurePhase: isAccepted ? null : 'http-status',
+          });
         },
       );
 
+      request.once('socket', (socket) => {
+        socket.once('connect', () => {
+          connectMs = Date.now() - startedAt;
+        });
+
+        socket.once('secureConnect', () => {
+          tlsHandshakeMs = Date.now() - startedAt;
+        });
+      });
+
       request.once('timeout', () => {
+        timeoutTriggered = true;
         request.destroy(
           new Error(`Probe timed out after ${settings.timeoutMs}ms`),
         );
@@ -363,11 +438,63 @@ export class WebsiteUptimeProbeService
           responseTimeMs: Date.now() - startedAt,
           ttfbMs,
           errorMessage: this.normalizeErrorMessage(error),
+          failurePhase: timeoutTriggered
+            ? 'timeout'
+            : tlsHandshakeMs === null && protocol === 'https' && connectMs !== null
+              ? 'tls'
+              : connectMs === null
+                ? 'connect'
+                : ttfbMs === null
+                  ? 'response'
+                  : 'unknown',
         });
       });
 
       request.end();
     });
+  }
+
+  private async resolveHostname(
+    hostname: string,
+    settings: UptimeProbeSettings,
+  ): Promise<DnsResolutionResult> {
+    const startedAt = Date.now();
+    let timeout: NodeJS.Timeout | undefined;
+
+    try {
+      const family = settings.ipFamily === 0 ? undefined : settings.ipFamily;
+      const lookupPromise = dns.promises.lookup(hostname, {
+        family,
+        verbatim: false,
+      });
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timeout = setTimeout(() => {
+          reject(
+            new Error(
+              `DNS lookup timed out after ${settings.dnsTimeoutMs}ms`,
+            ),
+          );
+        }, settings.dnsTimeoutMs);
+      });
+
+      const result = await Promise.race([lookupPromise, timeoutPromise]);
+
+      return {
+        address: result.address,
+        family: result.family,
+        dnsMs: Date.now() - startedAt,
+        errorMessage: null,
+      };
+    } catch (error) {
+      return {
+        address: null,
+        family: null,
+        dnsMs: Date.now() - startedAt,
+        errorMessage: this.normalizeErrorMessage(error),
+      };
+    } finally {
+      if (timeout) clearTimeout(timeout);
+    }
   }
 
   private getSettings(): UptimeProbeSettings {
@@ -418,6 +545,38 @@ export class WebsiteUptimeProbeService
 
     await Promise.all(workers);
     return results;
+  }
+
+  private logProbeResult(
+    target: WebsiteProbeTarget,
+    result: ProbeResult,
+    settings: UptimeProbeSettings,
+  ): void {
+    const message =
+      `domain=${target.domain}` +
+      ` | source=${WebsiteProbeSource.BACKEND}` +
+      ` | protocol=${result.protocol ?? 'unknown'}` +
+      ` | url=${result.url ?? 'unknown'}` +
+      ` | isUp=${result.isUp}` +
+      ` | status=${result.statusCode ?? 'null'}` +
+      ` | phase=${result.failurePhase ?? 'ok'}` +
+      ` | responseTimeMs=${result.responseTimeMs ?? 'null'}` +
+      ` | ttfbMs=${result.ttfbMs ?? 'null'}` +
+      ` | dnsMs=${result.dnsMs ?? 'null'}` +
+      ` | resolved=${result.resolvedAddress ?? 'null'}` +
+      ` | family=${result.resolvedFamily ?? 'null'}` +
+      ` | connectMs=${result.connectMs ?? 'null'}` +
+      ` | tlsMs=${result.tlsHandshakeMs ?? 'null'}` +
+      ` | error=${result.errorMessage ?? 'null'}`;
+
+    if (!result.isUp) {
+      this.logger.warn(`Public uptime probe down | ${message}`);
+      return;
+    }
+
+    if (settings.debugLogs) {
+      this.logger.debug(`Public uptime probe up | ${message}`);
+    }
   }
 
   private normalizeErrorMessage(error: unknown): string {

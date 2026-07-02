@@ -58,6 +58,12 @@ export const envSchema = z.object({
   UPTIME_PROBE_CRON: z.string().trim().min(1).default('* * * * *'),
   UPTIME_PROBE_STARTUP_DELAY_MS: z.coerce.number().int().min(0).default(5000),
   UPTIME_PROBE_TIMEOUT_MS: z.coerce.number().int().positive().default(8000),
+  UPTIME_PROBE_DNS_TIMEOUT_MS: z.coerce.number().int().positive().default(3000),
+  UPTIME_PROBE_IP_FAMILY: z.coerce
+    .number()
+    .pipe(z.union([z.literal(0), z.literal(4), z.literal(6)]))
+    .default(0),
+  UPTIME_PROBE_DEBUG_LOGS: booleanEnv.default(false),
   UPTIME_PROBE_CONCURRENCY: z.coerce.number().int().positive().default(10),
   UPTIME_PROBE_BATCH_SIZE: z.coerce.number().int().positive().default(100),
   UPTIME_PROBE_ALLOW_HTTP_FALLBACK: booleanEnv.default(false),

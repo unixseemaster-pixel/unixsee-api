@@ -27,3 +27,11 @@
 
 - Phase one production keeps the uptime module inside the core backend monolith.
 - Later, this module can be extracted into regional external probe workers, but the database/source contract should stay compatible.
+
+## Uptime probe diagnostics
+
+- Failed public uptime probes must log enough context to diagnose DNS, connect, TLS, timeout, HTTP status, and response phases.
+- Do not wait for the full HTML/body to determine uptime; response headers are enough for public availability and response-time/TTFB metrics.
+- Keep DNS timeout, IP family preference, and debug logging in typed config under `src/utils/config/env.schema.ts` and `src/utils/config/app.config.ts`.
+- Use `UPTIME_PROBE_DEBUG_LOGS=true` only for investigation because it logs successful probe details too.
+- If every external domain is marked down, first inspect the logged `phase`, `dnsMs`, `resolved`, `family`, `connectMs`, `tlsMs`, and `error` fields before changing dashboard or agent code.
