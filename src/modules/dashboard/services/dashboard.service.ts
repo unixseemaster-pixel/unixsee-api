@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
+import { AlertStatus, WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { DashboardOverviewSnapshotService } from './dashboard-overview-snapshot.service.js';
@@ -15,6 +15,267 @@ export class DashboardService {
 
   async getOverview(userId: string) {
     return this.dashboardOverviewSnapshotService.getOverviewSnapshot(userId);
+  }
+
+  async getWebsiteDetails(userId: string, websiteId: string) {
+    const website = await this.prisma.website.findFirst({
+      where: {
+        id: websiteId,
+        userId,
+      },
+      select: {
+        id: true,
+        vpsNodeId: true,
+        domain: true,
+        displayName: true,
+        isActive: true,
+        lastIsUp: true,
+        lastStatusCode: true,
+        lastResponseTimeMs: true,
+        lastProbeAt: true,
+        createdAt: true,
+        updatedAt: true,
+        metrics: {
+          orderBy: { recordedAt: 'desc' },
+          take: 1,
+          select: {
+            recordedAt: true,
+            concurrentRequests: true,
+            requestRate: true,
+            activeConnections: true,
+            processingRequests: true,
+            bytesInPerSecond: true,
+            bytesOutPerSecond: true,
+          },
+        },
+        probeMetrics: {
+          where: { probeSource: WebsiteProbeSource.BACKEND },
+          orderBy: { recordedAt: 'desc' },
+          take: 1,
+          select: {
+            recordedAt: true,
+            probeSource: true,
+            isUp: true,
+            statusCode: true,
+            responseTimeMs: true,
+            ttfbMs: true,
+            errorMessage: true,
+          },
+        },
+        sslMetrics: {
+          orderBy: { recordedAt: 'desc' },
+          take: 1,
+          select: {
+            recordedAt: true,
+            isValid: true,
+            validFrom: true,
+            validTo: true,
+            daysRemaining: true,
+            issuer: true,
+            subject: true,
+            statusMessage: true,
+          },
+        },
+        ssl: {
+          select: {
+            issuer: true,
+            subject: true,
+            validFrom: true,
+            validTo: true,
+            isValid: true,
+            isAutoRenewable: true,
+            statusMessage: true,
+          },
+        },
+        vpsNode: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            hostname: true,
+            publicIp: true,
+            osName: true,
+            osVersion: true,
+            kernelVersion: true,
+            agentVersion: true,
+            lastSeenAt: true,
+            vpsMetrics: {
+              orderBy: { recordedAt: 'desc' },
+              take: 1,
+              select: {
+                recordedAt: true,
+                cpuUsagePercent: true,
+                memoryUsedMB: true,
+                memoryTotalMB: true,
+                storageTotalMB: true,
+                storageAvailableMB: true,
+                liteSpeedConnections: true,
+                networkRxBytesPerSecond: true,
+                networkTxBytesPerSecond: true,
+              },
+            },
+          },
+        },
+        alerts: {
+          orderBy: { startedAt: 'desc' },
+          take: 10,
+          select: {
+            id: true,
+            title: true,
+            message: true,
+            severity: true,
+            status: true,
+            startedAt: true,
+            resolvedAt: true,
+            createdAt: true,
+            updatedAt: true,
+            metadata: true,
+          },
+        },
+      },
+    });
+
+    if (!website) {
+      throw new NotFoundException('Website not found');
+    }
+
+    const latestWebMetric = website.metrics[0] ?? null;
+    const latestProbeMetric = website.probeMetrics[0] ?? null;
+    const latestSslMetric = website.sslMetrics[0] ?? null;
+    const latestVpsMetric = website.vpsNode.vpsMetrics[0] ?? null;
+    const activeAlerts = website.alerts.filter(
+      (alert) => alert.status === AlertStatus.ACTIVE,
+    );
+    const traffic = this.trafficLoadService.resolve(
+      latestWebMetric
+        ? {
+            concurrentRequests: latestWebMetric.concurrentRequests,
+            requestRate: latestWebMetric.requestRate,
+          }
+        : null,
+    );
+    const status = this.resolveMonitoringStatus({
+      concurrentRequests: latestWebMetric?.concurrentRequests ?? 0,
+      alerts: activeAlerts,
+      sslIsValid: latestSslMetric?.isValid ?? website.ssl?.isValid ?? null,
+      isUp: latestProbeMetric?.isUp ?? null,
+    });
+    const lastCheckedAt = this.getLatestDate([
+      latestProbeMetric?.recordedAt,
+      website.lastProbeAt,
+      latestWebMetric?.recordedAt,
+      latestSslMetric?.recordedAt,
+      latestVpsMetric?.recordedAt,
+    ]);
+
+    return {
+      generatedAt: new Date(),
+      lastCheckedAt,
+      website: {
+        websiteId: website.id,
+        vpsNodeId: website.vpsNodeId,
+        domain: website.domain,
+        displayName: website.displayName,
+        isActive: website.isActive,
+        status,
+        lastCheckedAt,
+        createdAt: website.createdAt,
+        updatedAt: website.updatedAt,
+      },
+      availability: {
+        probeSource: WebsiteProbeSource.BACKEND,
+        isUp: latestProbeMetric?.isUp ?? null,
+        statusCode: latestProbeMetric?.statusCode ?? null,
+        responseTimeMs: latestProbeMetric?.responseTimeMs ?? null,
+        ttfbMs: latestProbeMetric?.ttfbMs ?? null,
+        errorMessage: latestProbeMetric?.errorMessage ?? null,
+        lastProbeAt: latestProbeMetric?.recordedAt ?? null,
+      },
+      traffic: {
+        load: traffic.load,
+        activity: traffic.activity,
+        concurrentRequests: latestWebMetric?.concurrentRequests ?? null,
+        requestRate: latestWebMetric?.requestRate ?? null,
+        activeConnections: latestWebMetric?.activeConnections ?? null,
+        processingRequests: latestWebMetric?.processingRequests ?? null,
+        bytesInPerSecond: this.serializeBigInt(
+          latestWebMetric?.bytesInPerSecond,
+        ),
+        bytesOutPerSecond: this.serializeBigInt(
+          latestWebMetric?.bytesOutPerSecond,
+        ),
+        lastMetricAt: latestWebMetric?.recordedAt ?? null,
+      },
+      ssl: {
+        isValid: latestSslMetric?.isValid ?? website.ssl?.isValid ?? null,
+        validFrom: latestSslMetric?.validFrom ?? website.ssl?.validFrom ?? null,
+        validTo: latestSslMetric?.validTo ?? website.ssl?.validTo ?? null,
+        daysRemaining:
+          latestSslMetric?.daysRemaining ??
+          this.calculateDaysRemaining(website.ssl?.validTo ?? null),
+        issuer: latestSslMetric?.issuer ?? website.ssl?.issuer ?? null,
+        subject: latestSslMetric?.subject ?? website.ssl?.subject ?? null,
+        isAutoRenewable: website.ssl?.isAutoRenewable ?? null,
+        statusMessage:
+          latestSslMetric?.statusMessage ?? website.ssl?.statusMessage ?? null,
+        lastCheckedAt: latestSslMetric?.recordedAt ?? null,
+      },
+      vpsNode: website.vpsNode
+        ? {
+            vpsNodeId: website.vpsNode.id,
+            name: website.vpsNode.name,
+            status: website.vpsNode.status,
+            hostname: website.vpsNode.hostname,
+            publicIp: website.vpsNode.publicIp,
+            osName: website.vpsNode.osName,
+            osVersion: website.vpsNode.osVersion,
+            kernelVersion: website.vpsNode.kernelVersion,
+            agentVersion: website.vpsNode.agentVersion,
+            lastSeenAt: website.vpsNode.lastSeenAt,
+            latestMetricAt: latestVpsMetric?.recordedAt ?? null,
+            cpuUsagePercent: latestVpsMetric?.cpuUsagePercent ?? null,
+            memoryUsagePercent: latestVpsMetric
+              ? this.calculateNullablePercent(
+                  latestVpsMetric.memoryUsedMB,
+                  latestVpsMetric.memoryTotalMB,
+                )
+              : null,
+            memoryUsedMB: latestVpsMetric?.memoryUsedMB ?? null,
+            memoryTotalMB: latestVpsMetric?.memoryTotalMB ?? null,
+            storageUsagePercent: latestVpsMetric
+              ? this.calculateNullablePercent(
+                  latestVpsMetric.storageTotalMB -
+                    latestVpsMetric.storageAvailableMB,
+                  latestVpsMetric.storageTotalMB,
+                )
+              : null,
+            storageTotalMB: latestVpsMetric?.storageTotalMB ?? null,
+            storageAvailableMB: latestVpsMetric?.storageAvailableMB ?? null,
+            liteSpeedConnections: latestVpsMetric?.liteSpeedConnections ?? null,
+            networkRxBytesPerSecond: this.serializeBigInt(
+              latestVpsMetric?.networkRxBytesPerSecond,
+            ),
+            networkTxBytesPerSecond: this.serializeBigInt(
+              latestVpsMetric?.networkTxBytesPerSecond,
+            ),
+          }
+        : null,
+      alerts: {
+        activeCount: activeAlerts.length,
+        recent: website.alerts.map((alert) => ({
+          id: alert.id,
+          title: alert.title,
+          message: alert.message,
+          severity: alert.severity,
+          status: alert.status,
+          startedAt: alert.startedAt,
+          resolvedAt: alert.resolvedAt,
+          createdAt: alert.createdAt,
+          updatedAt: alert.updatedAt,
+          metadata: alert.metadata,
+        })),
+      },
+    };
   }
 
   async getMonitoring(userId: string) {
@@ -517,6 +778,31 @@ export class DashboardService {
     if (total <= 0) return 0;
 
     return Number(((used / total) * 100).toFixed(2));
+  }
+
+  private calculateNullablePercent(
+    used: number | null | undefined,
+    total: number | null | undefined,
+  ) {
+    if (used === null || used === undefined) return null;
+    if (total === null || total === undefined || total <= 0) return null;
+
+    return this.calculatePercent(used, total);
+  }
+
+  private serializeBigInt(value: bigint | number | null | undefined) {
+    if (value === null || value === undefined) return null;
+
+    return value.toString();
+  }
+
+  private getLatestDate(dates: Array<Date | null | undefined>): Date | null {
+    return dates.reduce<Date | null>((latest, date) => {
+      if (!date) return latest;
+      if (!latest || date.getTime() > latest.getTime()) return date;
+
+      return latest;
+    }, null);
   }
 
   private toNumber(value: bigint | number | null) {

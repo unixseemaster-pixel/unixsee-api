@@ -40,6 +40,19 @@ export class DashboardController {
     return ApiResponseBuilder.ok(data);
   }
 
+  @Get('websites/:websiteId')
+  async getWebsiteDetails(
+    @CurrentUser() user: CurrentUserType,
+    @Param('websiteId') websiteId: string,
+  ) {
+    const data = await this.dashboardService.getWebsiteDetails(
+      user.id,
+      websiteId,
+    );
+
+    return ApiResponseBuilder.ok(data);
+  }
+
   @Get('websites/:websiteId/charts')
   async getWebsiteCharts(
     @CurrentUser() user: CurrentUserType,
