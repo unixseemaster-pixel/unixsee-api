@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { DashboardController } from './controllers/dashboard.controller.js';
 import { DashboardChartsService } from './services/dashboard-charts.service.js';
+import { DashboardOverviewSnapshotService } from './services/dashboard-overview-snapshot.service.js';
 import { DashboardService } from './services/dashboard.service.js';
 import { MetricsOverviewService } from '../metrics/services/metrics-overview.service.js';
 import { AlertsService } from '../alerts/services/alerts.service.js';
@@ -16,6 +17,7 @@ import { WebMetricsRepository } from '../metrics/repositories/web-metrics.reposi
   controllers: [DashboardController],
   providers: [
     DashboardChartsService,
+    DashboardOverviewSnapshotService,
     DashboardService,
     MetricsOverviewService,
     AlertsService,
