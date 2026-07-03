@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 import type { TrafficLoadType } from '#/modules/metrics/types/traffic-load.type.js';
 
@@ -96,6 +97,8 @@ type DiskIoBucket = {
 
 @Injectable()
 export class DashboardChartsService {
+  private readonly logger = createAppLogger(DashboardChartsService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly trafficLoadService: TrafficLoadService,
@@ -127,6 +130,15 @@ export class DashboardChartsService {
         range,
       ),
     ]);
+
+    this.logger.debug('dashboard.charts.overview.loaded', {
+      userId,
+      range: range.range,
+      interval: range.interval,
+      websiteCount: websites.length,
+      vpsNodeCount: vpsNodes.length,
+      activeAlertCount: activeAlerts,
+    });
 
     const websiteCharts = websites.map((website) =>
       this.buildWebsiteCharts(website, range, webMetrics, probeMetrics),
@@ -163,6 +175,10 @@ export class DashboardChartsService {
     });
 
     if (!website) {
+      this.logger.warn('dashboard.charts.website.not_found', {
+        userId,
+        websiteId,
+      });
       throw new NotFoundException('Website not found');
     }
 
@@ -170,6 +186,15 @@ export class DashboardChartsService {
       this.getWebMetrics([website.id], range),
       this.getProbeMetrics([website.id], range),
     ]);
+
+    this.logger.debug('dashboard.charts.website.loaded', {
+      userId,
+      websiteId,
+      range: range.range,
+      interval: range.interval,
+      webSampleCount: webMetrics.length,
+      probeSampleCount: probeMetrics.length,
+    });
 
     return {
       generatedAt: new Date(),
@@ -202,10 +227,22 @@ export class DashboardChartsService {
     });
 
     if (!vpsNode) {
+      this.logger.warn('dashboard.charts.vps.not_found', {
+        userId,
+        vpsNodeId,
+      });
       throw new NotFoundException('VPS node not found');
     }
 
     const vpsMetrics = await this.getVpsMetrics([vpsNode.id], range);
+
+    this.logger.debug('dashboard.charts.vps.loaded', {
+      userId,
+      vpsNodeId,
+      range: range.range,
+      interval: range.interval,
+      sampleCount: vpsMetrics.length,
+    });
 
     return {
       generatedAt: new Date(),

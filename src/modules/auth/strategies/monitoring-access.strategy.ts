@@ -7,6 +7,7 @@ import { AppConfigType } from '#/utils/config/app.config.js';
 import { UserService } from '#/modules/user/services/user/user.service.js';
 import { ERROR_MESSAGES } from '#/utils/error-messages.js';
 import { Request } from 'express';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 type MonitoringAccessJwtPayload = {
   sub: string;
@@ -30,6 +31,8 @@ export class MonitoringAccessStrategy extends PassportStrategy(
   Strategy,
   'jwt-monitoring-access',
 ) {
+  private readonly logger = createAppLogger(MonitoringAccessStrategy.name);
+
   constructor(
     // private readonly prisma: PrismaService,
     // private readonly reflector: Reflector,
@@ -47,6 +50,9 @@ export class MonitoringAccessStrategy extends PassportStrategy(
 
   async validate(req: Request, payload: MonitoringAccessJwtPayload) {
     if (payload.purpose !== 'MONITORING_ACCESS') {
+      this.logger.warn('auth.monitoring_access_token.rejected_wrong_purpose', {
+        userId: payload.sub,
+      });
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
     }
 
@@ -57,12 +63,19 @@ export class MonitoringAccessStrategy extends PassportStrategy(
     const authenticatedUserId = authenticatedUser?.id ?? authenticatedUser?.sub;
 
     if (!authenticatedUserId || authenticatedUserId !== payload.sub) {
+      this.logger.warn('auth.monitoring_access_token.rejected_user_mismatch', {
+        authenticatedUserId,
+        tokenUserId: payload.sub,
+      });
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
     }
 
     const user = await this.userService.findOneById(payload.sub);
 
     if (!user?.hashedRt) {
+      this.logger.warn('auth.monitoring_access_token.rejected_user_missing_or_logged_out', {
+        userId: payload.sub,
+      });
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
     }
 

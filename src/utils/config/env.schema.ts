@@ -15,6 +15,10 @@ const acceptedStatusCodesPattern =
   /^(?:\d{3}(?:\s*-\s*\d{3})?)(?:\s*,\s*\d{3}(?:\s*-\s*\d{3})?)*$/;
 
 export const envSchema = z.object({
+  APP_ENV: z
+    .enum(['development', 'staging', 'production', 'test'])
+    .default('development'),
+
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
     .default('development'),

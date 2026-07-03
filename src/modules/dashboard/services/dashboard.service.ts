@@ -4,9 +4,12 @@ import { AlertStatus, WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { DashboardOverviewSnapshotService } from './dashboard-overview-snapshot.service.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @Injectable()
 export class DashboardService {
+  private readonly logger = createAppLogger(DashboardService.name);
+
   constructor(
     private readonly dashboardOverviewSnapshotService: DashboardOverviewSnapshotService,
     private readonly trafficLoadService: TrafficLoadService,
@@ -14,7 +17,16 @@ export class DashboardService {
   ) {}
 
   async getOverview(userId: string) {
-    return this.dashboardOverviewSnapshotService.getOverviewSnapshot(userId);
+    const overview = await this.dashboardOverviewSnapshotService.getOverviewSnapshot(userId);
+
+    this.logger.debug('dashboard.overview.loaded', {
+      userId,
+      websiteCount: overview.websites.length,
+      vpsNodeCount: overview.vpsNodes.length,
+      status: overview.status,
+    });
+
+    return overview;
   }
 
   async getWebsiteDetails(userId: string, websiteId: string) {
@@ -136,6 +148,10 @@ export class DashboardService {
     });
 
     if (!website) {
+      this.logger.warn('dashboard.website_details.not_found', {
+        userId,
+        websiteId,
+      });
       throw new NotFoundException('Website not found');
     }
 
@@ -167,6 +183,14 @@ export class DashboardService {
       latestSslMetric?.recordedAt,
       latestVpsMetric?.recordedAt,
     ]);
+
+    this.logger.debug('dashboard.website_details.loaded', {
+      userId,
+      websiteId,
+      domain: website.domain,
+      status,
+      activeAlertCount: activeAlerts.length,
+    });
 
     return {
       generatedAt: new Date(),
@@ -677,8 +701,17 @@ export class DashboardService {
       };
     });
 
+    const status = this.resolveGlobalMonitoringStatus(websitesView, nodesView);
+
+    this.logger.debug('dashboard.monitoring.loaded', {
+      userId,
+      websiteCount: websitesView.length,
+      nodeCount: nodesView.length,
+      status,
+    });
+
     return {
-      status: this.resolveGlobalMonitoringStatus(websitesView, nodesView),
+      status,
       generatedAt: new Date(),
       range: {
         since: monitoringSince,

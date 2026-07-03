@@ -7,6 +7,7 @@ import { Role } from '#/generated/prisma/enums.js';
 import type { AppConfigType } from '#/utils/config/app.config.js';
 import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { DashboardOverviewSnapshotService } from '#/modules/dashboard/services/dashboard-overview-snapshot.service.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 export interface AuthenticatedUserSocketPayload {
   id: string;
@@ -32,6 +33,8 @@ export interface AuthorizedSocketSession {
 
 @Injectable()
 export class RealtimeService {
+  private readonly logger = createAppLogger(RealtimeService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
@@ -49,6 +52,7 @@ export class RealtimeService {
     const accessPayload = await this.verifyAccessTokenPayload(token);
 
     if (!accessPayload) {
+      this.logger.warn('socket.auth.rejected_access_token_invalid');
       return null;
     }
 
@@ -63,8 +67,20 @@ export class RealtimeService {
       monitoringPayload.sub !== user.id ||
       monitoringPayload.purpose !== 'MONITORING_ACCESS'
     ) {
+      this.logger.warn('socket.auth.rejected_monitoring_access_invalid', {
+        userId: accessPayload.sub,
+        hasUser: Boolean(user),
+        hasMonitoringPayload: Boolean(monitoringPayload),
+      });
       return null;
     }
+
+    this.logger.debug('socket.auth.monitoring_authorized', {
+      userId: user.id,
+      expiresAt: new Date(
+        Math.min(accessPayload.exp, monitoringPayload.exp) * 1000,
+      ),
+    });
 
     return {
       user,
@@ -80,14 +96,23 @@ export class RealtimeService {
     const accessPayload = await this.verifyAccessTokenPayload(token);
 
     if (!accessPayload) {
+      this.logger.warn('socket.auth.rejected_overview_token_invalid');
       return null;
     }
 
     const user = await this.getAuthenticatedUser(accessPayload.sub);
 
     if (!user) {
+      this.logger.warn('socket.auth.rejected_user_not_found', {
+        userId: accessPayload.sub,
+      });
       return null;
     }
+
+    this.logger.debug('socket.auth.overview_authorized', {
+      userId: user.id,
+      expiresAt: new Date(accessPayload.exp * 1000),
+    });
 
     return {
       user,
@@ -100,6 +125,7 @@ export class RealtimeService {
     monitoringAccessToken: string | null,
   ): Promise<AuthorizedSocketSession | null> {
     if (!monitoringAccessToken) {
+      this.logger.warn('socket.auth.rejected_monitoring_token_missing');
       return null;
     }
 
@@ -266,10 +292,19 @@ export class RealtimeService {
       ),
     ]);
 
+    const safeNodes = nodes.filter(Boolean);
+    const safeWebsites = websites.filter(Boolean);
+
+    this.logger.debug('socket.monitoring_snapshot.loaded', {
+      userId,
+      nodeCount: safeNodes.length,
+      websiteCount: safeWebsites.length,
+    });
+
     return {
       generatedAt: new Date(),
-      nodes: nodes.filter(Boolean),
-      websites: websites.filter(Boolean),
+      nodes: safeNodes,
+      websites: safeWebsites,
     };
   }
 

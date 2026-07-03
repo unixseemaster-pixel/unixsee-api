@@ -1,9 +1,12 @@
 import { SSLCertificate } from '#/generated/prisma/client.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { Injectable } from '@nestjs/common';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @Injectable()
 export class SslCertificatesService {
+  private readonly logger = createAppLogger(SslCertificatesService.name);
+
   constructor(private prisma: PrismaService) {}
 
   async getExpiringCertificates(userId: string, daysThreshold = 14) {
@@ -33,6 +36,12 @@ export class SslCertificatesService {
       orderBy: {
         validTo: 'asc',
       },
+    });
+
+    this.logger.debug('ssl.expiring_certificates.loaded', {
+      userId,
+      daysThreshold,
+      count: certificates.length,
     });
 
     return certificates.map((certificate) => ({

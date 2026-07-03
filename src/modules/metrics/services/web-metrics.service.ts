@@ -3,15 +3,23 @@ import { Injectable } from '@nestjs/common';
 import { WebMetricsRepository } from '../repositories/web-metrics.repository.js';
 import { WebMetric } from '#/generated/prisma/client.js';
 import { WebsiteMetricsType } from '../types/web-metrics.type.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @Injectable()
 export class WebMetricsService {
+  private readonly logger = createAppLogger(WebMetricsService.name);
+
   constructor(private webMetricsRepository: WebMetricsRepository) {}
 
   async getWebsitesOverviewByUser(
     userId: string,
   ): Promise<WebsiteMetricsType[]> {
     const websites = await this.webMetricsRepository.findLatestByUserId(userId);
+
+    this.logger.debug('metrics.websites_overview.loaded', {
+      userId,
+      websiteCount: websites.length,
+    });
 
     return websites.map((website) => ({
       websiteId: website.websiteId,
@@ -35,8 +43,15 @@ export class WebMetricsService {
       await this.webMetricsRepository.findOverviewByWebsiteId(websiteId);
 
     if (!website) {
+      this.logger.warn('metrics.website_overview.not_found', { websiteId });
       throw new Error(`Website not found: ${websiteId}`);
     }
+
+    this.logger.debug('metrics.website_overview.loaded', {
+      websiteId,
+      hasMetric: Boolean(website.latest),
+      hasProbe: Boolean(website.latestProbe),
+    });
 
     return {
       websiteId: website.websiteId,

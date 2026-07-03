@@ -4,9 +4,12 @@ import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @Injectable()
 export class DashboardOverviewSnapshotService {
+  private readonly logger = createAppLogger(DashboardOverviewSnapshotService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly systemHealthService: SystemHealthService,
@@ -265,6 +268,15 @@ export class DashboardOverviewSnapshotService {
       ...vpsCards,
     ]);
 
+    this.logger.debug('dashboard.overview_snapshot.loaded', {
+      userId,
+      status,
+      websiteCount: websiteCards.length,
+      vpsNodeCount: vpsCards.length,
+      alertCount: recentAlerts.length,
+      expiringSslCount: expiringCertificates.length,
+    });
+
     return {
       generatedAt: new Date(),
       status,
@@ -312,6 +324,9 @@ export class DashboardOverviewSnapshotService {
     });
 
     if (!website) {
+      this.logger.warn('dashboard.overview_website_tick.website_not_found', {
+        websiteId,
+      });
       return null;
     }
 
@@ -321,6 +336,10 @@ export class DashboardOverviewSnapshotService {
     );
 
     if (!websiteOverview) {
+      this.logger.warn('dashboard.overview_website_tick.not_found', {
+        websiteId,
+        userId: website.userId,
+      });
       return null;
     }
 
@@ -340,6 +359,10 @@ export class DashboardOverviewSnapshotService {
     );
 
     if (!vpsOverview) {
+      this.logger.warn('dashboard.overview_vps_tick.not_found', {
+        userId,
+        vpsNodeId,
+      });
       return null;
     }
 

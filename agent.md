@@ -226,9 +226,23 @@ The backend must use a small, dependency-free logging strategy based on the buil
 
 ### Logger wrapper
 
-- Use `createAppLogger(ContextName)` from `src/common/logging/app-logger.ts` in all controllers, services, guards, gateways, listeners, and scheduled workers.
+- Use `createAppLogger(ContextName)` from `src/common/logging/app-logger.ts` in all controllers, services, guards, gateways, listeners, and scheduled workers that perform I/O, auth, DB access, event dispatching, socket work, scheduled jobs, or important business decisions.
 - Do not use raw `new Logger(...)` in feature code. Raw Nest Logger usage must stay isolated inside the wrapper.
-- Class context is the Nest log context that identifies where a log came from. Example: `createAppLogger(AgentService.name)` produces logs with the `AgentService` context.
+- Class context is the Nest log context that identifies where a log came from. Example: `createAppLogger(AgentService.name)` produces logs with the `AgentService` context. Pure stateless calculation helpers may remain unlogged unless they make a decision that must be audited.
+
+
+### Environment level policy
+
+Logger levels must be selected from `APP_ENV` first, with `NODE_ENV` only as fallback. This is required because staging runs optimized production Node behavior while still needing staging observability.
+
+| Environment | Required env values | Enabled levels |
+| --- | --- | --- |
+| Development | `APP_ENV=development`, `NODE_ENV=development` | `log`, `warn`, `error`, `debug`, `verbose`, `fatal` |
+| Staging | `APP_ENV=staging`, `NODE_ENV=production` | `log`, `warn`, `error`, `debug`, `fatal` |
+| Production | `APP_ENV=production`, `NODE_ENV=production` | `log`, `warn`, `error`, `fatal` |
+| Test | `APP_ENV=test`, `NODE_ENV=test` | `error`, `fatal` |
+
+Do not use `NODE_ENV` alone to decide logger levels.
 
 ### Request ID propagation
 

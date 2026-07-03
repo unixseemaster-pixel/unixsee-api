@@ -10,7 +10,7 @@ import type { AppConfigType } from './utils/config/app.config.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: getLoggerLevels(process.env.NODE_ENV),
+    logger: getLoggerLevels(process.env.APP_ENV, process.env.NODE_ENV),
   });
   const configService = app.get<ConfigService<AppConfigType>>(ConfigService);
   const allowedOrigins = configService.getOrThrow('app.corsAllowedOrigins', {
@@ -43,6 +43,7 @@ async function bootstrap() {
 
   createAppLogger('Bootstrap').log('app.started', {
     port,
+    appEnv: configService.getOrThrow('app.appEnv', { infer: true }),
     nodeEnv: configService.getOrThrow('app.nodeEnv', { infer: true }),
   });
 }

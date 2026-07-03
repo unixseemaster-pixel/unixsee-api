@@ -35,6 +35,7 @@ const appConfig = registerAs('app', () => {
   const env = result.data;
 
   return {
+    appEnv: env.APP_ENV,
     nodeEnv: env.NODE_ENV,
     port: env.PORT,
     databaseUrl: env.DATABASE_URL,

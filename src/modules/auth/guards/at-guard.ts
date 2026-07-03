@@ -6,9 +6,12 @@ import { AuthGuard } from '@nestjs/passport';
 
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { RequestContext } from '#/common/logging/request-context.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @Injectable()
 export class AtGuard extends AuthGuard('jwt') {
+  private readonly logger = createAppLogger(AtGuard.name);
+
   constructor(
     private readonly reflector: Reflector,
     private readonly jwtService: JwtService,
@@ -23,13 +26,19 @@ export class AtGuard extends AuthGuard('jwt') {
 
     const canActivate = (await super.canActivate(context)) as boolean;
 
-    if (!canActivate) return false;
+    if (!canActivate) {
+      this.logger.warn('auth.access_guard.rejected');
+      return false;
+    }
 
     const request = context.switchToHttp().getRequest();
 
     const user = request.user;
 
-    if (!user) return false;
+    if (!user) {
+      this.logger.warn('auth.access_guard.user_missing');
+      return false;
+    }
 
     if (typeof user.sub === 'string') {
       RequestContext.setUserId(user.sub);
