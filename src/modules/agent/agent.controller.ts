@@ -1,23 +1,15 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Ip,
-  Logger,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Ip, Post, UseGuards } from '@nestjs/common';
 
 import { AgentSignatureGuard } from './guards/agent-signature.guard.js';
 import { IngestAgentMetricsDto } from './dto/ingest-agent-metrics.dto.js';
 import { AgentService } from './agent.service.js';
 import { Public } from '../auth/decorators/public.decorator.js';
 import { IsFirstProvisioning } from './decorators/is-first-provisioning.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @Controller('internal/agent/v1')
 export class AgentController {
-  private readonly logger = new Logger(AgentController.name);
+  private readonly logger = createAppLogger(AgentController.name);
 
   constructor(private readonly agentService: AgentService) {}
 
@@ -37,15 +29,24 @@ export class AgentController {
     );
     const machineId = payload.batch[0]?.machineId ?? 'unknown';
 
-    this.logger.log(
-      `Agent ingest received | machine=${machineId} | batch=${batchSize} | websiteEntries=${websiteEntryCount} | firstProvisioning=${isFirstProvisioningCycle}`,
-    );
+    this.logger.debug('agent.ingest.received', {
+      machineId,
+      batchSize,
+      websiteEntryCount,
+      firstProvisioning: isFirstProvisioningCycle,
+    });
 
     const result = await this.agentService.processTelemetryIngestion(
       payload,
       isFirstProvisioningCycle,
       clientIp,
     );
+
+    this.logger.log('agent.ingest.completed', {
+      machineId,
+      vpsNodeId: result.vpsNodeId,
+      hasAssignedCredential: Boolean(result.assignedSecretKey),
+    });
 
     return {
       status: 'success',

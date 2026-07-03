@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
@@ -19,10 +18,12 @@ import type { RegisterDto } from '../dto/register.dto.js';
 import { OtpContext } from '#/generated/prisma/enums.js';
 import { User } from '#/generated/prisma/client.js';
 import { OtpService } from './otp-service.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
+import { RequestContext } from '#/common/logging/request-context.js';
 
 @Injectable()
 export class AuthenticationService {
-  private readonly logger = new Logger(AuthenticationService.name);
+  private readonly logger = createAppLogger(AuthenticationService.name);
 
   constructor(
     private readonly prisma: PrismaService,
@@ -39,12 +40,12 @@ export class AuthenticationService {
     fullName,
     phoneNumber,
   }: RegisterDto) {
-    this.logger.log(`Register attempt for username: ${username}`);
+    this.logger.log('auth.register.attempt', { username, email, phoneNumber });
 
     const user = await this.userService.findOneByUsername({ username });
 
     if (user) {
-      this.logger.warn(`Register rejected, user already exists: ${username}`);
+      this.logger.warn('auth.register.rejected_user_exists', { username });
       throw new ConflictException(ERROR_MESSAGES.fa.userExist);
     }
 
@@ -58,22 +59,25 @@ export class AuthenticationService {
       phoneNumber,
     });
 
-    const tokens = this.createTokens({ userId: createdUser.id });
-    this.logger.log(`User registered successfully: ${createdUser.id}`);
+    const tokens = await this.createTokens({ userId: createdUser.id });
+    RequestContext.setUserId(createdUser.id);
+    this.logger.log('auth.register.completed', { userId: createdUser.id });
     return tokens;
   }
 
   async login({ password, username, email, phoneNumber }: LoginDto) {
-    this.logger.log(`Login attempt for username: ${username}`);
+    this.logger.log('auth.login.attempt', { username, email, phoneNumber });
 
     const existUser = await this.userService.findOneByUsername({ username });
     if (!existUser) {
-      this.logger.warn(`Login rejected, user not found: ${username}`);
+      this.logger.warn('auth.login.rejected_user_not_found', { username });
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
     }
 
     if (!existUser?.password) {
-      this.logger.warn(`Login rejected, password is not set: ${existUser.id}`);
+      this.logger.warn('auth.login.rejected_password_not_set', {
+        userId: existUser.id,
+      });
       throw new BadRequestException(
         "You didn't set password for your account.",
       );
@@ -82,37 +86,42 @@ export class AuthenticationService {
     const isPassCorrect = await bcrypt.compare(password, existUser.password);
 
     if (!isPassCorrect) {
-      this.logger.warn(`Login rejected, invalid password: ${existUser.id}`);
+      this.logger.warn('auth.login.rejected_invalid_password', {
+        userId: existUser.id,
+      });
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
     }
 
     const tokens = await this.createTokens({ userId: existUser.id });
 
-    this.logger.log(`User logged in successfully: ${existUser.id}`);
+    RequestContext.setUserId(existUser.id);
+    this.logger.log('auth.login.completed', { userId: existUser.id });
     return tokens;
   }
 
   async refresh(userId: string, refreshToken: string) {
-    this.logger.log(`Refresh token attempt for user: ${userId}`);
+    RequestContext.setUserId(userId);
+    this.logger.log('auth.refresh.attempt', { userId });
 
     const user = await this.userService.findOneById(userId);
     if (!user || !user.hashedRt) {
-      this.logger.warn(`Refresh rejected, user or hash not found: ${userId}`);
+      this.logger.warn('auth.refresh.rejected_missing_hash', { userId });
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
     }
 
     const isRtValid = await bcrypt.compare(refreshToken, user.hashedRt);
     if (!isRtValid) {
-      this.logger.warn(`Refresh rejected, invalid refresh token: ${userId}`);
+      this.logger.warn('auth.refresh.rejected_invalid_token', { userId });
       throw new UnauthorizedException(ERROR_MESSAGES.fa.unauthenticated);
     }
 
-    this.logger.log(`Refresh token accepted for user: ${user.id}`);
+    this.logger.log('auth.refresh.completed', { userId: user.id });
     return this.createTokens({ userId: user.id });
   }
 
   async logout(userId: string) {
-    this.logger.log(`Logout attempt for user: ${userId}`);
+    RequestContext.setUserId(userId);
+    this.logger.log('auth.logout.attempt', { userId });
 
     const user = await this.prisma.user.update({
       where: {
@@ -128,7 +137,7 @@ export class AuthenticationService {
       },
     });
 
-    this.logger.log(`User logged out successfully: ${userId}`);
+    this.logger.log('auth.logout.completed', { userId });
     return user;
   }
 
@@ -140,31 +149,28 @@ export class AuthenticationService {
     context?: OtpContext;
   }) {
     const resolvedContext = context ?? 'LOGIN';
-    this.logger.log(
-      `OTP request for context: ${resolvedContext}, phoneNumber: ${phoneNumber}`,
-    );
+    this.logger.log('auth.otp.requested', {
+      context: resolvedContext,
+      phoneNumber,
+    });
 
     try {
-      this.logger.log(
-        `Calling OtpService.createAndOverwrite for context: ${resolvedContext}`,
-      );
       const otp = await this.otpService.createAndOverwrite({
         length: 6,
         phoneNumber,
         context,
       });
 
-      this.logger.log(
-        `OTP created for context: ${resolvedContext}, otpId: ${otp.id}`,
-      );
+      this.logger.log('auth.otp.created', {
+        context: resolvedContext,
+        otpId: otp.id,
+      });
       return { otp: otp.otp };
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      const stack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `OTP creation failed for context: ${resolvedContext}, phoneNumber: ${phoneNumber}, error: ${message}`,
-        stack,
-      );
+      this.logger.error('auth.otp.create_failed', error as Error, {
+        context: resolvedContext,
+        phoneNumber,
+      });
       throw error;
     }
   }
@@ -178,7 +184,7 @@ export class AuthenticationService {
     otp: string;
     context: OtpContext;
   }) {
-    this.logger.log(`OTP validation attempt for context: ${context}`);
+    this.logger.log('auth.otp.validation_attempt', { context, phoneNumber });
 
     const isOtpValid = await this.otpService.validateOtp({
       phoneNumber,
@@ -187,7 +193,10 @@ export class AuthenticationService {
     });
 
     if (!isOtpValid) {
-      this.logger.warn(`OTP validation rejected for context: ${context}`);
+      this.logger.warn('auth.otp.validation_rejected', {
+        context,
+        phoneNumber,
+      });
       throw new UnauthorizedException('wrong credentials.');
     }
 
@@ -195,7 +204,7 @@ export class AuthenticationService {
     const userExist = await this.userService.findOneByPhoneNumber(phoneNumber);
 
     if (!userExist) {
-      this.logger.log(`Creating user from OTP validation context: ${context}`);
+      this.logger.log('auth.otp.creating_user', { context, phoneNumber });
       userToSignIn = await this.userService.create({
         phoneNumber,
         role: 'USER',
@@ -216,7 +225,11 @@ export class AuthenticationService {
 
     await Promise.all([updateRtHashPromise, removeOtpPromise]);
 
-    this.logger.log(`OTP validation completed for user: ${userToSignIn.id}`);
+    RequestContext.setUserId(userToSignIn.id);
+    this.logger.log('auth.otp.validation_completed', {
+      userId: userToSignIn.id,
+      context,
+    });
     return {
       ...tokens,
       ...userToSignIn,
@@ -232,14 +245,15 @@ export class AuthenticationService {
     context?: OtpContext;
     userId: string;
   }) {
-    this.logger.log(`Monitoring access OTP request for user: ${userId}`);
+    RequestContext.setUserId(userId);
+    this.logger.log('auth.monitoring_otp.requested', { userId, phoneNumber });
 
     const existUser = await this.userService.findOneById(userId);
 
     if (!existUser || existUser.phoneNumber !== phoneNumber) {
-      this.logger.warn(
-        `Monitoring access OTP request rejected for user: ${userId}`,
-      );
+      this.logger.warn('auth.monitoring_otp.rejected_user_mismatch', {
+        userId,
+      });
       throw new UnauthorizedException('wrong credentials.');
     }
 
@@ -249,7 +263,7 @@ export class AuthenticationService {
       context: 'MONITORING_ACCESS',
     });
 
-    this.logger.log(`Monitoring access OTP created for user: ${userId}`);
+    this.logger.log('auth.monitoring_otp.created', { userId, otpId: otp.id });
     return { otp: otp.otp };
   }
 
@@ -264,7 +278,8 @@ export class AuthenticationService {
     otp: string;
     context: OtpContext;
   }) {
-    this.logger.log(`Monitoring access OTP verification attempt: ${userId}`);
+    RequestContext.setUserId(userId);
+    this.logger.log('auth.monitoring_otp.verify_attempt', { userId });
 
     const isOtpValid = await this.otpService.validateOtp({
       phoneNumber,
@@ -273,18 +288,16 @@ export class AuthenticationService {
     });
 
     if (!isOtpValid) {
-      this.logger.warn(
-        `Monitoring access OTP verification rejected, invalid OTP: ${userId}`,
-      );
+      this.logger.warn('auth.monitoring_otp.rejected_invalid_code', { userId });
       throw new UnauthorizedException('wrong credentials.');
     }
 
     const userExist = await this.userService.findOneByPhoneNumber(phoneNumber);
 
     if (!userExist || userId !== userExist.id) {
-      this.logger.warn(
-        `Monitoring access OTP verification rejected, user mismatch: ${userId}`,
-      );
+      this.logger.warn('auth.monitoring_otp.rejected_user_mismatch', {
+        userId,
+      });
       throw new UnauthorizedException('wrong credentials.');
     }
 
@@ -294,9 +307,9 @@ export class AuthenticationService {
 
     await this.otpService.remove(otp);
 
-    this.logger.log(
-      `Monitoring access token created for user: ${userExist.id}`,
-    );
+    this.logger.log('auth.monitoring_access.created', {
+      userId: userExist.id,
+    });
     const serverTimeInSeconds = Math.floor(Date.now() / 1000);
     return {
       monitoringAccessToken,

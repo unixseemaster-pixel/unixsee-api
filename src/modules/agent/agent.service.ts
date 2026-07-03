@@ -1,9 +1,5 @@
 import { randomBytes, randomUUID } from 'crypto';
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { EventDispatcherService } from '../event/event-dispatcher.service.js';
@@ -13,10 +9,11 @@ import {
 } from './dto/ingest-agent-metrics.dto.js';
 import { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
 import type { Website } from '#/generated/prisma/client.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @Injectable()
 export class AgentService {
-  private readonly logger = new Logger(AgentService.name);
+  private readonly logger = createAppLogger(AgentService.name);
 
   constructor(
     private readonly prisma: PrismaService,
@@ -39,9 +36,10 @@ export class AgentService {
         );
 
         if (provisioningResult) {
-          this.logger.log(
-            `Agent node provisioned | machine=${sampleMachineId} | vpsNode=${provisioningResult.vpsNodeId}`,
-          );
+          this.logger.log('agent.node.provisioned', {
+            machineId: sampleMachineId,
+            vpsNodeId: provisioningResult.vpsNodeId,
+          });
           return provisioningResult;
         }
       }
@@ -96,16 +94,22 @@ export class AgentService {
 
       this.dispatchRealtimeEvents(payload, vpsTarget.id, websiteMap);
 
-      this.logger.log(
-        `Agent ingest stored | machine=${sampleMachineId} | batch=${payload.batch.length} | vpsInserted=${vpsMetricResult.count} | webInserted=${webMetricResult.count} | webRows=${webMetricRows.length} | durationMs=${Date.now() - startedAt}`,
-      );
+      this.logger.log('agent.ingest.stored', {
+        machineId: sampleMachineId,
+        batchSize: payload.batch.length,
+        vpsInserted: vpsMetricResult.count,
+        webInserted: webMetricResult.count,
+        webRows: webMetricRows.length,
+        durationMs: Date.now() - startedAt,
+      });
 
       return { vpsNodeId: vpsTarget.id };
     } catch (error) {
-      this.logger.error(
-        `Agent ingest failed | machine=${sampleMachineId} | batch=${payload.batch.length} | durationMs=${Date.now() - startedAt} | ${this.formatError(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
+      this.logger.error('agent.ingest.failed', error as Error, {
+        machineId: sampleMachineId,
+        batchSize: payload.batch.length,
+        durationMs: Date.now() - startedAt,
+      });
 
       throw error;
     }
@@ -175,6 +179,12 @@ export class AgentService {
     );
 
     if (missingWebsites.length === 0) {
+      this.logger.debug('agent.websites.inventory.refresh', {
+        vpsNodeId,
+        discoveredCount: discoveredWebsites.length,
+        missingCount: 0,
+      });
+
       await this.refreshWebsiteInventory(vpsNodeId, discoveredWebsites);
 
       const refreshedWebsites = await this.prisma.website.findMany({
@@ -189,6 +199,12 @@ export class AgentService {
     }
 
     const fallbackUserId = vpsNodeUserId ?? (await this.getFallbackUserId());
+
+    this.logger.log('agent.websites.discovered', {
+      vpsNodeId,
+      discoveredCount: discoveredWebsites.length,
+      missingCount: missingWebsites.length,
+    });
 
     await this.prisma.website.createMany({
       data: missingWebsites.map((website) => ({
@@ -310,15 +326,16 @@ export class AgentService {
     for (const event of emittedEvents) {
       this.eventDispatcher.dispatchWebsiteMetricsEvaluated(event);
     }
+
+    this.logger.debug('agent.realtime.events.dispatched', {
+      vpsNodeId,
+      batchSize: payload.batch.length,
+      websiteEventCount: emittedEvents.length,
+    });
   }
 
   private getHomeDirectory(documentRoot: string): string | null {
     const match = documentRoot.match(/^(\/home\/[^/]+)/);
     return match?.[1] ?? null;
-  }
-
-  private formatError(error: unknown): string {
-    if (error instanceof Error) return `${error.name}: ${error.message}`;
-    return String(error);
   }
 }

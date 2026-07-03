@@ -217,3 +217,64 @@ To ensure the backend scales smoothly when migrating to a larger platform archit
 - **Isolate Event Channels via Wrappers:** Never let gateway handlers mix logic directly with event emitters. Wrap emissions within an abstract wrapper service. This ensures that when we add **Redis Pub/Sub** horizontal distribution later, we only change the wrapper implementation, leaving the core application code untouched.
 - **No Metric Updates:** Write all metric endpoints purely as `INSERT` or read-only queries. Never invoke `UPDATE` or `UPSERT` commands on metrics tables. This guarantees the data remains perfectly structured for conversion into a **TimescaleDB hypertable**.
 - **Decoupled Alert Processing:** Keep alert processing rules cleanly separated from notification configuration keys. This ensures we can easily lift and drop the evaluator services directly into a separate **BullMQ worker thread** down the line without breaking the system.
+
+---
+
+## 8. Production Logging and Request Tracing Rules
+
+The backend must use a small, dependency-free logging strategy based on the built-in NestJS `Logger`, wrapped by the project logger utilities.
+
+### Logger wrapper
+
+- Use `createAppLogger(ContextName)` from `src/common/logging/app-logger.ts` in all controllers, services, guards, gateways, listeners, and scheduled workers.
+- Do not use raw `new Logger(...)` in feature code. Raw Nest Logger usage must stay isolated inside the wrapper.
+- Class context is the Nest log context that identifies where a log came from. Example: `createAppLogger(AgentService.name)` produces logs with the `AgentService` context.
+
+### Request ID propagation
+
+- HTTP requests must run through `requestContextMiddleware`.
+- The middleware must accept an incoming `x-request-id` header or generate a UUID, set `response.setHeader('x-request-id', requestId)`, and store the value with `AsyncLocalStorage`.
+- Downstream logs must include `requestId` automatically through the logger wrapper.
+- Auth guards/services should call `RequestContext.setUserId(userId)` after the caller is known.
+
+### Log format
+
+Use stable event names and structured shallow metadata:
+
+```ts
+private readonly logger = createAppLogger(AgentService.name);
+
+this.logger.log('agent.ingest.stored', {
+  machineId,
+  batchSize,
+  vpsInserted,
+  webInserted,
+  durationMs,
+});
+```
+
+Avoid prose-only logs such as:
+
+```ts
+this.logger.log(`Agent ingest stored for ${machineId}`);
+```
+
+### Levels
+
+| Level | Use |
+| --- | --- |
+| `debug` | Noisy flow details, request success traces, event fanout counts, successful socket tick diagnostics. Off in production by default. |
+| `verbose` | Very detailed investigation-only logs. Avoid in hot paths. |
+| `log` | Important successful business/runtime events: app started, agent batch stored, user logged in, website created, probe cycle completed. |
+| `warn` | Recoverable or suspicious cases: invalid credentials, HMAC rejection, timestamp drift, duplicate/idempotent batches, probe down, slow requests. |
+| `error` | Operation failed and needs attention: DB write failed, event handler failed, socket authorization check failed, external provider failed. |
+| `fatal` | Startup/config failures where the process cannot safely continue. |
+
+### Safety rules
+
+- Never log passwords, JWTs, refresh tokens, HMAC secrets, HMAC signatures, activation tokens, cookies, authorization headers, OTP codes, raw request bodies, or full telemetry payloads.
+- Do not log per-metric rows in ingestion. Log one batch summary with counts and duration.
+- Do not log full Prisma models. Log IDs, domains, counts, status codes, durations, and safe enum/status values.
+- For guard failures, log a safe reason: `headers_missing`, `timestamp_drift`, `machine_unknown`, or `signature_invalid`.
+- For Socket.io, log connection/session outcomes and authorization failures. Keep high-frequency live tick broadcasts unlogged or `debug` only.
+- For uptime failures, include diagnostic fields: `domain`, `failurePhase`, `statusCode`, `responseTimeMs`, `ttfbMs`, `dnsMs`, `connectMs`, `tlsHandshakeMs`, and `errorMessage`.

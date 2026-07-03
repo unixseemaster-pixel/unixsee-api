@@ -1,7 +1,7 @@
-import { Logger } from '@nestjs/common';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 import { envSchema, type Env } from './env.schema.js';
 
-const logger = new Logger('ConfigValidation');
+const logger = createAppLogger('ConfigValidation');
 
 export function validateEnv(rawEnv: Record<string, unknown>): Env {
   const result = envSchema.safeParse(rawEnv);
@@ -11,12 +11,12 @@ export function validateEnv(rawEnv: Record<string, unknown>): Env {
       .map((issue) => `  ✘ [${issue.path.join('.')}] ${issue.message}`)
       .join('\n');
 
-    logger.error(`\n\n❌ Invalid environment variables:\n${formatted}\n`);
+    logger.fatal('config.env.invalid', { issues: formatted });
 
     // Crash at boot — never run with bad config
     process.exit(1);
   }
 
-  logger.log('✅ Environment variables validated successfully');
+  logger.log('config.env.validated');
   return result.data;
 }

@@ -13,6 +13,9 @@ declare global {
 
     interface Request {
       user?: User;
+      requestId?: string;
+      vpsMachineId?: string;
+      isFirstProvisioningCycle?: boolean;
     }
   }
 }

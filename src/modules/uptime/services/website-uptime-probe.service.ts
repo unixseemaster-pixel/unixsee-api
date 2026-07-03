@@ -6,7 +6,6 @@ import type { Socket } from 'node:net';
 import { URL } from 'node:url';
 import {
   Injectable,
-  Logger,
   OnApplicationBootstrap,
   OnModuleDestroy,
 } from '@nestjs/common';
@@ -18,6 +17,7 @@ import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { EventDispatcherService } from '#/modules/event/event-dispatcher.service.js';
 import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import type { AppConfigType } from '#/utils/config/app.config.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 type WebsiteProbeTarget = {
   id: string;
@@ -64,7 +64,7 @@ type UptimeProbeSettings = AppConfigType['app']['uptimeProbes'];
 export class WebsiteUptimeProbeService
   implements OnApplicationBootstrap, OnModuleDestroy
 {
-  private readonly logger = new Logger(WebsiteUptimeProbeService.name);
+  private readonly logger = createAppLogger(WebsiteUptimeProbeService.name);
   private readonly cronJobName = 'public-uptime-probe-cycle';
   private readonly startupJobName = 'public-uptime-probe-startup';
   private isRunning = false;
@@ -80,16 +80,22 @@ export class WebsiteUptimeProbeService
     const settings = this.getSettings();
 
     if (!settings.enabled) {
-      this.logger.log('Public website uptime probes are disabled.');
+      this.logger.log('uptime.probes.disabled');
       return;
     }
 
     this.registerRecurringProbeJob(settings);
     this.registerStartupProbeJob(settings);
 
-    this.logger.log(
-      `Public website uptime probes enabled | cron=${settings.cronExpression} | startupDelayMs=${settings.startupDelayMs} | timeoutMs=${settings.timeoutMs} | concurrency=${settings.concurrency} | proxyMode=${Boolean(settings.proxyUrl)} | proxyUrl=${settings.proxyUrl ?? 'null'} | skipDnsPreflight=${this.shouldSkipDnsPreflight(settings)} | source=${WebsiteProbeSource.BACKEND}`,
-    );
+    this.logger.log('uptime.probes.enabled', {
+      cron: settings.cronExpression,
+      startupDelayMs: settings.startupDelayMs,
+      timeoutMs: settings.timeoutMs,
+      concurrency: settings.concurrency,
+      proxyMode: Boolean(settings.proxyUrl),
+      skipDnsPreflight: this.shouldSkipDnsPreflight(settings),
+      source: WebsiteProbeSource.BACKEND,
+    });
   }
 
   onModuleDestroy(): void {
@@ -111,9 +117,9 @@ export class WebsiteUptimeProbeService
     }
 
     if (this.isRunning) {
-      this.logger.debug(
-        `Skipping uptime probe cycle because previous cycle is still running | trigger=${trigger}`,
-      );
+      this.logger.debug('uptime.probe_cycle.skipped_already_running', {
+        trigger,
+      });
       return { checked: 0, up: 0, down: 0 };
     }
 
@@ -132,11 +138,11 @@ export class WebsiteUptimeProbeService
       });
 
       if (settings.debugLogs) {
-        this.logger.debug(
-          `Public uptime probe targets | trigger=${trigger} | count=${targets.length} | domains=${targets
-            .map((target) => target.domain)
-            .join(',')}`,
-        );
+        this.logger.debug('uptime.probe_targets.loaded', {
+          trigger,
+          count: targets.length,
+          domains: targets.map((target) => target.domain),
+        });
       }
 
       const results = await this.mapWithConcurrency(
@@ -149,9 +155,13 @@ export class WebsiteUptimeProbeService
       const up = results.filter((result) => result.isUp).length;
       const down = checked - up;
 
-      this.logger.log(
-        `Public uptime probe cycle completed | trigger=${trigger} | checked=${checked} | up=${up} | down=${down} | durationMs=${Date.now() - startedAt}`,
-      );
+      this.logger.log('uptime.probe_cycle.completed', {
+        trigger,
+        checked,
+        up,
+        down,
+        durationMs: Date.now() - startedAt,
+      });
 
       return { checked, up, down };
     } finally {
@@ -200,10 +210,9 @@ export class WebsiteUptimeProbeService
 
   private runProbeCycle(trigger: 'cron' | 'startup'): void {
     this.probeAllActiveWebsites(trigger).catch((error) => {
-      this.logger.error(
-        `Uptime probe cycle failed | trigger=${trigger} | ${this.formatError(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
+      this.logger.error('uptime.probe_cycle.failed', error as Error, {
+        trigger,
+      });
     });
   }
 
@@ -949,33 +958,32 @@ export class WebsiteUptimeProbeService
     result: ProbeResult,
     settings: UptimeProbeSettings,
   ): void {
-    const message =
-      `domain=${target.domain}` +
-      ` | source=${WebsiteProbeSource.BACKEND}` +
-      ` | protocol=${result.protocol ?? 'unknown'}` +
-      ` | url=${result.url ?? 'unknown'}` +
-      ` | isUp=${result.isUp}` +
-      ` | status=${result.statusCode ?? 'null'}` +
-      ` | phase=${result.failurePhase ?? 'ok'}` +
-      ` | responseTimeMs=${result.responseTimeMs ?? 'null'}` +
-      ` | ttfbMs=${result.ttfbMs ?? 'null'}` +
-      ` | dnsMs=${result.dnsMs ?? 'null'}` +
-      ` | resolved=${result.resolvedAddress ?? 'null'}` +
-      ` | family=${result.resolvedFamily ?? 'null'}` +
-      ` | connectMs=${result.connectMs ?? 'null'}` +
-      ` | tlsMs=${result.tlsHandshakeMs ?? 'null'}` +
-      ` | proxyMode=${Boolean(settings.proxyUrl)}` +
-      ` | proxyUrl=${settings.proxyUrl ?? 'null'}` +
-      ` | skipDnsPreflight=${this.shouldSkipDnsPreflight(settings)}` +
-      ` | error=${result.errorMessage ?? 'null'}`;
+    const fields = {
+      domain: target.domain,
+      source: WebsiteProbeSource.BACKEND,
+      protocol: result.protocol ?? 'unknown',
+      isUp: result.isUp,
+      statusCode: result.statusCode,
+      failurePhase: result.failurePhase ?? 'ok',
+      responseTimeMs: result.responseTimeMs,
+      ttfbMs: result.ttfbMs,
+      dnsMs: result.dnsMs,
+      resolvedAddress: result.resolvedAddress,
+      resolvedFamily: result.resolvedFamily,
+      connectMs: result.connectMs,
+      tlsHandshakeMs: result.tlsHandshakeMs,
+      proxyMode: Boolean(settings.proxyUrl),
+      skipDnsPreflight: this.shouldSkipDnsPreflight(settings),
+      errorMessage: result.errorMessage,
+    };
 
     if (!result.isUp) {
-      this.logger.warn(`Public uptime probe down | ${message}`);
+      this.logger.warn('uptime.probe.down', fields);
       return;
     }
 
     if (settings.debugLogs) {
-      this.logger.debug(`Public uptime probe up | ${message}`);
+      this.logger.debug('uptime.probe.up', fields);
     }
   }
 
@@ -988,10 +996,5 @@ export class WebsiteUptimeProbeService
 
     const code = (error as NodeJS.ErrnoException).code;
     return (code ? `${code}: ${error.message}` : error.message).slice(0, 240);
-  }
-
-  private formatError(error: unknown): string {
-    if (error instanceof Error) return `${error.name}: ${error.message}`;
-    return String(error);
   }
 }

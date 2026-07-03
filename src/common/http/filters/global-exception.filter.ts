@@ -4,10 +4,13 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
-  Logger,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
+
 import { ApiResponseBuilder } from '../api-response.builder.js';
+import { createAppLogger } from '../../logging/app-logger.js';
+
+const logger = createAppLogger('GlobalExceptionFilter');
 
 type NormalizedException = {
   code?: string;
@@ -26,10 +29,9 @@ type ExceptionResponse = {
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(GlobalExceptionFilter.name);
-
   catch(exception: unknown, host: ArgumentsHost) {
     const context = host.switchToHttp();
+    const request = context.getRequest<Request>();
     const response = context.getResponse<Response>();
 
     const statusCode = this.getStatusCode(exception);
@@ -43,18 +45,14 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     );
 
     if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(
-        `Unhandled HTTP error ${statusCode}: ${this.getLogMessage(exception)}`,
-        exception instanceof Error ? exception.stack : undefined,
-      );
+      logger.error('http.exception.unhandled', exception as Error, {
+        method: request.method,
+        path: request.originalUrl ?? request.url,
+        statusCode,
+      });
     }
 
     return response.status(statusCode).json(body);
-  }
-
-  private getLogMessage(exception: unknown): string {
-    if (exception instanceof Error) return `${exception.name}: ${exception.message}`;
-    return String(exception);
   }
 
   private getStatusCode(exception: unknown): number {

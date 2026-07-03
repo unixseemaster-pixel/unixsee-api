@@ -3,14 +3,21 @@ import { ConfigService } from '@nestjs/config';
 
 import { AppModule } from './app.module.js';
 import { GlobalExceptionFilter } from './common/http/filters/global-exception.filter.js';
+import { requestContextMiddleware } from './common/logging/request-context.middleware.js';
+import { getLoggerLevels } from './common/logging/logger-levels.js';
+import { createAppLogger } from './common/logging/app-logger.js';
 import type { AppConfigType } from './utils/config/app.config.js';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: getLoggerLevels(process.env.NODE_ENV),
+  });
   const configService = app.get<ConfigService<AppConfigType>>(ConfigService);
   const allowedOrigins = configService.getOrThrow('app.corsAllowedOrigins', {
     infer: true,
   });
+
+  app.use(requestContextMiddleware);
 
   // Ensure NestJS correctly reads the forwarded headers (X-Forwarded-For) to read VPS IPs
   app.getHttpAdapter().getInstance().set('trust proxy', true);
@@ -31,7 +38,13 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  await app.listen(process.env.PORT ?? 4000);
+  const port = configService.getOrThrow('app.port', { infer: true });
+  await app.listen(port);
+
+  createAppLogger('Bootstrap').log('app.started', {
+    port,
+    nodeEnv: configService.getOrThrow('app.nodeEnv', { infer: true }),
+  });
 }
 
 bootstrap();

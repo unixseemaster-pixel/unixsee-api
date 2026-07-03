@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
+import { RequestContext } from '#/common/logging/request-context.js';
 
 @Injectable()
 export class AtGuard extends AuthGuard('jwt') {
@@ -29,6 +30,10 @@ export class AtGuard extends AuthGuard('jwt') {
     const user = request.user;
 
     if (!user) return false;
+
+    if (typeof user.sub === 'string') {
+      RequestContext.setUserId(user.sub);
+    }
 
     return true;
   }

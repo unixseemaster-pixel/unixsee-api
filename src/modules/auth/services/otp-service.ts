@@ -1,14 +1,15 @@
 import { Otp, OtpContext } from '#/generated/prisma/client.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
-import { AppConfigType } from '#/utils/config/app.config.js';
+import type { AppConfigType } from '#/utils/config/app.config.js';
 import {
   HttpException,
   HttpStatus,
   Injectable,
-  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 interface SaveOtpToDbParams {
   otp: string;
@@ -29,7 +30,7 @@ interface CreateOtpParams {
 
 @Injectable()
 export class OtpService {
-  private readonly logger = new Logger(OtpService.name);
+  private readonly logger = createAppLogger(OtpService.name);
 
   constructor(
     private readonly prisma: PrismaService,
@@ -47,44 +48,35 @@ export class OtpService {
     phoneNumber,
     context = 'LOGIN',
   }: CreateOtpParams): Promise<Otp> {
-    this.logger.log(
-      `createAndOverwrite started, context: ${context}, phoneNumber: ${phoneNumber}, length: ${length}`,
-    );
+    this.logger.debug('otp.create_or_overwrite.started', {
+      context,
+      phoneNumber,
+      length,
+    });
 
     try {
       const otpCode = this.createCode(length);
-      this.logger.log(`OTP code generated, context: ${context}`);
-
-      this.logger.log(
-        `Searching existing OTP, context: ${context}, phoneNumber: ${phoneNumber}`,
-      );
       const existOtp = await this.prisma.otp.findUnique({
         where: {
           phoneNumber,
           context,
         },
       });
-      this.logger.log(
-        `Existing OTP lookup completed, context: ${context}, found: ${Boolean(existOtp)}`,
-      );
+
+      this.logger.debug('otp.existing_lookup.completed', {
+        context,
+        phoneNumber,
+        found: Boolean(existOtp),
+      });
 
       const appConfig = this.config.get('app', { infer: true });
       const expTime = appConfig.otpExpiredTime;
       const retryTime = appConfig.otpRetryTime;
-      this.logger.log(
-        `OTP config loaded, context: ${context}, expTime: ${expTime}, retryTime: ${retryTime}`,
-      );
 
       if (existOtp) {
-        this.logger.log(
-          `Existing OTP found, context: ${context}, otpId: ${existOtp.id}, lastRequestedTime: ${existOtp.lastRequestedTime?.toISOString() ?? 'NULL'}`,
-        );
         const retryAllowed = existOtp.lastRequestedTime
           ? this.isRetryAllowed(existOtp.lastRequestedTime, retryTime)
           : true;
-        this.logger.log(
-          `Retry check completed, context: ${context}, retryAllowed: ${JSON.stringify(retryAllowed)}`,
-        );
 
         if (retryAllowed !== true) {
           const minText =
@@ -94,18 +86,17 @@ export class OtpService {
           const secText =
             retryAllowed.seconds > 0 ? `${retryAllowed.seconds} seconds` : '';
 
-          this.logger.warn(
-            `OTP retry rejected, context: ${context}, phoneNumber: ${phoneNumber}, wait: ${minText} ${secText}`,
-          );
+          this.logger.warn('otp.retry.rejected', {
+            context,
+            phoneNumber,
+            wait: `${minText} ${secText}`.trim(),
+          });
           throw new HttpException(
             `Please wait ${minText} ${secText}`,
             HttpStatus.TOO_MANY_REQUESTS,
           );
         }
 
-        this.logger.log(
-          `Updating existing OTP, context: ${context}, otpId: ${existOtp.id}`,
-        );
         const updatedOtp = await this.prisma.otp.update({
           where: {
             phoneNumber: existOtp.phoneNumber || undefined,
@@ -117,39 +108,36 @@ export class OtpService {
             lastRequestedTime: new Date(),
           },
         });
-        this.logger.log(
-          `Existing OTP updated, context: ${context}, otpId: ${updatedOtp.id}`,
-        );
+
+        this.logger.log('otp.updated', {
+          context,
+          otpId: updatedOtp.id,
+        });
 
         return updatedOtp;
       }
 
-      this.logger.log(
-        `Creating new OTP, context: ${context}, phoneNumber: ${phoneNumber}`,
-      );
       const createdOtp = await this.prisma.otp.create({
         data: {
           otp: otpCode,
-
-          phoneNumber: phoneNumber,
+          phoneNumber,
           expiredTime: this.createExpiredDateByMinute(expTime),
           lastRequestedTime: new Date(),
-
           ...(context && { context }),
         },
       });
-      this.logger.log(
-        `New OTP created, context: ${context}, otpId: ${createdOtp.id}`,
-      );
+
+      this.logger.log('otp.created', {
+        context,
+        otpId: createdOtp.id,
+      });
 
       return createdOtp;
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      const stack = error instanceof Error ? error.stack : undefined;
-      this.logger.error(
-        `createAndOverwrite failed, context: ${context}, phoneNumber: ${phoneNumber}, error: ${message}`,
-        stack,
-      );
+      this.logger.error('otp.create_or_overwrite.failed', error as Error, {
+        context,
+        phoneNumber,
+      });
       throw error;
     }
   }
@@ -159,15 +147,18 @@ export class OtpService {
     try {
       const otpCode = this.createCode(length);
 
-      return this.prisma.otp.create({
+      const createdOtp = await this.prisma.otp.create({
         data: {
           otp: otpCode,
-
           phoneNumber,
           expiredTime: this.createExpiredDateByMinute(expTime),
         },
       });
+
+      this.logger.log('otp.created', { otpId: createdOtp.id, phoneNumber });
+      return createdOtp;
     } catch (error) {
+      this.logger.error('otp.create.failed', error as Error, { phoneNumber });
       throw new HttpException('Something went wrong.', 500);
     }
   }
@@ -175,16 +166,18 @@ export class OtpService {
   async saveToDb({ otp, phoneNumber }: SaveOtpToDbParams) {
     const expTime = this.config.get('app', { infer: true }).otpExpiredTime;
     try {
-      const createdOtp = await this.prisma.otp.create({
+      await this.prisma.otp.create({
         data: {
-          phoneNumber: phoneNumber,
+          phoneNumber,
           otp,
           expiredTime: this.createExpiredDateByMinute(expTime),
         },
       });
 
+      this.logger.log('otp.saved', { phoneNumber });
       return { status: 'success' };
     } catch (error) {
+      this.logger.error('otp.save.failed', error as Error, { phoneNumber });
       throw new HttpException('Something went wrong.', 500);
     }
   }
@@ -202,12 +195,25 @@ export class OtpService {
       },
     });
 
-    if (!existOtp || this.isOtpExpired(existOtp.expiredTime))
+    if (!existOtp || this.isOtpExpired(existOtp.expiredTime)) {
+      this.logger.warn('otp.validation.rejected', {
+        context,
+        phoneNumber,
+        reason: !existOtp ? 'not_found' : 'expired',
+      });
       throw new UnauthorizedException('Invalid credentials');
+    }
 
-    if (existOtp.phoneNumber !== phoneNumber || existOtp.otp !== otp)
+    if (existOtp.phoneNumber !== phoneNumber || existOtp.otp !== otp) {
+      this.logger.warn('otp.validation.rejected', {
+        context,
+        phoneNumber,
+        reason: 'mismatch',
+      });
       throw new UnauthorizedException('Invalid credentials');
+    }
 
+    this.logger.debug('otp.validation.accepted', { context, phoneNumber });
     return true;
   }
 
@@ -225,11 +231,21 @@ export class OtpService {
       },
     });
 
-    if (!existOtp || this.isOtpExpired(existOtp.expiredTime))
+    if (!existOtp || this.isOtpExpired(existOtp.expiredTime)) {
+      this.logger.warn('otp.identifier_validation.rejected', {
+        identifier,
+        reason: !existOtp ? 'not_found' : 'expired',
+      });
       throw new UnauthorizedException('Invalid credentials.');
+    }
 
-    if (existOtp.identifier !== identifier || existOtp.otp !== otp)
+    if (existOtp.identifier !== identifier || existOtp.otp !== otp) {
+      this.logger.warn('otp.identifier_validation.rejected', {
+        identifier,
+        reason: 'mismatch',
+      });
       throw new UnauthorizedException('Invalid credentials.');
+    }
 
     return true;
   }
@@ -248,12 +264,6 @@ export class OtpService {
     const currentDate = new Date();
     currentDate.setMinutes(currentDate.getMinutes() + minute);
 
-    return currentDate;
-  }
-
-  private createRetryDateByMinute(minute: number): Date {
-    const currentDate = new Date();
-    currentDate.setMinutes(currentDate.getMinutes() + minute);
     return currentDate;
   }
 

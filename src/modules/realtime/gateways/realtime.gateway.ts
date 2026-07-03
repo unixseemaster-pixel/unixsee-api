@@ -4,7 +4,6 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { Server, Socket } from 'socket.io';
 
@@ -15,6 +14,7 @@ import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.serv
 import type { MetricsIngestedEventPayload } from '#/modules/event/event-dispatcher.service.js';
 import type { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
 import type { WebsiteProbeEvaluatedEvent } from '#/common/events/website-probe-evaluated.event.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @WebSocketGateway({
   namespace: '/realtime',
@@ -34,7 +34,7 @@ export class RealtimeGateway
     string,
     ReturnType<typeof setTimeout>
   >();
-  private readonly logger = new Logger(RealtimeGateway.name);
+  private readonly logger = createAppLogger(RealtimeGateway.name);
 
   @WebSocketServer()
   server!: Server;
@@ -46,14 +46,16 @@ export class RealtimeGateway
 
   handleConnection(client: Socket): void {
     this.initializeSocketSession(client).catch((error) => {
-      this.logger.error(`Socket handshake failed: ${error.message}`);
+      this.logger.error('socket.handshake.failed', error as Error, {
+        socketId: client.id,
+      });
       client.disconnect(true);
     });
   }
 
   handleDisconnect(client: Socket): void {
     this.clearAuthorizationTimers(client.id);
-    this.logger.log(`Socket disconnected: ${client.id}`);
+    this.logger.debug('socket.disconnected', { socketId: client.id });
   }
 
   private async initializeSocketSession(client: Socket): Promise<void> {
@@ -125,9 +127,14 @@ export class RealtimeGateway
     );
     client.emit(EVENT_NAMES.OVERVIEW_SNAPSHOT, overviewSnapshot);
 
-    this.logger.log(
-      `User ${user.id} connected | Overview: true | Monitoring: ${client.data.hasMonitoringAccess} | VPS: ${vpsNodeIds.length} | Websites: ${websiteIds.length}`,
-    );
+    this.logger.log('socket.connected', {
+      socketId: client.id,
+      userId: user.id,
+      overviewAccess: true,
+      monitoringAccess: client.data.hasMonitoringAccess,
+      vpsCount: vpsNodeIds.length,
+      websiteCount: websiteIds.length,
+    });
   }
 
   private scheduleAuthorizationChecks(
@@ -141,9 +148,9 @@ export class RealtimeGateway
     const authorizationCheck = setInterval(() => {
       this.revalidateSocket(client, token, monitoringAccessToken).catch(
         (error: Error) => {
-          this.logger.error(
-            `Socket authorization check failed: ${error.message}`,
-          );
+          this.logger.error('socket.authorization_check.failed', error, {
+            socketId: client.id,
+          });
           client.disconnect(true);
         },
       );
@@ -265,8 +272,10 @@ export class RealtimeGateway
             .emit(EVENT_NAMES.OVERVIEW_VPS_TICK, overviewTick);
         }),
       );
-    } catch (error: any) {
-      this.logger.error(`VPS live tick error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error('socket.vps_live_tick.failed', error as Error, {
+        vpsNodeId: event.vpsNodeId,
+      });
     }
   }
 
@@ -327,8 +336,11 @@ export class RealtimeGateway
           .to(`user:${userId}`)
           .emit(EVENT_NAMES.OVERVIEW_WEBSITE_TICK, overviewTick);
       }
-    } catch (error: any) {
-      this.logger.error(`Website metrics stream error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error('socket.website_metrics_stream.failed', error as Error, {
+        websiteId: event.websiteId,
+        vpsNodeId: event.vpsNodeId,
+      });
     }
   }
 
@@ -380,8 +392,10 @@ export class RealtimeGateway
       this.server
         .to(`user:${userId}`)
         .emit(EVENT_NAMES.OVERVIEW_WEBSITE_TICK, overviewTick);
-    } catch (error: any) {
-      this.logger.error(`Website probe stream error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error('socket.website_probe_stream.failed', error as Error, {
+        websiteId: event.websiteId,
+      });
     }
   }
 
@@ -401,8 +415,11 @@ export class RealtimeGateway
         .emit(EVENT_NAMES.INCIDENT_CREATED, event);
 
       await this.emitOverviewSnapshotForWebsite(event.websiteId);
-    } catch (error: any) {
-      this.logger.error(`Incident created stream error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error('socket.incident_created_stream.failed', error as Error, {
+        websiteId: event.websiteId,
+        severity: event.severity,
+      });
     }
   }
 
@@ -420,8 +437,11 @@ export class RealtimeGateway
         .emit(EVENT_NAMES.INCIDENT_RESOLVED, event);
 
       await this.emitOverviewSnapshotForWebsite(event.websiteId);
-    } catch (error: any) {
-      this.logger.error(`Incident resolved stream error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error('socket.incident_resolved_stream.failed', error as Error, {
+        websiteId: event.websiteId,
+        alertId: event.alertId,
+      });
     }
   }
 
