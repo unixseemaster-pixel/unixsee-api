@@ -7,6 +7,7 @@ import { Role } from '#/generated/prisma/enums.js';
 import type { AppConfigType } from '#/utils/config/app.config.js';
 import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { DashboardOverviewSnapshotService } from '#/modules/dashboard/services/dashboard-overview-snapshot.service.js';
+import { DashboardService } from '#/modules/dashboard/services/dashboard.service.js';
 import { createAppLogger } from '#/common/logging/app-logger.js';
 
 export interface AuthenticatedUserSocketPayload {
@@ -40,6 +41,7 @@ export class RealtimeService {
     private readonly jwtService: JwtService,
     private readonly config: ConfigService<AppConfigType, true>,
     private readonly dashboardOverviewSnapshotService: DashboardOverviewSnapshotService,
+    private readonly dashboardService: DashboardService,
   ) {}
 
   // =========================
@@ -240,6 +242,16 @@ export class RealtimeService {
       userId,
       vpsNodeId,
     );
+  }
+
+  async getWebsiteDetailsTick(websiteId: string) {
+    const userId = await this.getUserIdByWebsiteId(websiteId);
+
+    if (!userId) {
+      return null;
+    }
+
+    return this.dashboardService.getWebsiteDetails(userId, websiteId);
   }
 
   async getUserIdByWebsiteId(websiteId: string) {

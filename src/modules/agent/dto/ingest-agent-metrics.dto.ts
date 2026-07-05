@@ -48,6 +48,58 @@ export class MetricPayloadDto {
   @IsInt()
   @Min(0)
   storageAvailableMB!: number;
+
+  @IsOptional()
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  @Min(0)
+  networkRxBytesPerSecondMean?: number;
+
+  @IsOptional()
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  @Min(0)
+  networkTxBytesPerSecondMean?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  cpuCoreCount?: number;
+
+  @IsOptional()
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  load1?: number;
+
+  @IsOptional()
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  load5?: number;
+
+  @IsOptional()
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  load15?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  ramAvailableMB?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  swapTotalMB?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  swapUsedMB?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  processCount?: number;
+
+  @IsOptional()
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  @Min(0)
+  uptimeSeconds?: number;
 }
 
 export class WebsitePayloadDto {
@@ -66,6 +118,31 @@ export class WebsitePayloadDto {
   @IsInt()
   @Min(0)
   peakConcurrentRequests!: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  requestRate?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  activeConnections?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  processingRequests?: number;
+
+  @IsOptional()
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  @Min(0)
+  bytesInPerSecond?: number;
+
+  @IsOptional()
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  @Min(0)
+  bytesOutPerSecond?: number;
 
   // Backward-compatible no-op: old agents may still send `probe`, but
   // public uptime/response probes are now owned by the backend uptime module.

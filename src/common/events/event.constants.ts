@@ -5,6 +5,7 @@ export const EVENT_NAMES = {
   OVERVIEW_SNAPSHOT: 'overview:snapshot',
   OVERVIEW_WEBSITE_TICK: 'overview:website_tick',
   OVERVIEW_VPS_TICK: 'overview:vps_tick',
+  DASHBOARD_WEBSITE_DETAILS_TICK: 'dashboard:website_details_tick',
   MONITORING_SNAPSHOT: 'monitoring:snapshot',
   MONITORING_VPS_TICK: 'monitoring:vps_tick',
   MONITORING_WEBSITE_TICK: 'monitoring:website_tick',

@@ -238,6 +238,10 @@ export class RealtimeGateway
             diskIops: entry.metrics.diskIopsMean,
             storageTotalMB: entry.metrics.storageTotalMB,
             storageAvailableMB: entry.metrics.storageAvailableMB,
+            networkRxBytesPerSecond:
+              entry.metrics.networkRxBytesPerSecondMean ?? 0,
+            networkTxBytesPerSecond:
+              entry.metrics.networkTxBytesPerSecondMean ?? 0,
           },
         };
 
@@ -305,6 +309,7 @@ export class RealtimeGateway
           websiteId: payload.websiteId,
           domain: payload.domain,
           traffic: payload.traffic,
+          metrics: event.metrics,
           timestamp: payload.timestamp,
         });
 
@@ -335,6 +340,8 @@ export class RealtimeGateway
         this.server
           .to(`user:${userId}`)
           .emit(EVENT_NAMES.OVERVIEW_WEBSITE_TICK, overviewTick);
+
+        await this.emitWebsiteDetailsTickForWebsite(event.websiteId);
       }
     } catch (error: unknown) {
       this.logger.error('socket.website_metrics_stream.failed', error as Error, {
@@ -392,6 +399,8 @@ export class RealtimeGateway
       this.server
         .to(`user:${userId}`)
         .emit(EVENT_NAMES.OVERVIEW_WEBSITE_TICK, overviewTick);
+
+      await this.emitWebsiteDetailsTickForWebsite(event.websiteId);
     } catch (error: unknown) {
       this.logger.error('socket.website_probe_stream.failed', error as Error, {
         websiteId: event.websiteId,
@@ -415,6 +424,7 @@ export class RealtimeGateway
         .emit(EVENT_NAMES.INCIDENT_CREATED, event);
 
       await this.emitOverviewSnapshotForWebsite(event.websiteId);
+      await this.emitWebsiteDetailsTickForWebsite(event.websiteId);
     } catch (error: unknown) {
       this.logger.error('socket.incident_created_stream.failed', error as Error, {
         websiteId: event.websiteId,
@@ -437,12 +447,35 @@ export class RealtimeGateway
         .emit(EVENT_NAMES.INCIDENT_RESOLVED, event);
 
       await this.emitOverviewSnapshotForWebsite(event.websiteId);
+      await this.emitWebsiteDetailsTickForWebsite(event.websiteId);
     } catch (error: unknown) {
       this.logger.error('socket.incident_resolved_stream.failed', error as Error, {
         websiteId: event.websiteId,
         alertId: event.alertId,
       });
     }
+  }
+
+  private async emitWebsiteDetailsTickForWebsite(
+    websiteId: string,
+  ): Promise<void> {
+    const userId = await this.realtimeService.getUserIdByWebsiteId(websiteId);
+
+    if (!userId) {
+      return;
+    }
+
+    const detailsTick = await this.realtimeService.getWebsiteDetailsTick(
+      websiteId,
+    );
+
+    if (!detailsTick) {
+      return;
+    }
+
+    this.server
+      .to(`user:${userId}`)
+      .emit(EVENT_NAMES.DASHBOARD_WEBSITE_DETAILS_TICK, detailsTick);
   }
 
   private async emitOverviewSnapshotForWebsite(

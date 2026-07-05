@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
-import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @Injectable()
 export class DashboardOverviewSnapshotService {
@@ -21,6 +21,7 @@ export class DashboardOverviewSnapshotService {
       await Promise.all([
         this.prisma.website.findMany({
           where: { userId },
+          orderBy: { domain: 'asc' },
           select: {
             id: true,
             vpsNodeId: true,
@@ -52,6 +53,10 @@ export class DashboardOverviewSnapshotService {
                 recordedAt: true,
                 concurrentRequests: true,
                 requestRate: true,
+                activeConnections: true,
+                processingRequests: true,
+                bytesInPerSecond: true,
+                bytesOutPerSecond: true,
               },
             },
             sslMetrics: {
@@ -60,7 +65,15 @@ export class DashboardOverviewSnapshotService {
               select: {
                 recordedAt: true,
                 isValid: true,
+                validTo: true,
                 daysRemaining: true,
+                statusMessage: true,
+              },
+            },
+            ssl: {
+              select: {
+                validTo: true,
+                isValid: true,
                 statusMessage: true,
               },
             },
@@ -80,6 +93,7 @@ export class DashboardOverviewSnapshotService {
             ],
           },
           distinct: ['id'],
+          orderBy: { name: 'asc' },
           select: {
             id: true,
             name: true,
@@ -98,6 +112,8 @@ export class DashboardOverviewSnapshotService {
                 liteSpeedConnections: true,
                 storageTotalMB: true,
                 storageAvailableMB: true,
+                networkRxBytesPerSecond: true,
+                networkTxBytesPerSecond: true,
               },
             },
             websites: {
@@ -145,6 +161,13 @@ export class DashboardOverviewSnapshotService {
         this.getOverviewExpiringCertificates(userId),
       ]);
 
+    const uptimeSamples = await this.getRecentWebsiteUptimeSamples(
+      websites.map((website) => website.id),
+    );
+    const uptimePercentByWebsiteId = this.calculateUptimePercentByWebsiteId(
+      uptimeSamples,
+    );
+
     const websiteCards = websites.map((website) => {
       const latestMetric = website.metrics[0] ?? null;
       const latestProbe = website.probeMetrics[0] ?? null;
@@ -162,32 +185,53 @@ export class DashboardOverviewSnapshotService {
       const websiteAlerts = recentAlerts.filter(
         (alert) => alert.websiteId === website.id,
       );
+      const lastCheckedAt = this.latestTimestampOrNull([
+        website.lastProbeAt,
+        latestProbe?.recordedAt,
+        latestMetric?.recordedAt,
+        latestSslMetric?.recordedAt,
+      ]);
+      const responseTimeMs =
+        latestProbe?.responseTimeMs ?? website.lastResponseTimeMs ?? null;
+      const isUp = latestProbe?.isUp ?? website.lastIsUp;
+      const sslStatus = this.resolveSslStatus({
+        isValid: latestSslMetric?.isValid ?? website.ssl?.isValid ?? null,
+        daysRemaining:
+          latestSslMetric?.daysRemaining ??
+          this.calculateDaysRemaining(website.ssl?.validTo ?? null),
+      });
+      const sslExpiresAt = latestSslMetric?.validTo ?? website.ssl?.validTo ?? null;
 
       return {
+        id: website.id,
         websiteId: website.id,
         vpsNodeId: website.vpsNodeId,
         domain: website.domain,
         displayName: website.displayName,
         isActive: website.isActive,
-        lastCheckedAt: this.latestTimestampOrNull([
-          website.lastProbeAt,
-          latestProbe?.recordedAt,
-          latestMetric?.recordedAt,
-          latestSslMetric?.recordedAt,
-        ]),
+        timestamp: lastCheckedAt,
+        lastCheckedAt,
         status: this.systemHealthService.calculate({
           concurrentRequests,
-          isUp: website.lastIsUp,
+          isUp,
           alerts: websiteAlerts.map((alert) => ({
             status: alert.severity.toLowerCase(),
           })),
         }),
+        responseTimeMs,
+        uptimePercent: uptimePercentByWebsiteId.get(website.id) ?? null,
+        cacheHitRate: null,
         traffic,
+        ssl: {
+          status: sslStatus,
+          expiringCount: sslStatus === 'expiring' ? 1 : 0,
+          expiresAt: sslExpiresAt,
+        },
         availability: {
           probeSource: WebsiteProbeSource.BACKEND,
-          isUp: website.lastIsUp,
-          statusCode: website.lastStatusCode,
-          responseTimeMs: website.lastResponseTimeMs,
+          isUp,
+          statusCode: latestProbe?.statusCode ?? website.lastStatusCode,
+          responseTimeMs,
           ttfbMs: latestProbe?.ttfbMs ?? null,
           errorMessage: latestProbe?.errorMessage ?? null,
           lastProbeAt: this.latestTimestampOrNull([
@@ -229,8 +273,19 @@ export class DashboardOverviewSnapshotService {
             latestMetric.storageTotalMB,
           )
         : 0;
+      const networkInMbps = this.bytesPerSecondToMbps(
+        latestMetric?.networkRxBytesPerSecond ?? null,
+      );
+      const networkOutMbps = this.bytesPerSecondToMbps(
+        latestMetric?.networkTxBytesPerSecond ?? null,
+      );
+      const lastCheckedAt = this.latestTimestampOrNull([
+        latestMetric?.recordedAt,
+        node.lastSeenAt,
+      ]);
 
       return {
+        id: node.id,
         vpsNodeId: node.id,
         name: node.name,
         status: this.resolveVpsOverviewStatus({
@@ -240,13 +295,18 @@ export class DashboardOverviewSnapshotService {
         nodeStatus: node.status,
         hostname: node.hostname,
         publicIp: node.publicIp,
-        lastCheckedAt: this.latestTimestampOrNull([
-          latestMetric?.recordedAt,
-          node.lastSeenAt,
-        ]),
+        lastCheckedAt,
         lastSeenAt: node.lastSeenAt,
         websitesCount: node.websites.length,
         activeAlertsCount: node.alerts.length,
+        cpuUsagePercent: latestMetric?.cpuUsagePercent ?? null,
+        memoryUsedMB: latestMetric?.memoryUsedMB ?? null,
+        memoryTotalMB: latestMetric?.memoryTotalMB ?? null,
+        memoryUsagePercent,
+        diskUsagePercent: storageUsagePercent,
+        storageUsagePercent,
+        networkInMbps,
+        networkOutMbps,
         metrics: latestMetric
           ? {
               recordedAt: latestMetric.recordedAt,
@@ -254,10 +314,19 @@ export class DashboardOverviewSnapshotService {
               memoryUsagePercent,
               memoryUsedMB: latestMetric.memoryUsedMB,
               memoryTotalMB: latestMetric.memoryTotalMB,
+              diskUsagePercent: storageUsagePercent,
               storageUsagePercent,
               storageTotalMB: latestMetric.storageTotalMB,
               storageAvailableMB: latestMetric.storageAvailableMB,
               liteSpeedConnections: latestMetric.liteSpeedConnections,
+              networkInMbps,
+              networkOutMbps,
+              networkRxBytesPerSecond: this.toNumber(
+                latestMetric.networkRxBytesPerSecond,
+              ),
+              networkTxBytesPerSecond: this.toNumber(
+                latestMetric.networkTxBytesPerSecond,
+              ),
             }
           : null,
       };
@@ -290,18 +359,20 @@ export class DashboardOverviewSnapshotService {
         trafficLoad: totalTraffic.load,
         trafficActivity: totalTraffic.activity,
         averageResponseTimeMs: this.averageNullable(
-          websites.map((website) => website.lastResponseTimeMs),
+          websiteCards.map((website) => website.responseTimeMs),
         ),
         averageTtfbMs: this.averageNullable(
           websites.map((website) => website.probeMetrics[0]?.ttfbMs ?? null),
         ),
-        uptimePercent: this.calculateUptimePercent(
-          websites.map((website) => website.lastIsUp),
+        uptimePercent: this.averageNullable(
+          websiteCards.map((website) => website.uptimePercent),
         ),
-        websitesUp: websites.filter((website) => website.lastIsUp === true)
-          .length,
-        websitesChecked: websites.filter((website) => website.lastIsUp !== null)
-          .length,
+        websitesUp: websiteCards.filter(
+          (website) => website.availability.isUp === true,
+        ).length,
+        websitesChecked: websiteCards.filter(
+          (website) => website.availability.isUp !== null,
+        ).length,
       },
       vpsNodes: vpsCards,
       alerts: recentAlerts,
@@ -395,6 +466,48 @@ export class DashboardOverviewSnapshotService {
     });
   }
 
+  private getRecentWebsiteUptimeSamples(websiteIds: string[]) {
+    if (websiteIds.length === 0) {
+      return [];
+    }
+
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    return this.prisma.websiteProbeMetric.findMany({
+      where: {
+        websiteId: { in: websiteIds },
+        probeSource: WebsiteProbeSource.BACKEND,
+        recordedAt: {
+          gte: since,
+        },
+      },
+      select: {
+        websiteId: true,
+        isUp: true,
+      },
+    });
+  }
+
+  private calculateUptimePercentByWebsiteId(
+    samples: Array<{ websiteId: string; isUp: boolean }>,
+  ) {
+    const counts = new Map<string, { total: number; up: number }>();
+
+    for (const sample of samples) {
+      const current = counts.get(sample.websiteId) ?? { total: 0, up: 0 };
+      current.total += 1;
+      current.up += sample.isUp ? 1 : 0;
+      counts.set(sample.websiteId, current);
+    }
+
+    return new Map(
+      [...counts.entries()].map(([websiteId, count]) => [
+        websiteId,
+        count.total === 0 ? null : Math.round((count.up / count.total) * 100),
+      ]),
+    );
+  }
+
   private resolveGlobalOverviewStatus(
     websites: Array<{
       status: string;
@@ -446,6 +559,30 @@ export class DashboardOverviewSnapshotService {
     return 'healthy';
   }
 
+  private resolveSslStatus({
+    isValid,
+    daysRemaining,
+  }: {
+    isValid: boolean | null;
+    daysRemaining: number | null;
+  }) {
+    if (isValid === false) return 'invalid';
+    if (typeof daysRemaining === 'number' && daysRemaining <= 14) {
+      return 'expiring';
+    }
+    if (isValid === true) return 'valid';
+
+    return 'unknown';
+  }
+
+  private calculateDaysRemaining(validTo: Date | null) {
+    if (!validTo) return null;
+
+    return Math.ceil(
+      (new Date(validTo).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+    );
+  }
+
   private calculatePercent(used: number, total: number) {
     if (total <= 0) return 0;
 
@@ -473,16 +610,6 @@ export class DashboardOverviewSnapshotService {
     return new Date(Math.max(...timestamps));
   }
 
-  private calculateUptimePercent(values: Array<boolean | null>) {
-    const checked = values.filter((value): value is boolean => value !== null);
-
-    if (checked.length === 0) return null;
-
-    return Math.round(
-      (checked.filter((value) => value).length / checked.length) * 100,
-    );
-  }
-
   private averageNullable(values: Array<number | null | undefined>) {
     const numericValues = values.filter(
       (value): value is number => typeof value === 'number',
@@ -494,5 +621,17 @@ export class DashboardOverviewSnapshotService {
       numericValues.reduce((total, value) => total + value, 0) /
         numericValues.length,
     );
+  }
+
+  private bytesPerSecondToMbps(value: bigint | number | null | undefined) {
+    if (value === null || value === undefined) return null;
+
+    return Number(((Number(value) * 8) / 1_000_000).toFixed(2));
+  }
+
+  private toNumber(value: bigint | number | null | undefined) {
+    if (value === null || value === undefined) return null;
+
+    return Number(value);
   }
 }

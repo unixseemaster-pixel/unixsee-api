@@ -61,8 +61,17 @@ export class AgentService {
           recordedAt: new Date(entry.timestamp),
           vpsNodeId: vpsTarget.id,
           cpuUsagePercent: entry.metrics.cpuMean,
+          cpuCoreCount: entry.metrics.cpuCoreCount ?? null,
+          load1: entry.metrics.load1 ?? null,
+          load5: entry.metrics.load5 ?? null,
+          load15: entry.metrics.load15 ?? null,
           memoryTotalMB: entry.metrics.ramTotalMB,
           memoryUsedMB: entry.metrics.ramMeanMB,
+          memoryAvailableMB: entry.metrics.ramAvailableMB ?? null,
+          swapTotalMB: entry.metrics.swapTotalMB ?? null,
+          swapUsedMB: entry.metrics.swapUsedMB ?? null,
+          processCount: entry.metrics.processCount ?? null,
+          uptimeSeconds: this.toBigIntOrNull(entry.metrics.uptimeSeconds),
           liteSpeedConnections: entry.metrics.lsConnectionsPeak,
           diskReadBytesPerSecond: BigInt(
             entry.metrics.diskReadBytesPerSecondMean,
@@ -73,8 +82,12 @@ export class AgentService {
           diskIops: entry.metrics.diskIopsMean,
           storageTotalMB: entry.metrics.storageTotalMB,
           storageAvailableMB: entry.metrics.storageAvailableMB,
-          networkRxBytesPerSecond: BigInt(0),
-          networkTxBytesPerSecond: BigInt(0),
+          networkRxBytesPerSecond: BigInt(
+            Math.round(entry.metrics.networkRxBytesPerSecondMean ?? 0),
+          ),
+          networkTxBytesPerSecond: BigInt(
+            Math.round(entry.metrics.networkTxBytesPerSecondMean ?? 0),
+          ),
         })),
         skipDuplicates: true,
       });
@@ -286,7 +299,11 @@ export class AgentService {
           vpsNodeId,
           websiteId: website.id,
           concurrentRequests: siteData.peakConcurrentRequests,
-          requestRate: 0,
+          requestRate: siteData.requestRate ?? 0,
+          activeConnections: siteData.activeConnections ?? null,
+          processingRequests: siteData.processingRequests ?? null,
+          bytesInPerSecond: this.toBigIntOrNull(siteData.bytesInPerSecond),
+          bytesOutPerSecond: this.toBigIntOrNull(siteData.bytesOutPerSecond),
         };
       });
     });
@@ -316,7 +333,11 @@ export class AgentService {
           domain: siteData.domain,
           metrics: {
             concurrentRequests: siteData.peakConcurrentRequests,
-            requestRate: 0,
+            requestRate: siteData.requestRate ?? 0,
+            activeConnections: siteData.activeConnections ?? null,
+            processingRequests: siteData.processingRequests ?? null,
+            bytesInPerSecond: siteData.bytesInPerSecond ?? null,
+            bytesOutPerSecond: siteData.bytesOutPerSecond ?? null,
           },
           timestamp: new Date(entry.timestamp).toISOString(),
         });
@@ -332,6 +353,12 @@ export class AgentService {
       batchSize: payload.batch.length,
       websiteEventCount: emittedEvents.length,
     });
+  }
+
+  private toBigIntOrNull(value: number | null | undefined): bigint | null {
+    if (value === null || value === undefined) return null;
+
+    return BigInt(Math.round(value));
   }
 
   private getHomeDirectory(documentRoot: string): string | null {

@@ -183,6 +183,17 @@ export class DashboardService {
       latestSslMetric?.recordedAt,
       latestVpsMetric?.recordedAt,
     ]);
+    const checkout = this.buildCheckoutSnapshot(activeAlerts);
+    const backups = this.buildBackupSnapshot();
+    const activity = this.buildWebsiteActivity({
+      domain: website.domain,
+      latestProbeAt: latestProbeMetric?.recordedAt ?? website.lastProbeAt,
+      latestMetricAt: latestWebMetric?.recordedAt ?? null,
+      latestSslMetricAt: latestSslMetric?.recordedAt ?? null,
+      alerts: website.alerts,
+      isUp: latestProbeMetric?.isUp ?? null,
+      trafficLoad: traffic.load,
+    });
 
     this.logger.debug('dashboard.website_details.loaded', {
       userId,
@@ -213,7 +224,7 @@ export class DashboardService {
         responseTimeMs: latestProbeMetric?.responseTimeMs ?? null,
         ttfbMs: latestProbeMetric?.ttfbMs ?? null,
         errorMessage: latestProbeMetric?.errorMessage ?? null,
-        lastProbeAt: latestProbeMetric?.recordedAt ?? null,
+        lastProbeAt: latestProbeMetric?.recordedAt ?? website.lastProbeAt ?? null,
       },
       traffic: {
         load: traffic.load,
@@ -242,6 +253,12 @@ export class DashboardService {
         isAutoRenewable: website.ssl?.isAutoRenewable ?? null,
         statusMessage:
           latestSslMetric?.statusMessage ?? website.ssl?.statusMessage ?? null,
+        status: this.resolveSslStatus({
+          isValid: latestSslMetric?.isValid ?? website.ssl?.isValid ?? null,
+          daysRemaining:
+            latestSslMetric?.daysRemaining ??
+            this.calculateDaysRemaining(website.ssl?.validTo ?? null),
+        }),
         lastCheckedAt: latestSslMetric?.recordedAt ?? null,
       },
       vpsNode: website.vpsNode
@@ -267,6 +284,13 @@ export class DashboardService {
             memoryUsedMB: latestVpsMetric?.memoryUsedMB ?? null,
             memoryTotalMB: latestVpsMetric?.memoryTotalMB ?? null,
             storageUsagePercent: latestVpsMetric
+              ? this.calculateNullablePercent(
+                  latestVpsMetric.storageTotalMB -
+                    latestVpsMetric.storageAvailableMB,
+                  latestVpsMetric.storageTotalMB,
+                )
+              : null,
+            diskUsagePercent: latestVpsMetric
               ? this.calculateNullablePercent(
                   latestVpsMetric.storageTotalMB -
                     latestVpsMetric.storageAvailableMB,
@@ -299,6 +323,9 @@ export class DashboardService {
           metadata: alert.metadata,
         })),
       },
+      checkout,
+      backups,
+      activity,
     };
   }
 
@@ -738,6 +765,140 @@ export class DashboardService {
     };
   }
 
+  private buildCheckoutSnapshot(
+    activeAlerts: Array<{ title: string; message: string; severity: string }>,
+  ) {
+    const checkoutAlert = activeAlerts.find((alert) =>
+      this.containsCheckoutKeyword(`${alert.title} ${alert.message}`),
+    );
+
+    if (checkoutAlert) {
+      return {
+        status:
+          checkoutAlert.severity === 'CRITICAL'
+            ? 'issue_detected'
+            : 'degraded',
+        message: checkoutAlert.message,
+        lastCheckedAt: null,
+      };
+    }
+
+    return {
+      status: 'unknown',
+      message: 'No dedicated checkout probe is configured yet.',
+      lastCheckedAt: null,
+    };
+  }
+
+  private buildBackupSnapshot() {
+    return {
+      latest: null,
+      history: [],
+    };
+  }
+
+  private buildWebsiteActivity({
+    domain,
+    latestProbeAt,
+    latestMetricAt,
+    latestSslMetricAt,
+    alerts,
+    isUp,
+    trafficLoad,
+  }: {
+    domain: string;
+    latestProbeAt: Date | null | undefined;
+    latestMetricAt: Date | null | undefined;
+    latestSslMetricAt: Date | null | undefined;
+    alerts: Array<{
+      id: string;
+      title: string;
+      message: string;
+      severity: string;
+      status: string;
+      startedAt: Date;
+      resolvedAt: Date | null;
+      updatedAt: Date;
+    }>;
+    isUp: boolean | null;
+    trafficLoad: string;
+  }) {
+    const activity: Array<{
+      id: string;
+      type: string;
+      title: string;
+      description: string | null;
+      time: string | null;
+      tone: string;
+    }> = alerts.slice(0, 4).map((alert) => ({
+      id: `alert-${alert.id}`,
+      type: 'alert',
+      title: alert.title,
+      description: alert.message,
+      time: (alert.resolvedAt ?? alert.startedAt).toISOString(),
+      tone: this.mapActivityTone(alert.severity, alert.status),
+    }));
+
+    if (latestProbeAt) {
+      activity.push({
+        id: `probe-${domain}-${latestProbeAt.toISOString()}`,
+        type: 'probe',
+        title: isUp === false ? 'Availability issue detected' : 'Availability checked',
+        description:
+          isUp === false
+            ? 'The latest backend public probe reported the website as down.'
+            : 'The latest backend public probe completed successfully.',
+        time: latestProbeAt.toISOString(),
+        tone: isUp === false ? 'critical' : 'success',
+      });
+    }
+
+    if (latestMetricAt) {
+      activity.push({
+        id: `traffic-${domain}-${latestMetricAt.toISOString()}`,
+        type: 'traffic',
+        title: 'Traffic metrics received',
+        description: `Current traffic pressure is ${trafficLoad}.`,
+        time: latestMetricAt.toISOString(),
+        tone:
+          trafficLoad === 'critical' || trafficLoad === 'high'
+            ? 'warning'
+            : 'info',
+      });
+    }
+
+    if (latestSslMetricAt) {
+      activity.push({
+        id: `ssl-${domain}-${latestSslMetricAt.toISOString()}`,
+        type: 'ssl',
+        title: 'SSL state checked',
+        description: 'Latest SSL certificate state was refreshed.',
+        time: latestSslMetricAt.toISOString(),
+        tone: 'info',
+      });
+    }
+
+    return activity
+      .sort((first, second) => {
+        const firstTime = first.time ? new Date(first.time).getTime() : 0;
+        const secondTime = second.time ? new Date(second.time).getTime() : 0;
+        return secondTime - firstTime;
+      })
+      .slice(0, 8);
+  }
+
+  private containsCheckoutKeyword(value: string) {
+    return /checkout|payment|gateway|درگاه|پرداخت|تسویه/i.test(value);
+  }
+
+  private mapActivityTone(severity: string, status: string) {
+    if (status === 'RESOLVED') return 'success';
+    if (severity === 'CRITICAL') return 'critical';
+    if (severity === 'WARNING') return 'warning';
+
+    return 'info';
+  }
+
   private resolveMonitoringStatus({
     concurrentRequests,
     alerts,
@@ -797,6 +958,22 @@ export class DashboardService {
     }
 
     return 'healthy';
+  }
+
+  private resolveSslStatus({
+    isValid,
+    daysRemaining,
+  }: {
+    isValid: boolean | null;
+    daysRemaining: number | null;
+  }) {
+    if (isValid === false) return 'invalid';
+    if (typeof daysRemaining === 'number' && daysRemaining <= 14) {
+      return 'expiring';
+    }
+    if (isValid === true) return 'valid';
+
+    return 'unknown';
   }
 
   private calculateDaysRemaining(validTo: Date | null) {
