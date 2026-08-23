@@ -3,14 +3,20 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 
 import { AuthenticationController } from './controllers/authentication.controller.js';
 import { AuthenticationService } from './services/authentication.service.js';
-import { UserService } from '../user/services/user/user.service.js';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy.js';
 import { AccessTokenStrategy } from './strategies/access-token.strategy.js';
-import { OtpService } from './services/otp-service.js';
+import { OtpModule } from './otp.module.js';
 import { MonitoringAccessStrategy } from './strategies/monitoring-access.strategy.js';
+import { UsersModule } from '#/modules/users/users.module.js';
+import { TenantsModule } from '#/modules/tenants/tenants.module.js';
+import { MailModule } from '#/modules/mail/mail.module.js';
 
 @Module({
   imports: [
+    UsersModule,
+    TenantsModule,
+    MailModule,
+    OtpModule,
     JwtModule.register({
       // secret: jwtConstants.secret,
       // signOptions: { expiresIn: '60s' },
@@ -19,12 +25,10 @@ import { MonitoringAccessStrategy } from './strategies/monitoring-access.strateg
   controllers: [AuthenticationController],
   providers: [
     AuthenticationService,
-    UserService,
     JwtService,
     AccessTokenStrategy,
     RefreshTokenStrategy,
     MonitoringAccessStrategy,
-    OtpService,
   ],
 })
 export class AuthModule {}

@@ -28,6 +28,8 @@ export type ServerMinAggregateOutputType = {
   id: string | null
   name: string | null
   ipAddress: string | null
+  notes: string | null
+  controlPanelUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -36,6 +38,8 @@ export type ServerMaxAggregateOutputType = {
   id: string | null
   name: string | null
   ipAddress: string | null
+  notes: string | null
+  controlPanelUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +48,8 @@ export type ServerCountAggregateOutputType = {
   id: number
   name: number
   ipAddress: number
+  notes: number
+  controlPanelUrl: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -54,6 +60,8 @@ export type ServerMinAggregateInputType = {
   id?: true
   name?: true
   ipAddress?: true
+  notes?: true
+  controlPanelUrl?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -62,6 +70,8 @@ export type ServerMaxAggregateInputType = {
   id?: true
   name?: true
   ipAddress?: true
+  notes?: true
+  controlPanelUrl?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -70,6 +80,8 @@ export type ServerCountAggregateInputType = {
   id?: true
   name?: true
   ipAddress?: true
+  notes?: true
+  controlPanelUrl?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -151,6 +163,8 @@ export type ServerGroupByOutputType = {
   id: string
   name: string
   ipAddress: string
+  notes: string | null
+  controlPanelUrl: string | null
   createdAt: Date
   updatedAt: Date
   _count: ServerCountAggregateOutputType | null
@@ -180,20 +194,30 @@ export type ServerWhereInput = {
   id?: Prisma.UuidFilter<"Server"> | string
   name?: Prisma.StringFilter<"Server"> | string
   ipAddress?: Prisma.StringFilter<"Server"> | string
+  notes?: Prisma.StringNullableFilter<"Server"> | string | null
+  controlPanelUrl?: Prisma.StringNullableFilter<"Server"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   vpsNodes?: Prisma.VpsNodeListRelationFilter
   alerts?: Prisma.AlertListRelationFilter
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenListRelationFilter
+  discoveries?: Prisma.WebsiteDiscoveryListRelationFilter
+  agentCommands?: Prisma.AgentCommandListRelationFilter
 }
 
 export type ServerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
+  notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  controlPanelUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   vpsNodes?: Prisma.VpsNodeOrderByRelationAggregateInput
   alerts?: Prisma.AlertOrderByRelationAggregateInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenOrderByRelationAggregateInput
+  discoveries?: Prisma.WebsiteDiscoveryOrderByRelationAggregateInput
+  agentCommands?: Prisma.AgentCommandOrderByRelationAggregateInput
 }
 
 export type ServerWhereUniqueInput = Prisma.AtLeast<{
@@ -203,16 +227,23 @@ export type ServerWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ServerWhereInput[]
   NOT?: Prisma.ServerWhereInput | Prisma.ServerWhereInput[]
   ipAddress?: Prisma.StringFilter<"Server"> | string
+  notes?: Prisma.StringNullableFilter<"Server"> | string | null
+  controlPanelUrl?: Prisma.StringNullableFilter<"Server"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Server"> | Date | string
   vpsNodes?: Prisma.VpsNodeListRelationFilter
   alerts?: Prisma.AlertListRelationFilter
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenListRelationFilter
+  discoveries?: Prisma.WebsiteDiscoveryListRelationFilter
+  agentCommands?: Prisma.AgentCommandListRelationFilter
 }, "id" | "name">
 
 export type ServerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
+  notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  controlPanelUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ServerCountOrderByAggregateInput
@@ -227,6 +258,8 @@ export type ServerScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"Server"> | string
   name?: Prisma.StringWithAggregatesFilter<"Server"> | string
   ipAddress?: Prisma.StringWithAggregatesFilter<"Server"> | string
+  notes?: Prisma.StringNullableWithAggregatesFilter<"Server"> | string | null
+  controlPanelUrl?: Prisma.StringNullableWithAggregatesFilter<"Server"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Server"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Server"> | Date | string
 }
@@ -235,46 +268,68 @@ export type ServerCreateInput = {
   id?: string
   name: string
   ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   vpsNodes?: Prisma.VpsNodeCreateNestedManyWithoutServerInput
   alerts?: Prisma.AlertCreateNestedManyWithoutServerInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenCreateNestedManyWithoutServerInput
+  discoveries?: Prisma.WebsiteDiscoveryCreateNestedManyWithoutServerInput
+  agentCommands?: Prisma.AgentCommandCreateNestedManyWithoutServerInput
 }
 
 export type ServerUncheckedCreateInput = {
   id?: string
   name: string
   ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   vpsNodes?: Prisma.VpsNodeUncheckedCreateNestedManyWithoutServerInput
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutServerInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUncheckedCreateNestedManyWithoutServerInput
+  discoveries?: Prisma.WebsiteDiscoveryUncheckedCreateNestedManyWithoutServerInput
+  agentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutServerInput
 }
 
 export type ServerUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNodes?: Prisma.VpsNodeUpdateManyWithoutServerNestedInput
   alerts?: Prisma.AlertUpdateManyWithoutServerNestedInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUpdateManyWithoutServerNestedInput
+  discoveries?: Prisma.WebsiteDiscoveryUpdateManyWithoutServerNestedInput
+  agentCommands?: Prisma.AgentCommandUpdateManyWithoutServerNestedInput
 }
 
 export type ServerUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNodes?: Prisma.VpsNodeUncheckedUpdateManyWithoutServerNestedInput
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutServerNestedInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUncheckedUpdateManyWithoutServerNestedInput
+  discoveries?: Prisma.WebsiteDiscoveryUncheckedUpdateManyWithoutServerNestedInput
+  agentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutServerNestedInput
 }
 
 export type ServerCreateManyInput = {
   id?: string
   name: string
   ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -283,6 +338,8 @@ export type ServerUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -291,6 +348,8 @@ export type ServerUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -299,6 +358,8 @@ export type ServerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
+  controlPanelUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -307,6 +368,8 @@ export type ServerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
+  controlPanelUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -315,6 +378,8 @@ export type ServerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   ipAddress?: Prisma.SortOrder
+  notes?: Prisma.SortOrder
+  controlPanelUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -329,6 +394,20 @@ export type ServerNullableScalarRelationFilter = {
   isNot?: Prisma.ServerWhereInput | null
 }
 
+export type ServerCreateNestedOneWithoutEnrollmentTokensInput = {
+  create?: Prisma.XOR<Prisma.ServerCreateWithoutEnrollmentTokensInput, Prisma.ServerUncheckedCreateWithoutEnrollmentTokensInput>
+  connectOrCreate?: Prisma.ServerCreateOrConnectWithoutEnrollmentTokensInput
+  connect?: Prisma.ServerWhereUniqueInput
+}
+
+export type ServerUpdateOneRequiredWithoutEnrollmentTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.ServerCreateWithoutEnrollmentTokensInput, Prisma.ServerUncheckedCreateWithoutEnrollmentTokensInput>
+  connectOrCreate?: Prisma.ServerCreateOrConnectWithoutEnrollmentTokensInput
+  upsert?: Prisma.ServerUpsertWithoutEnrollmentTokensInput
+  connect?: Prisma.ServerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServerUpdateToOneWithWhereWithoutEnrollmentTokensInput, Prisma.ServerUpdateWithoutEnrollmentTokensInput>, Prisma.ServerUncheckedUpdateWithoutEnrollmentTokensInput>
+}
+
 export type ServerCreateNestedOneWithoutVpsNodesInput = {
   create?: Prisma.XOR<Prisma.ServerCreateWithoutVpsNodesInput, Prisma.ServerUncheckedCreateWithoutVpsNodesInput>
   connectOrCreate?: Prisma.ServerCreateOrConnectWithoutVpsNodesInput
@@ -341,6 +420,34 @@ export type ServerUpdateOneRequiredWithoutVpsNodesNestedInput = {
   upsert?: Prisma.ServerUpsertWithoutVpsNodesInput
   connect?: Prisma.ServerWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ServerUpdateToOneWithWhereWithoutVpsNodesInput, Prisma.ServerUpdateWithoutVpsNodesInput>, Prisma.ServerUncheckedUpdateWithoutVpsNodesInput>
+}
+
+export type ServerCreateNestedOneWithoutDiscoveriesInput = {
+  create?: Prisma.XOR<Prisma.ServerCreateWithoutDiscoveriesInput, Prisma.ServerUncheckedCreateWithoutDiscoveriesInput>
+  connectOrCreate?: Prisma.ServerCreateOrConnectWithoutDiscoveriesInput
+  connect?: Prisma.ServerWhereUniqueInput
+}
+
+export type ServerUpdateOneRequiredWithoutDiscoveriesNestedInput = {
+  create?: Prisma.XOR<Prisma.ServerCreateWithoutDiscoveriesInput, Prisma.ServerUncheckedCreateWithoutDiscoveriesInput>
+  connectOrCreate?: Prisma.ServerCreateOrConnectWithoutDiscoveriesInput
+  upsert?: Prisma.ServerUpsertWithoutDiscoveriesInput
+  connect?: Prisma.ServerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServerUpdateToOneWithWhereWithoutDiscoveriesInput, Prisma.ServerUpdateWithoutDiscoveriesInput>, Prisma.ServerUncheckedUpdateWithoutDiscoveriesInput>
+}
+
+export type ServerCreateNestedOneWithoutAgentCommandsInput = {
+  create?: Prisma.XOR<Prisma.ServerCreateWithoutAgentCommandsInput, Prisma.ServerUncheckedCreateWithoutAgentCommandsInput>
+  connectOrCreate?: Prisma.ServerCreateOrConnectWithoutAgentCommandsInput
+  connect?: Prisma.ServerWhereUniqueInput
+}
+
+export type ServerUpdateOneRequiredWithoutAgentCommandsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServerCreateWithoutAgentCommandsInput, Prisma.ServerUncheckedCreateWithoutAgentCommandsInput>
+  connectOrCreate?: Prisma.ServerCreateOrConnectWithoutAgentCommandsInput
+  upsert?: Prisma.ServerUpsertWithoutAgentCommandsInput
+  connect?: Prisma.ServerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServerUpdateToOneWithWhereWithoutAgentCommandsInput, Prisma.ServerUpdateWithoutAgentCommandsInput>, Prisma.ServerUncheckedUpdateWithoutAgentCommandsInput>
 }
 
 export type ServerCreateNestedOneWithoutAlertsInput = {
@@ -359,22 +466,104 @@ export type ServerUpdateOneWithoutAlertsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ServerUpdateToOneWithWhereWithoutAlertsInput, Prisma.ServerUpdateWithoutAlertsInput>, Prisma.ServerUncheckedUpdateWithoutAlertsInput>
 }
 
+export type ServerCreateWithoutEnrollmentTokensInput = {
+  id?: string
+  name: string
+  ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vpsNodes?: Prisma.VpsNodeCreateNestedManyWithoutServerInput
+  alerts?: Prisma.AlertCreateNestedManyWithoutServerInput
+  discoveries?: Prisma.WebsiteDiscoveryCreateNestedManyWithoutServerInput
+  agentCommands?: Prisma.AgentCommandCreateNestedManyWithoutServerInput
+}
+
+export type ServerUncheckedCreateWithoutEnrollmentTokensInput = {
+  id?: string
+  name: string
+  ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vpsNodes?: Prisma.VpsNodeUncheckedCreateNestedManyWithoutServerInput
+  alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutServerInput
+  discoveries?: Prisma.WebsiteDiscoveryUncheckedCreateNestedManyWithoutServerInput
+  agentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutServerInput
+}
+
+export type ServerCreateOrConnectWithoutEnrollmentTokensInput = {
+  where: Prisma.ServerWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServerCreateWithoutEnrollmentTokensInput, Prisma.ServerUncheckedCreateWithoutEnrollmentTokensInput>
+}
+
+export type ServerUpsertWithoutEnrollmentTokensInput = {
+  update: Prisma.XOR<Prisma.ServerUpdateWithoutEnrollmentTokensInput, Prisma.ServerUncheckedUpdateWithoutEnrollmentTokensInput>
+  create: Prisma.XOR<Prisma.ServerCreateWithoutEnrollmentTokensInput, Prisma.ServerUncheckedCreateWithoutEnrollmentTokensInput>
+  where?: Prisma.ServerWhereInput
+}
+
+export type ServerUpdateToOneWithWhereWithoutEnrollmentTokensInput = {
+  where?: Prisma.ServerWhereInput
+  data: Prisma.XOR<Prisma.ServerUpdateWithoutEnrollmentTokensInput, Prisma.ServerUncheckedUpdateWithoutEnrollmentTokensInput>
+}
+
+export type ServerUpdateWithoutEnrollmentTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vpsNodes?: Prisma.VpsNodeUpdateManyWithoutServerNestedInput
+  alerts?: Prisma.AlertUpdateManyWithoutServerNestedInput
+  discoveries?: Prisma.WebsiteDiscoveryUpdateManyWithoutServerNestedInput
+  agentCommands?: Prisma.AgentCommandUpdateManyWithoutServerNestedInput
+}
+
+export type ServerUncheckedUpdateWithoutEnrollmentTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vpsNodes?: Prisma.VpsNodeUncheckedUpdateManyWithoutServerNestedInput
+  alerts?: Prisma.AlertUncheckedUpdateManyWithoutServerNestedInput
+  discoveries?: Prisma.WebsiteDiscoveryUncheckedUpdateManyWithoutServerNestedInput
+  agentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutServerNestedInput
+}
+
 export type ServerCreateWithoutVpsNodesInput = {
   id?: string
   name: string
   ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   alerts?: Prisma.AlertCreateNestedManyWithoutServerInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenCreateNestedManyWithoutServerInput
+  discoveries?: Prisma.WebsiteDiscoveryCreateNestedManyWithoutServerInput
+  agentCommands?: Prisma.AgentCommandCreateNestedManyWithoutServerInput
 }
 
 export type ServerUncheckedCreateWithoutVpsNodesInput = {
   id?: string
   name: string
   ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutServerInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUncheckedCreateNestedManyWithoutServerInput
+  discoveries?: Prisma.WebsiteDiscoveryUncheckedCreateNestedManyWithoutServerInput
+  agentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutServerInput
 }
 
 export type ServerCreateOrConnectWithoutVpsNodesInput = {
@@ -397,36 +586,200 @@ export type ServerUpdateWithoutVpsNodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alerts?: Prisma.AlertUpdateManyWithoutServerNestedInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUpdateManyWithoutServerNestedInput
+  discoveries?: Prisma.WebsiteDiscoveryUpdateManyWithoutServerNestedInput
+  agentCommands?: Prisma.AgentCommandUpdateManyWithoutServerNestedInput
 }
 
 export type ServerUncheckedUpdateWithoutVpsNodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alerts?: Prisma.AlertUncheckedUpdateManyWithoutServerNestedInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUncheckedUpdateManyWithoutServerNestedInput
+  discoveries?: Prisma.WebsiteDiscoveryUncheckedUpdateManyWithoutServerNestedInput
+  agentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutServerNestedInput
+}
+
+export type ServerCreateWithoutDiscoveriesInput = {
+  id?: string
+  name: string
+  ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vpsNodes?: Prisma.VpsNodeCreateNestedManyWithoutServerInput
+  alerts?: Prisma.AlertCreateNestedManyWithoutServerInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenCreateNestedManyWithoutServerInput
+  agentCommands?: Prisma.AgentCommandCreateNestedManyWithoutServerInput
+}
+
+export type ServerUncheckedCreateWithoutDiscoveriesInput = {
+  id?: string
+  name: string
+  ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vpsNodes?: Prisma.VpsNodeUncheckedCreateNestedManyWithoutServerInput
+  alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutServerInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUncheckedCreateNestedManyWithoutServerInput
+  agentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutServerInput
+}
+
+export type ServerCreateOrConnectWithoutDiscoveriesInput = {
+  where: Prisma.ServerWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServerCreateWithoutDiscoveriesInput, Prisma.ServerUncheckedCreateWithoutDiscoveriesInput>
+}
+
+export type ServerUpsertWithoutDiscoveriesInput = {
+  update: Prisma.XOR<Prisma.ServerUpdateWithoutDiscoveriesInput, Prisma.ServerUncheckedUpdateWithoutDiscoveriesInput>
+  create: Prisma.XOR<Prisma.ServerCreateWithoutDiscoveriesInput, Prisma.ServerUncheckedCreateWithoutDiscoveriesInput>
+  where?: Prisma.ServerWhereInput
+}
+
+export type ServerUpdateToOneWithWhereWithoutDiscoveriesInput = {
+  where?: Prisma.ServerWhereInput
+  data: Prisma.XOR<Prisma.ServerUpdateWithoutDiscoveriesInput, Prisma.ServerUncheckedUpdateWithoutDiscoveriesInput>
+}
+
+export type ServerUpdateWithoutDiscoveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vpsNodes?: Prisma.VpsNodeUpdateManyWithoutServerNestedInput
+  alerts?: Prisma.AlertUpdateManyWithoutServerNestedInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUpdateManyWithoutServerNestedInput
+  agentCommands?: Prisma.AgentCommandUpdateManyWithoutServerNestedInput
+}
+
+export type ServerUncheckedUpdateWithoutDiscoveriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vpsNodes?: Prisma.VpsNodeUncheckedUpdateManyWithoutServerNestedInput
+  alerts?: Prisma.AlertUncheckedUpdateManyWithoutServerNestedInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUncheckedUpdateManyWithoutServerNestedInput
+  agentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutServerNestedInput
+}
+
+export type ServerCreateWithoutAgentCommandsInput = {
+  id?: string
+  name: string
+  ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vpsNodes?: Prisma.VpsNodeCreateNestedManyWithoutServerInput
+  alerts?: Prisma.AlertCreateNestedManyWithoutServerInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenCreateNestedManyWithoutServerInput
+  discoveries?: Prisma.WebsiteDiscoveryCreateNestedManyWithoutServerInput
+}
+
+export type ServerUncheckedCreateWithoutAgentCommandsInput = {
+  id?: string
+  name: string
+  ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vpsNodes?: Prisma.VpsNodeUncheckedCreateNestedManyWithoutServerInput
+  alerts?: Prisma.AlertUncheckedCreateNestedManyWithoutServerInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUncheckedCreateNestedManyWithoutServerInput
+  discoveries?: Prisma.WebsiteDiscoveryUncheckedCreateNestedManyWithoutServerInput
+}
+
+export type ServerCreateOrConnectWithoutAgentCommandsInput = {
+  where: Prisma.ServerWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServerCreateWithoutAgentCommandsInput, Prisma.ServerUncheckedCreateWithoutAgentCommandsInput>
+}
+
+export type ServerUpsertWithoutAgentCommandsInput = {
+  update: Prisma.XOR<Prisma.ServerUpdateWithoutAgentCommandsInput, Prisma.ServerUncheckedUpdateWithoutAgentCommandsInput>
+  create: Prisma.XOR<Prisma.ServerCreateWithoutAgentCommandsInput, Prisma.ServerUncheckedCreateWithoutAgentCommandsInput>
+  where?: Prisma.ServerWhereInput
+}
+
+export type ServerUpdateToOneWithWhereWithoutAgentCommandsInput = {
+  where?: Prisma.ServerWhereInput
+  data: Prisma.XOR<Prisma.ServerUpdateWithoutAgentCommandsInput, Prisma.ServerUncheckedUpdateWithoutAgentCommandsInput>
+}
+
+export type ServerUpdateWithoutAgentCommandsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vpsNodes?: Prisma.VpsNodeUpdateManyWithoutServerNestedInput
+  alerts?: Prisma.AlertUpdateManyWithoutServerNestedInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUpdateManyWithoutServerNestedInput
+  discoveries?: Prisma.WebsiteDiscoveryUpdateManyWithoutServerNestedInput
+}
+
+export type ServerUncheckedUpdateWithoutAgentCommandsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vpsNodes?: Prisma.VpsNodeUncheckedUpdateManyWithoutServerNestedInput
+  alerts?: Prisma.AlertUncheckedUpdateManyWithoutServerNestedInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUncheckedUpdateManyWithoutServerNestedInput
+  discoveries?: Prisma.WebsiteDiscoveryUncheckedUpdateManyWithoutServerNestedInput
 }
 
 export type ServerCreateWithoutAlertsInput = {
   id?: string
   name: string
   ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   vpsNodes?: Prisma.VpsNodeCreateNestedManyWithoutServerInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenCreateNestedManyWithoutServerInput
+  discoveries?: Prisma.WebsiteDiscoveryCreateNestedManyWithoutServerInput
+  agentCommands?: Prisma.AgentCommandCreateNestedManyWithoutServerInput
 }
 
 export type ServerUncheckedCreateWithoutAlertsInput = {
   id?: string
   name: string
   ipAddress: string
+  notes?: string | null
+  controlPanelUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   vpsNodes?: Prisma.VpsNodeUncheckedCreateNestedManyWithoutServerInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUncheckedCreateNestedManyWithoutServerInput
+  discoveries?: Prisma.WebsiteDiscoveryUncheckedCreateNestedManyWithoutServerInput
+  agentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutServerInput
 }
 
 export type ServerCreateOrConnectWithoutAlertsInput = {
@@ -449,18 +802,28 @@ export type ServerUpdateWithoutAlertsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNodes?: Prisma.VpsNodeUpdateManyWithoutServerNestedInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUpdateManyWithoutServerNestedInput
+  discoveries?: Prisma.WebsiteDiscoveryUpdateManyWithoutServerNestedInput
+  agentCommands?: Prisma.AgentCommandUpdateManyWithoutServerNestedInput
 }
 
 export type ServerUncheckedUpdateWithoutAlertsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   ipAddress?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  controlPanelUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vpsNodes?: Prisma.VpsNodeUncheckedUpdateManyWithoutServerNestedInput
+  enrollmentTokens?: Prisma.ServerEnrollmentTokenUncheckedUpdateManyWithoutServerNestedInput
+  discoveries?: Prisma.WebsiteDiscoveryUncheckedUpdateManyWithoutServerNestedInput
+  agentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutServerNestedInput
 }
 
 
@@ -471,11 +834,17 @@ export type ServerUncheckedUpdateWithoutAlertsInput = {
 export type ServerCountOutputType = {
   vpsNodes: number
   alerts: number
+  enrollmentTokens: number
+  discoveries: number
+  agentCommands: number
 }
 
 export type ServerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vpsNodes?: boolean | ServerCountOutputTypeCountVpsNodesArgs
   alerts?: boolean | ServerCountOutputTypeCountAlertsArgs
+  enrollmentTokens?: boolean | ServerCountOutputTypeCountEnrollmentTokensArgs
+  discoveries?: boolean | ServerCountOutputTypeCountDiscoveriesArgs
+  agentCommands?: boolean | ServerCountOutputTypeCountAgentCommandsArgs
 }
 
 /**
@@ -502,15 +871,41 @@ export type ServerCountOutputTypeCountAlertsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.AlertWhereInput
 }
 
+/**
+ * ServerCountOutputType without action
+ */
+export type ServerCountOutputTypeCountEnrollmentTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ServerEnrollmentTokenWhereInput
+}
+
+/**
+ * ServerCountOutputType without action
+ */
+export type ServerCountOutputTypeCountDiscoveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WebsiteDiscoveryWhereInput
+}
+
+/**
+ * ServerCountOutputType without action
+ */
+export type ServerCountOutputTypeCountAgentCommandsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AgentCommandWhereInput
+}
+
 
 export type ServerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   ipAddress?: boolean
+  notes?: boolean
+  controlPanelUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   vpsNodes?: boolean | Prisma.Server$vpsNodesArgs<ExtArgs>
   alerts?: boolean | Prisma.Server$alertsArgs<ExtArgs>
+  enrollmentTokens?: boolean | Prisma.Server$enrollmentTokensArgs<ExtArgs>
+  discoveries?: boolean | Prisma.Server$discoveriesArgs<ExtArgs>
+  agentCommands?: boolean | Prisma.Server$agentCommandsArgs<ExtArgs>
   _count?: boolean | Prisma.ServerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["server"]>
 
@@ -518,6 +913,8 @@ export type ServerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   name?: boolean
   ipAddress?: boolean
+  notes?: boolean
+  controlPanelUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["server"]>
@@ -526,6 +923,8 @@ export type ServerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   name?: boolean
   ipAddress?: boolean
+  notes?: boolean
+  controlPanelUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["server"]>
@@ -534,14 +933,19 @@ export type ServerSelectScalar = {
   id?: boolean
   name?: boolean
   ipAddress?: boolean
+  notes?: boolean
+  controlPanelUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ServerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "ipAddress" | "createdAt" | "updatedAt", ExtArgs["result"]["server"]>
+export type ServerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "ipAddress" | "notes" | "controlPanelUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["server"]>
 export type ServerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vpsNodes?: boolean | Prisma.Server$vpsNodesArgs<ExtArgs>
   alerts?: boolean | Prisma.Server$alertsArgs<ExtArgs>
+  enrollmentTokens?: boolean | Prisma.Server$enrollmentTokensArgs<ExtArgs>
+  discoveries?: boolean | Prisma.Server$discoveriesArgs<ExtArgs>
+  agentCommands?: boolean | Prisma.Server$agentCommandsArgs<ExtArgs>
   _count?: boolean | Prisma.ServerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -552,11 +956,16 @@ export type $ServerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     vpsNodes: Prisma.$VpsNodePayload<ExtArgs>[]
     alerts: Prisma.$AlertPayload<ExtArgs>[]
+    enrollmentTokens: Prisma.$ServerEnrollmentTokenPayload<ExtArgs>[]
+    discoveries: Prisma.$WebsiteDiscoveryPayload<ExtArgs>[]
+    agentCommands: Prisma.$AgentCommandPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     ipAddress: string
+    notes: string | null
+    controlPanelUrl: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["server"]>
@@ -955,6 +1364,9 @@ export interface Prisma__ServerClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   vpsNodes<T extends Prisma.Server$vpsNodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$vpsNodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VpsNodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   alerts<T extends Prisma.Server$alertsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$alertsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AlertPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  enrollmentTokens<T extends Prisma.Server$enrollmentTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$enrollmentTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServerEnrollmentTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  discoveries<T extends Prisma.Server$discoveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$discoveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebsiteDiscoveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  agentCommands<T extends Prisma.Server$agentCommandsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Server$agentCommandsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AgentCommandPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -987,6 +1399,8 @@ export interface ServerFieldRefs {
   readonly id: Prisma.FieldRef<"Server", 'String'>
   readonly name: Prisma.FieldRef<"Server", 'String'>
   readonly ipAddress: Prisma.FieldRef<"Server", 'String'>
+  readonly notes: Prisma.FieldRef<"Server", 'String'>
+  readonly controlPanelUrl: Prisma.FieldRef<"Server", 'String'>
   readonly createdAt: Prisma.FieldRef<"Server", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Server", 'DateTime'>
 }
@@ -1427,6 +1841,78 @@ export type Server$alertsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.AlertScalarFieldEnum | Prisma.AlertScalarFieldEnum[]
+}
+
+/**
+ * Server.enrollmentTokens
+ */
+export type Server$enrollmentTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ServerEnrollmentToken
+   */
+  select?: Prisma.ServerEnrollmentTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ServerEnrollmentToken
+   */
+  omit?: Prisma.ServerEnrollmentTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServerEnrollmentTokenInclude<ExtArgs> | null
+  where?: Prisma.ServerEnrollmentTokenWhereInput
+  orderBy?: Prisma.ServerEnrollmentTokenOrderByWithRelationInput | Prisma.ServerEnrollmentTokenOrderByWithRelationInput[]
+  cursor?: Prisma.ServerEnrollmentTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ServerEnrollmentTokenScalarFieldEnum | Prisma.ServerEnrollmentTokenScalarFieldEnum[]
+}
+
+/**
+ * Server.discoveries
+ */
+export type Server$discoveriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WebsiteDiscovery
+   */
+  select?: Prisma.WebsiteDiscoverySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WebsiteDiscovery
+   */
+  omit?: Prisma.WebsiteDiscoveryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WebsiteDiscoveryInclude<ExtArgs> | null
+  where?: Prisma.WebsiteDiscoveryWhereInput
+  orderBy?: Prisma.WebsiteDiscoveryOrderByWithRelationInput | Prisma.WebsiteDiscoveryOrderByWithRelationInput[]
+  cursor?: Prisma.WebsiteDiscoveryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WebsiteDiscoveryScalarFieldEnum | Prisma.WebsiteDiscoveryScalarFieldEnum[]
+}
+
+/**
+ * Server.agentCommands
+ */
+export type Server$agentCommandsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AgentCommand
+   */
+  select?: Prisma.AgentCommandSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AgentCommand
+   */
+  omit?: Prisma.AgentCommandOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AgentCommandInclude<ExtArgs> | null
+  where?: Prisma.AgentCommandWhereInput
+  orderBy?: Prisma.AgentCommandOrderByWithRelationInput | Prisma.AgentCommandOrderByWithRelationInput[]
+  cursor?: Prisma.AgentCommandWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AgentCommandScalarFieldEnum | Prisma.AgentCommandScalarFieldEnum[]
 }
 
 /**

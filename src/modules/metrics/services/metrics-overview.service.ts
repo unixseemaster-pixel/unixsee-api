@@ -5,9 +5,12 @@ import { TrafficLoadService } from './traffic-load.service.js';
 import { AlertsService } from '#/modules/alerts/services/alerts.service.js';
 import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { SystemHealthService } from '#/modules/health/services/system-health.service.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @Injectable()
 export class MetricsOverviewService {
+  private readonly logger = createAppLogger(MetricsOverviewService.name);
+
   constructor(
     private readonly webMetricsService: WebMetricsService,
     private readonly systemHealthService: SystemHealthService,
@@ -85,8 +88,17 @@ export class MetricsOverviewService {
         : null,
     );
 
+    const status = this.resolveGlobalStatus(websiteOverviews);
+
+    this.logger.debug('metrics.overview.loaded', {
+      userId,
+      websiteCount: websiteOverviews.length,
+      alertCount: alerts.length,
+      status,
+    });
+
     return {
-      status: this.resolveGlobalStatus(websiteOverviews),
+      status,
 
       websites: websiteOverviews,
       totals: {

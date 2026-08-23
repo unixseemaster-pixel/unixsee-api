@@ -69,6 +69,7 @@ export class AuthenticationController {
   async sendOtp(@Body() body: SendOtpDto) {
     const response = await this.authService.sendOtp({
       phoneNumber: body.phoneNumber,
+      email: body.email,
       context: 'LOGIN',
     });
 
@@ -81,6 +82,7 @@ export class AuthenticationController {
   async validateOtp(@Body() body: ValidateOtpDto) {
     const response = await this.authService.validateOtp({
       phoneNumber: body.phoneNumber,
+      email: body.email,
       context: body.context,
       otp: body.otp,
     });

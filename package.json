@@ -14,13 +14,13 @@
     "start": "dotenv -e .env.development -- nest start",
     "start:dev": "dotenv -e .env.development -- nest start --watch",
     "start:debug": "dotenv -e .env.development -- nest start --debug --watch",
-    "start:prod": "dotenv -e .env.production -- node dist/main",
+    "start:prod": "dotenv -e .env.production -- node dist/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "dotenv -e .env.development -- jest",
-    "test:watch": "dotenv -e .env.development -- jest --watch",
-    "test:cov": "dotenv -e .env.development -- jest --coverage",
-    "test:debug": "dotenv -e .env.development -- node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "dotenv -e .env.development -- jest --config ./test/jest-e2e.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:cov": "vitest run --coverage",
+    "test:debug": "vitest run --inspect-brk --no-file-parallelism",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "prisma:generate": "dotenv -e .env.development -- prisma generate",
     "prisma:generate:dev": "dotenv -e .env.development -- prisma generate",
     "prisma:generate:prod": "dotenv -e .env.production -- prisma generate",
@@ -31,6 +31,8 @@
     "prisma:migrate:status:prod": "dotenv -e .env.production -- prisma migrate status",
     "prisma:studio:dev": "dotenv -e .env.development -- prisma studio --port 51212 --browser none",
     "prisma:studio:prod": "dotenv -e .env.production -- prisma studio --port 51212 --browser none",
+    "seed:dev-arvin": "dotenv -e .env.development -- node scripts/seed-dev-arvin.mjs",
+    "seed:dev-plans": "node scripts/seed-dev-plans.mjs",
     "deploy:prod": "pnpm install --frozen-lockfile && pnpm prisma:generate:prod && pnpm prisma:migrate:prod && pnpm build:prod"
   },
   "dependencies": {
@@ -41,16 +43,19 @@
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
-    "@nestjs/schedule": "^6.0.1",
     "@nestjs/platform-socket.io": "^11.1.24",
+    "@nestjs/schedule": "^6.0.1",
     "@nestjs/websockets": "^11.1.24",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@supabase/supabase-js": "^2.112.3",
     "bcryptjs": "^3.0.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "cron": "^4.3.3",
     "dotenv": "^17.4.2",
+    "multer": "^2.2.0",
+    "nodemailer": "^9.0.5",
     "passport-jwt": "^4.0.1",
     "pg": "^8.21.0",
     "reflect-metadata": "^0.2.2",
@@ -64,11 +69,15 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
+    "@swc/core": "^1.15.47",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
+    "@types/multer": "^2.2.0",
     "@types/node": "^24.0.0",
+    "@types/nodemailer": "^8.0.1",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^7.0.0",
+    "@vitest/coverage-v8": "^3.2.7",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
@@ -84,7 +93,10 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.20.0"
+    "typescript-eslint": "^8.20.0",
+    "unplugin-swc": "^1.5.10",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^3.2.7"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -104,6 +116,6 @@
     "testEnvironment": "node"
   },
   "imports": {
-    "#/*": "./dist/src/*"
+    "#/*": "./dist/*"
   }
 }

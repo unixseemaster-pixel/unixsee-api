@@ -23,10 +23,30 @@ export * from './enums.js';
  */
 export type User = Prisma.UserModel
 /**
+ * Model Tenant
+ * 
+ */
+export type Tenant = Prisma.TenantModel
+/**
+ * Model Membership
+ * 
+ */
+export type Membership = Prisma.MembershipModel
+/**
+ * Model AuthorizationCase
+ * Customer احراز هویت package for staff review → tenant approval.
+ */
+export type AuthorizationCase = Prisma.AuthorizationCaseModel
+/**
  * Model Server
  * 
  */
 export type Server = Prisma.ServerModel
+/**
+ * Model ServerEnrollmentToken
+ * 
+ */
+export type ServerEnrollmentToken = Prisma.ServerEnrollmentTokenModel
 /**
  * Model VpsNode
  * 
@@ -37,6 +57,28 @@ export type VpsNode = Prisma.VpsNodeModel
  * 
  */
 export type Website = Prisma.WebsiteModel
+/**
+ * Model WebsiteDiscovery
+ * 
+ */
+export type WebsiteDiscovery = Prisma.WebsiteDiscoveryModel
+/**
+ * Model WebsiteTrafficSnapshot
+ * Phase 1 agent 3-minute unique-IP visitor samples (append-only).
+ * Latest traffic snapshot only. Historical Phase 1 rows remain in
+ * WebsiteActiveVisitorSample but the v0.2 agent does not append to it.
+ */
+export type WebsiteTrafficSnapshot = Prisma.WebsiteTrafficSnapshotModel
+/**
+ * Model AgentCommand
+ * 
+ */
+export type AgentCommand = Prisma.AgentCommandModel
+/**
+ * Model WebsiteActiveVisitorSample
+ * 
+ */
+export type WebsiteActiveVisitorSample = Prisma.WebsiteActiveVisitorSampleModel
 /**
  * Model VpsMetric
  * 
@@ -87,3 +129,104 @@ export type Alert = Prisma.AlertModel
  * 
  */
 export type Otp = Prisma.OtpModel
+/**
+ * Model Plan
+ * 
+ */
+export type Plan = Prisma.PlanModel
+/**
+ * Model PlanRequest
+ * 
+ */
+export type PlanRequest = Prisma.PlanRequestModel
+/**
+ * Model ServiceCatalogItem
+ * 
+ */
+export type ServiceCatalogItem = Prisma.ServiceCatalogItemModel
+/**
+ * Model ComplementaryServiceRequest
+ * 
+ */
+export type ComplementaryServiceRequest = Prisma.ComplementaryServiceRequestModel
+/**
+ * Model ServiceQuotation
+ * 
+ */
+export type ServiceQuotation = Prisma.ServiceQuotationModel
+/**
+ * Model ServiceAssignment
+ * 
+ */
+export type ServiceAssignment = Prisma.ServiceAssignmentModel
+/**
+ * Model ServiceUsage
+ * 
+ */
+export type ServiceUsage = Prisma.ServiceUsageModel
+/**
+ * Model ServiceDeliverable
+ * 
+ */
+export type ServiceDeliverable = Prisma.ServiceDeliverableModel
+/**
+ * Model Ticket
+ * 
+ */
+export type Ticket = Prisma.TicketModel
+/**
+ * Model TicketMessage
+ * 
+ */
+export type TicketMessage = Prisma.TicketMessageModel
+/**
+ * Model TicketAttachment
+ * 
+ */
+export type TicketAttachment = Prisma.TicketAttachmentModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model NotificationRead
+ * 
+ */
+export type NotificationRead = Prisma.NotificationReadModel
+/**
+ * Model Activity
+ * 
+ */
+export type Activity = Prisma.ActivityModel
+/**
+ * Model AuditRecord
+ * 
+ */
+export type AuditRecord = Prisma.AuditRecordModel
+/**
+ * Model OperationalAction
+ * 
+ */
+export type OperationalAction = Prisma.OperationalActionModel
+/**
+ * Model IdempotencyRecord
+ * 
+ */
+export type IdempotencyRecord = Prisma.IdempotencyRecordModel
+/**
+ * Model UnixseeMessage
+ * Tenant-targeted one-way staff → customer messages (پیام‌های یونیکسی).
+ * Distinct from Notification (News) and ticket thread messages.
+ */
+export type UnixseeMessage = Prisma.UnixseeMessageModel
+/**
+ * Model UnixseeMessageAttachment
+ * 
+ */
+export type UnixseeMessageAttachment = Prisma.UnixseeMessageAttachmentModel
+/**
+ * Model UnixseeMessageRead
+ * 
+ */
+export type UnixseeMessageRead = Prisma.UnixseeMessageReadModel

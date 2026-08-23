@@ -34,7 +34,9 @@ export type AlertMinAggregateOutputType = {
   severity: $Enums.AlertSeverity | null
   status: $Enums.AlertStatus | null
   startedAt: Date | null
+  acknowledgedAt: Date | null
   resolvedAt: Date | null
+  suppressedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -49,7 +51,9 @@ export type AlertMaxAggregateOutputType = {
   severity: $Enums.AlertSeverity | null
   status: $Enums.AlertStatus | null
   startedAt: Date | null
+  acknowledgedAt: Date | null
   resolvedAt: Date | null
+  suppressedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -64,7 +68,9 @@ export type AlertCountAggregateOutputType = {
   severity: number
   status: number
   startedAt: number
+  acknowledgedAt: number
   resolvedAt: number
+  suppressedAt: number
   metadata: number
   createdAt: number
   updatedAt: number
@@ -82,7 +88,9 @@ export type AlertMinAggregateInputType = {
   severity?: true
   status?: true
   startedAt?: true
+  acknowledgedAt?: true
   resolvedAt?: true
+  suppressedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -97,7 +105,9 @@ export type AlertMaxAggregateInputType = {
   severity?: true
   status?: true
   startedAt?: true
+  acknowledgedAt?: true
   resolvedAt?: true
+  suppressedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,7 +122,9 @@ export type AlertCountAggregateInputType = {
   severity?: true
   status?: true
   startedAt?: true
+  acknowledgedAt?: true
   resolvedAt?: true
+  suppressedAt?: true
   metadata?: true
   createdAt?: true
   updatedAt?: true
@@ -201,7 +213,9 @@ export type AlertGroupByOutputType = {
   severity: $Enums.AlertSeverity
   status: $Enums.AlertStatus
   startedAt: Date
+  acknowledgedAt: Date | null
   resolvedAt: Date | null
+  suppressedAt: Date | null
   metadata: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
@@ -238,7 +252,9 @@ export type AlertWhereInput = {
   severity?: Prisma.EnumAlertSeverityFilter<"Alert"> | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFilter<"Alert"> | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFilter<"Alert"> | Date | string
+  acknowledgedAt?: Prisma.DateTimeNullableFilter<"Alert"> | Date | string | null
   resolvedAt?: Prisma.DateTimeNullableFilter<"Alert"> | Date | string | null
+  suppressedAt?: Prisma.DateTimeNullableFilter<"Alert"> | Date | string | null
   metadata?: Prisma.JsonNullableFilter<"Alert">
   createdAt?: Prisma.DateTimeFilter<"Alert"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Alert"> | Date | string
@@ -257,7 +273,9 @@ export type AlertOrderByWithRelationInput = {
   severity?: Prisma.SortOrder
   status?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
+  acknowledgedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   resolvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  suppressedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -279,7 +297,9 @@ export type AlertWhereUniqueInput = Prisma.AtLeast<{
   severity?: Prisma.EnumAlertSeverityFilter<"Alert"> | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFilter<"Alert"> | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFilter<"Alert"> | Date | string
+  acknowledgedAt?: Prisma.DateTimeNullableFilter<"Alert"> | Date | string | null
   resolvedAt?: Prisma.DateTimeNullableFilter<"Alert"> | Date | string | null
+  suppressedAt?: Prisma.DateTimeNullableFilter<"Alert"> | Date | string | null
   metadata?: Prisma.JsonNullableFilter<"Alert">
   createdAt?: Prisma.DateTimeFilter<"Alert"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Alert"> | Date | string
@@ -298,7 +318,9 @@ export type AlertOrderByWithAggregationInput = {
   severity?: Prisma.SortOrder
   status?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
+  acknowledgedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   resolvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  suppressedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -320,7 +342,9 @@ export type AlertScalarWhereWithAggregatesInput = {
   severity?: Prisma.EnumAlertSeverityWithAggregatesFilter<"Alert"> | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusWithAggregatesFilter<"Alert"> | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeWithAggregatesFilter<"Alert"> | Date | string
+  acknowledgedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Alert"> | Date | string | null
   resolvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Alert"> | Date | string | null
+  suppressedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Alert"> | Date | string | null
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"Alert">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Alert"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Alert"> | Date | string
@@ -333,7 +357,9 @@ export type AlertCreateInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -352,7 +378,9 @@ export type AlertUncheckedCreateInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -365,7 +393,9 @@ export type AlertUpdateInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -384,7 +414,9 @@ export type AlertUncheckedUpdateInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -400,7 +432,9 @@ export type AlertCreateManyInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -413,7 +447,9 @@ export type AlertUpdateManyMutationInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -429,7 +465,9 @@ export type AlertUncheckedUpdateManyInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -455,7 +493,9 @@ export type AlertCountOrderByAggregateInput = {
   severity?: Prisma.SortOrder
   status?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
+  acknowledgedAt?: Prisma.SortOrder
   resolvedAt?: Prisma.SortOrder
+  suppressedAt?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -471,7 +511,9 @@ export type AlertMaxOrderByAggregateInput = {
   severity?: Prisma.SortOrder
   status?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
+  acknowledgedAt?: Prisma.SortOrder
   resolvedAt?: Prisma.SortOrder
+  suppressedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -486,7 +528,9 @@ export type AlertMinOrderByAggregateInput = {
   severity?: Prisma.SortOrder
   status?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
+  acknowledgedAt?: Prisma.SortOrder
   resolvedAt?: Prisma.SortOrder
+  suppressedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -632,7 +676,9 @@ export type AlertCreateWithoutServerInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -649,7 +695,9 @@ export type AlertUncheckedCreateWithoutServerInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -694,7 +742,9 @@ export type AlertScalarWhereInput = {
   severity?: Prisma.EnumAlertSeverityFilter<"Alert"> | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFilter<"Alert"> | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFilter<"Alert"> | Date | string
+  acknowledgedAt?: Prisma.DateTimeNullableFilter<"Alert"> | Date | string | null
   resolvedAt?: Prisma.DateTimeNullableFilter<"Alert"> | Date | string | null
+  suppressedAt?: Prisma.DateTimeNullableFilter<"Alert"> | Date | string | null
   metadata?: Prisma.JsonNullableFilter<"Alert">
   createdAt?: Prisma.DateTimeFilter<"Alert"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Alert"> | Date | string
@@ -707,7 +757,9 @@ export type AlertCreateWithoutVpsNodeInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -724,7 +776,9 @@ export type AlertUncheckedCreateWithoutVpsNodeInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -763,7 +817,9 @@ export type AlertCreateWithoutWebsiteInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -780,7 +836,9 @@ export type AlertUncheckedCreateWithoutWebsiteInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -821,7 +879,9 @@ export type AlertCreateManyServerInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -834,7 +894,9 @@ export type AlertUpdateWithoutServerInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -851,7 +913,9 @@ export type AlertUncheckedUpdateWithoutServerInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -866,7 +930,9 @@ export type AlertUncheckedUpdateManyWithoutServerInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -881,7 +947,9 @@ export type AlertCreateManyVpsNodeInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -894,7 +962,9 @@ export type AlertUpdateWithoutVpsNodeInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -911,7 +981,9 @@ export type AlertUncheckedUpdateWithoutVpsNodeInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -926,7 +998,9 @@ export type AlertUncheckedUpdateManyWithoutVpsNodeInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -941,7 +1015,9 @@ export type AlertCreateManyWebsiteInput = {
   severity: $Enums.AlertSeverity
   status?: $Enums.AlertStatus
   startedAt?: Date | string
+  acknowledgedAt?: Date | string | null
   resolvedAt?: Date | string | null
+  suppressedAt?: Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -954,7 +1030,9 @@ export type AlertUpdateWithoutWebsiteInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -971,7 +1049,9 @@ export type AlertUncheckedUpdateWithoutWebsiteInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -986,7 +1066,9 @@ export type AlertUncheckedUpdateManyWithoutWebsiteInput = {
   severity?: Prisma.EnumAlertSeverityFieldUpdateOperationsInput | $Enums.AlertSeverity
   status?: Prisma.EnumAlertStatusFieldUpdateOperationsInput | $Enums.AlertStatus
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  acknowledgedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   resolvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suppressedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1004,7 +1086,9 @@ export type AlertSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   severity?: boolean
   status?: boolean
   startedAt?: boolean
+  acknowledgedAt?: boolean
   resolvedAt?: boolean
+  suppressedAt?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1023,7 +1107,9 @@ export type AlertSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   severity?: boolean
   status?: boolean
   startedAt?: boolean
+  acknowledgedAt?: boolean
   resolvedAt?: boolean
+  suppressedAt?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1042,7 +1128,9 @@ export type AlertSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   severity?: boolean
   status?: boolean
   startedAt?: boolean
+  acknowledgedAt?: boolean
   resolvedAt?: boolean
+  suppressedAt?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1061,13 +1149,15 @@ export type AlertSelectScalar = {
   severity?: boolean
   status?: boolean
   startedAt?: boolean
+  acknowledgedAt?: boolean
   resolvedAt?: boolean
+  suppressedAt?: boolean
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AlertOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "websiteId" | "vpsNodeId" | "serverId" | "title" | "message" | "severity" | "status" | "startedAt" | "resolvedAt" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["alert"]>
+export type AlertOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "websiteId" | "vpsNodeId" | "serverId" | "title" | "message" | "severity" | "status" | "startedAt" | "acknowledgedAt" | "resolvedAt" | "suppressedAt" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["alert"]>
 export type AlertInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   website?: boolean | Prisma.Alert$websiteArgs<ExtArgs>
   vpsNode?: boolean | Prisma.Alert$vpsNodeArgs<ExtArgs>
@@ -1101,7 +1191,9 @@ export type $AlertPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     severity: $Enums.AlertSeverity
     status: $Enums.AlertStatus
     startedAt: Date
+    acknowledgedAt: Date | null
     resolvedAt: Date | null
+    suppressedAt: Date | null
     metadata: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
@@ -1540,7 +1632,9 @@ export interface AlertFieldRefs {
   readonly severity: Prisma.FieldRef<"Alert", 'AlertSeverity'>
   readonly status: Prisma.FieldRef<"Alert", 'AlertStatus'>
   readonly startedAt: Prisma.FieldRef<"Alert", 'DateTime'>
+  readonly acknowledgedAt: Prisma.FieldRef<"Alert", 'DateTime'>
   readonly resolvedAt: Prisma.FieldRef<"Alert", 'DateTime'>
+  readonly suppressedAt: Prisma.FieldRef<"Alert", 'DateTime'>
   readonly metadata: Prisma.FieldRef<"Alert", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Alert", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Alert", 'DateTime'>

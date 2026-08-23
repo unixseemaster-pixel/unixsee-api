@@ -41,6 +41,7 @@
 - Use the built-in NestJS logger only through `createAppLogger(ContextName)` from `src/common/logging/app-logger.ts`.
 - Do not create raw `new Logger(...)` instances in feature code. The wrapper automatically adds the current `requestId` and masks common sensitive fields.
 - Class context means the source class/module name attached to every log line. Use `private readonly logger = createAppLogger(MyService.name);` in services, controllers, guards, gateways, listeners, and scheduled workers.
+- Add the logger to classes that perform I/O, auth, DB writes/reads, event dispatching, socket work, scheduled jobs, or important business decisions. Pure stateless calculation helpers may stay unlogged unless they make a decision that must be audited.
 - Every HTTP request must pass through `requestContextMiddleware`, which creates or preserves the `x-request-id` header and stores it in `AsyncLocalStorage` for downstream logs.
 - When a user is authenticated, set the request user context with `RequestContext.setUserId(userId)` in guards or auth flows so later logs can be correlated.
 - Prefer stable event names instead of prose messages, for example `agent.ingest.stored`, `auth.login.completed`, `socket.connected`, or `uptime.probe.down`.
@@ -48,6 +49,8 @@
 - Never log secrets, JWTs, refresh tokens, HMAC signatures, passwords, OTP codes, cookies, authorization headers, raw request bodies, or full telemetry batches.
 - Log batch summaries instead of per-row metric records. Include counts and duration: `batchSize`, `vpsInserted`, `webInserted`, `durationMs`.
 - Use `debug` for noisy flow details, `log` for important successful business events, `warn` for rejected or suspicious recoverable cases, `error` for failed operations, and `fatal` for startup/config failures.
+- Logger levels must be driven by `APP_ENV` first, then `NODE_ENV` as fallback. Environment policy: development enables `debug` and `verbose`; staging enables `debug` but not `verbose`; production enables only `log`, `warn`, `error`, and `fatal`; test enables only `error` and `fatal`.
+- In staging set `APP_ENV=staging` and `NODE_ENV=production`. In development set both to `development`. In production set both to `production`.
 - In production, keep `debug` and `verbose` disabled unless investigating an incident. Do not add high-volume success logs to hot paths.
 - For database writes, do not log before and after every row. Log after important create/update/delete operations or after a batch completes. Always log failed DB operations with error context.
 - For guards, log the rejection reason safely, such as missing header, timestamp drift, unknown machine, or invalid signature. Do not log the actual secret or signature.

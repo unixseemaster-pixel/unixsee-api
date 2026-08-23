@@ -3,25 +3,40 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { AlertStatus, WebsiteProbeSource } from '#/generated/prisma/enums.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
+import { TenantAccessService } from '#/common/tenancy/tenant-access.service.js';
 import { DashboardOverviewSnapshotService } from './dashboard-overview-snapshot.service.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 
 @Injectable()
 export class DashboardService {
+  private readonly logger = createAppLogger(DashboardService.name);
+
   constructor(
     private readonly dashboardOverviewSnapshotService: DashboardOverviewSnapshotService,
     private readonly trafficLoadService: TrafficLoadService,
     private readonly prisma: PrismaService,
+    private readonly tenantAccess: TenantAccessService,
   ) {}
 
   async getOverview(userId: string) {
-    return this.dashboardOverviewSnapshotService.getOverviewSnapshot(userId);
+    const overview =
+      await this.dashboardOverviewSnapshotService.getOverviewSnapshot(userId);
+
+    this.logger.debug('dashboard.overview.loaded', {
+      userId,
+      websiteCount: overview.websites.length,
+      vpsNodeCount: overview.vpsNodes.length,
+      status: overview.status,
+    });
+
+    return overview;
   }
 
   async getWebsiteDetails(userId: string, websiteId: string) {
+    await this.tenantAccess.assertWebsiteAccess(userId, websiteId);
     const website = await this.prisma.website.findFirst({
       where: {
         id: websiteId,
-        userId,
       },
       select: {
         id: true,
@@ -136,6 +151,10 @@ export class DashboardService {
     });
 
     if (!website) {
+      this.logger.warn('dashboard.website_details.not_found', {
+        userId,
+        websiteId,
+      });
       throw new NotFoundException('Website not found');
     }
 
@@ -167,6 +186,25 @@ export class DashboardService {
       latestSslMetric?.recordedAt,
       latestVpsMetric?.recordedAt,
     ]);
+    const checkout = this.buildCheckoutSnapshot(activeAlerts);
+    const backups = this.buildBackupSnapshot();
+    const activity = this.buildWebsiteActivity({
+      domain: website.domain,
+      latestProbeAt: latestProbeMetric?.recordedAt ?? website.lastProbeAt,
+      latestMetricAt: latestWebMetric?.recordedAt ?? null,
+      latestSslMetricAt: latestSslMetric?.recordedAt ?? null,
+      alerts: website.alerts,
+      isUp: latestProbeMetric?.isUp ?? null,
+      trafficLoad: traffic.load,
+    });
+
+    this.logger.debug('dashboard.website_details.loaded', {
+      userId,
+      websiteId,
+      domain: website.domain,
+      status,
+      activeAlertCount: activeAlerts.length,
+    });
 
     return {
       generatedAt: new Date(),
@@ -189,7 +227,8 @@ export class DashboardService {
         responseTimeMs: latestProbeMetric?.responseTimeMs ?? null,
         ttfbMs: latestProbeMetric?.ttfbMs ?? null,
         errorMessage: latestProbeMetric?.errorMessage ?? null,
-        lastProbeAt: latestProbeMetric?.recordedAt ?? null,
+        lastProbeAt:
+          latestProbeMetric?.recordedAt ?? website.lastProbeAt ?? null,
       },
       traffic: {
         load: traffic.load,
@@ -218,6 +257,12 @@ export class DashboardService {
         isAutoRenewable: website.ssl?.isAutoRenewable ?? null,
         statusMessage:
           latestSslMetric?.statusMessage ?? website.ssl?.statusMessage ?? null,
+        status: this.resolveSslStatus({
+          isValid: latestSslMetric?.isValid ?? website.ssl?.isValid ?? null,
+          daysRemaining:
+            latestSslMetric?.daysRemaining ??
+            this.calculateDaysRemaining(website.ssl?.validTo ?? null),
+        }),
         lastCheckedAt: latestSslMetric?.recordedAt ?? null,
       },
       vpsNode: website.vpsNode
@@ -243,6 +288,13 @@ export class DashboardService {
             memoryUsedMB: latestVpsMetric?.memoryUsedMB ?? null,
             memoryTotalMB: latestVpsMetric?.memoryTotalMB ?? null,
             storageUsagePercent: latestVpsMetric
+              ? this.calculateNullablePercent(
+                  latestVpsMetric.storageTotalMB -
+                    latestVpsMetric.storageAvailableMB,
+                  latestVpsMetric.storageTotalMB,
+                )
+              : null,
+            diskUsagePercent: latestVpsMetric
               ? this.calculateNullablePercent(
                   latestVpsMetric.storageTotalMB -
                     latestVpsMetric.storageAvailableMB,
@@ -275,6 +327,9 @@ export class DashboardService {
           metadata: alert.metadata,
         })),
       },
+      checkout,
+      backups,
+      activity,
     };
   }
 
@@ -283,7 +338,11 @@ export class DashboardService {
 
     const [websites, vpsNodes] = await Promise.all([
       this.prisma.website.findMany({
-        where: { userId },
+        where: {
+          tenantId: {
+            in: await this.tenantAccess.getAccessibleTenantIds(userId),
+          },
+        },
         orderBy: { domain: 'asc' },
         select: {
           id: true,
@@ -367,13 +426,19 @@ export class DashboardService {
       }),
       this.prisma.vpsNode.findMany({
         where: {
-          OR: [{ userId }, { websites: { some: { userId } } }],
+          websites: {
+            some: {
+              tenantId: {
+                in: await this.tenantAccess.getAccessibleTenantIds(userId),
+              },
+            },
+          },
         },
         orderBy: { name: 'asc' },
         select: {
           id: true,
           name: true,
-          machineId: true,
+          agentInstanceId: true,
           status: true,
           hostname: true,
           publicIp: true,
@@ -587,7 +652,7 @@ export class DashboardService {
       return {
         id: node.id,
         name: node.name,
-        machineId: node.machineId,
+        agentInstanceId: node.agentInstanceId,
         status: node.status,
         hostname: node.hostname,
         publicIp: node.publicIp,
@@ -677,8 +742,17 @@ export class DashboardService {
       };
     });
 
+    const status = this.resolveGlobalMonitoringStatus(websitesView, nodesView);
+
+    this.logger.debug('dashboard.monitoring.loaded', {
+      userId,
+      websiteCount: websitesView.length,
+      nodeCount: nodesView.length,
+      status,
+    });
+
     return {
-      status: this.resolveGlobalMonitoringStatus(websitesView, nodesView),
+      status,
       generatedAt: new Date(),
       range: {
         since: monitoringSince,
@@ -703,6 +777,141 @@ export class DashboardService {
         nodes: nodesView,
       },
     };
+  }
+
+  private buildCheckoutSnapshot(
+    activeAlerts: Array<{ title: string; message: string; severity: string }>,
+  ) {
+    const checkoutAlert = activeAlerts.find((alert) =>
+      this.containsCheckoutKeyword(`${alert.title} ${alert.message}`),
+    );
+
+    if (checkoutAlert) {
+      return {
+        status:
+          checkoutAlert.severity === 'CRITICAL' ? 'issue_detected' : 'degraded',
+        message: checkoutAlert.message,
+        lastCheckedAt: null,
+      };
+    }
+
+    return {
+      status: 'unknown',
+      message: 'No dedicated checkout probe is configured yet.',
+      lastCheckedAt: null,
+    };
+  }
+
+  private buildBackupSnapshot() {
+    return {
+      latest: null,
+      history: [],
+    };
+  }
+
+  private buildWebsiteActivity({
+    domain,
+    latestProbeAt,
+    latestMetricAt,
+    latestSslMetricAt,
+    alerts,
+    isUp,
+    trafficLoad,
+  }: {
+    domain: string;
+    latestProbeAt: Date | null | undefined;
+    latestMetricAt: Date | null | undefined;
+    latestSslMetricAt: Date | null | undefined;
+    alerts: Array<{
+      id: string;
+      title: string;
+      message: string;
+      severity: string;
+      status: string;
+      startedAt: Date;
+      resolvedAt: Date | null;
+      updatedAt: Date;
+    }>;
+    isUp: boolean | null;
+    trafficLoad: string;
+  }) {
+    const activity: Array<{
+      id: string;
+      type: string;
+      title: string;
+      description: string | null;
+      time: string | null;
+      tone: string;
+    }> = alerts.slice(0, 4).map((alert) => ({
+      id: `alert-${alert.id}`,
+      type: 'alert',
+      title: alert.title,
+      description: alert.message,
+      time: (alert.resolvedAt ?? alert.startedAt).toISOString(),
+      tone: this.mapActivityTone(alert.severity, alert.status),
+    }));
+
+    if (latestProbeAt) {
+      activity.push({
+        id: `probe-${domain}-${latestProbeAt.toISOString()}`,
+        type: 'probe',
+        title:
+          isUp === false
+            ? 'Availability issue detected'
+            : 'Availability checked',
+        description:
+          isUp === false
+            ? 'The latest backend public probe reported the website as down.'
+            : 'The latest backend public probe completed successfully.',
+        time: latestProbeAt.toISOString(),
+        tone: isUp === false ? 'critical' : 'success',
+      });
+    }
+
+    if (latestMetricAt) {
+      activity.push({
+        id: `traffic-${domain}-${latestMetricAt.toISOString()}`,
+        type: 'traffic',
+        title: 'Traffic metrics received',
+        description: `Current traffic pressure is ${trafficLoad}.`,
+        time: latestMetricAt.toISOString(),
+        tone:
+          trafficLoad === 'critical' || trafficLoad === 'high'
+            ? 'warning'
+            : 'info',
+      });
+    }
+
+    if (latestSslMetricAt) {
+      activity.push({
+        id: `ssl-${domain}-${latestSslMetricAt.toISOString()}`,
+        type: 'ssl',
+        title: 'SSL state checked',
+        description: 'Latest SSL certificate state was refreshed.',
+        time: latestSslMetricAt.toISOString(),
+        tone: 'info',
+      });
+    }
+
+    return activity
+      .sort((first, second) => {
+        const firstTime = first.time ? new Date(first.time).getTime() : 0;
+        const secondTime = second.time ? new Date(second.time).getTime() : 0;
+        return secondTime - firstTime;
+      })
+      .slice(0, 8);
+  }
+
+  private containsCheckoutKeyword(value: string) {
+    return /checkout|payment|gateway|درگاه|پرداخت|تسویه/i.test(value);
+  }
+
+  private mapActivityTone(severity: string, status: string) {
+    if (status === 'RESOLVED') return 'success';
+    if (severity === 'CRITICAL') return 'critical';
+    if (severity === 'WARNING') return 'warning';
+
+    return 'info';
   }
 
   private resolveMonitoringStatus({
@@ -764,6 +973,22 @@ export class DashboardService {
     }
 
     return 'healthy';
+  }
+
+  private resolveSslStatus({
+    isValid,
+    daysRemaining,
+  }: {
+    isValid: boolean | null;
+    daysRemaining: number | null;
+  }) {
+    if (isValid === false) return 'invalid';
+    if (typeof daysRemaining === 'number' && daysRemaining <= 14) {
+      return 'expiring';
+    }
+    if (isValid === true) return 'valid';
+
+    return 'unknown';
   }
 
   private calculateDaysRemaining(validTo: Date | null) {

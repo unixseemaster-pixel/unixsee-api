@@ -5,6 +5,10 @@ export interface WebsiteMetricsEvaluatedEvent {
   metrics: {
     concurrentRequests: number;
     requestRate?: number;
+    activeConnections?: number | null;
+    processingRequests?: number | null;
+    bytesInPerSecond?: number | null;
+    bytesOutPerSecond?: number | null;
   };
   timestamp: string;
 }

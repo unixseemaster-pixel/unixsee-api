@@ -1,4 +1,4 @@
-import type { User as PrismaUser } from '@prisma/client';
+import type { User as PrismaUser } from '#/generated/prisma/client.js';
 
 export type CurrentUserType = Omit<PrismaUser, 'password' | 'hashedRt'> & {
   sub: string;
@@ -14,8 +14,8 @@ declare global {
     interface Request {
       user?: User;
       requestId?: string;
-      vpsMachineId?: string;
-      isFirstProvisioningCycle?: boolean;
+      agentInstanceId?: string;
+      rawBody?: Buffer;
     }
   }
 }

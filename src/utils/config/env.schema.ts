@@ -15,14 +15,43 @@ const acceptedStatusCodesPattern =
   /^(?:\d{3}(?:\s*-\s*\d{3})?)(?:\s*,\s*\d{3}(?:\s*-\s*\d{3})?)*$/;
 
 export const envSchema = z.object({
+  APP_ENV: z
+    .enum(['development', 'staging', 'production', 'test'])
+    .default('development'),
+
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
     .default('development'),
 
   PORT: z.coerce.number().int().positive().default(4000),
 
+  /** Nest origin for agent enroll/heartbeat (no /api/v1 suffix). */
+  AGENT_API_BASE_URL: z
+    .url('AGENT_API_BASE_URL must be a valid URL')
+    .default('https://core.unixsee.com'),
+
   DATABASE_URL: z.url('DATABASE_URL must be a valid URL'),
 
+  SUPABASE_URL: z.url('SUPABASE_URL must be a valid URL'),
+  SUPABASE_SECRET_KEY: z
+    .string({ error: 'SUPABASE_SECRET_KEY is required' })
+    .trim()
+    .min(1, 'SUPABASE_SECRET_KEY is required'),
+  SUPABASE_STORAGE_BUCKET: z
+    .string({ error: 'SUPABASE_STORAGE_BUCKET is required' })
+    .trim()
+    .min(1, 'SUPABASE_STORAGE_BUCKET is required'),
+
+  STORAGE_PROVIDER: z
+    .enum(['filesystem', 's3'])
+    .default('filesystem'),
+  LOCAL_STORAGE_PATH: z
+    .string()
+    .trim()
+    .default('./storage/uploads'),
+
+  /** Public origin for browser-facing storage download URLs. */
+  STORAGE_PUBLIC_BASE_URL: z.url().optional(),
   JWT_ACCESS_SECRET: z
     .string({ error: 'JWT_ACCESS_SECRET is required' })
     .min(32, 'JWT_ACCESS_SECRET must be at least 32 characters'),
@@ -82,6 +111,24 @@ export const envSchema = z.object({
     .trim()
     .min(1)
     .default('Unixsee-Uptime-Probe/1.0 (+https://unixsee.com)'),
+
+  TICKET_AUTO_CLOSE_ENABLED: booleanEnv.default(true),
+  TICKET_AUTO_CLOSE_GRACE_DAYS: z.coerce.number().int().min(5).max(7).default(7),
+  TICKET_AUTO_CLOSE_CRON: z.string().trim().min(1).default('0 * * * *'),
+
+  // Temporary phone-OTP delivery via SMTP (SMS stand-in).
+  EMAIL_SMTP_HOST: z.string().trim().min(1),
+  EMAIL_SMTP_PORT: z.coerce.number().int().positive().default(465),
+  EMAIL_SMTP_SECURE: booleanEnv.default(true),
+  EMAIL_SMTP_TLS_REJECT_UNAUTHORIZED: booleanEnv.default(true),
+  EMAIL_SMTP_USER: z.string().trim().min(1),
+  EMAIL_SMTP_PASSWORD: z.string().min(1),
+  EMAIL_FROM: z.string().trim().min(1),
+  PHONE_OTP_MOCK_DELIVERY_EMAIL: z
+    .string()
+    .trim()
+    .email()
+    .default('arvin.ramezani6@gmail.com'),
 });
 
 export type Env = z.infer<typeof envSchema>;

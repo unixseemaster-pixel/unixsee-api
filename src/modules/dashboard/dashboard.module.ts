@@ -4,29 +4,23 @@ import { DashboardController } from './controllers/dashboard.controller.js';
 import { DashboardChartsService } from './services/dashboard-charts.service.js';
 import { DashboardOverviewSnapshotService } from './services/dashboard-overview-snapshot.service.js';
 import { DashboardService } from './services/dashboard.service.js';
-import { MetricsOverviewService } from '../metrics/services/metrics-overview.service.js';
-import { AlertsService } from '../alerts/services/alerts.service.js';
-import { SslCertificatesService } from '../ssl-certificates/services/ssl-certificates.service.js';
-import { SystemHealthService } from '../health/services/system-health.service.js';
-import { WebMetricsService } from '../metrics/services/web-metrics.service.js';
-import { TrafficLoadService } from '../metrics/services/traffic-load.service.js';
-import { AlertsRepository } from '../alerts/repositories/alerts.repository.js';
-import { WebMetricsRepository } from '../metrics/repositories/web-metrics.repository.js';
+import { MetricsModule } from '../metrics/metrics.module.js';
+import { AlertsModule } from '../alerts/alerts.module.js';
+import { SslCertificatesModule } from '../ssl-certificates/ssl-certificates.module.js';
+import { HealthModule } from '../health/health.module.js';
 
 @Module({
+  imports: [MetricsModule, AlertsModule, SslCertificatesModule, HealthModule],
   controllers: [DashboardController],
   providers: [
     DashboardChartsService,
     DashboardOverviewSnapshotService,
     DashboardService,
-    MetricsOverviewService,
-    AlertsService,
-    SslCertificatesService,
-    SystemHealthService,
-    WebMetricsService,
-    TrafficLoadService,
-    AlertsRepository,
-    WebMetricsRepository,
+  ],
+  exports: [
+    DashboardService,
+    DashboardChartsService,
+    DashboardOverviewSnapshotService,
   ],
 })
 export class DashboardModule {}

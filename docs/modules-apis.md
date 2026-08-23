@@ -1,3 +1,9 @@
+> **Historical / secondary:** Prefer monorepo
+> [`docs/backend/modules-and-routes.md`](../../docs/backend/modules-and-routes.md)
+> and ADRs 0004–0005 for new Nest work. This file still describes an older
+> target shape (including a mega `admin` module) that **ADR 0005 rejects**.
+> Keep useful endpoint ideas; do not follow conflicting structure.
+
 For this architecture, your backend should be designed around:
 
 - Clear bounded contexts (modules)

@@ -1,8 +1,10 @@
+import { TenantAccessService } from '#/common/tenancy/tenant-access.service.js';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { WebsiteProbeSource } from '#/generated/prisma/enums.js';
+import { createAppLogger } from '#/common/logging/app-logger.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
+import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 
 import type { TrafficLoadType } from '#/modules/metrics/types/traffic-load.type.js';
 
@@ -23,12 +25,17 @@ type WebMetricSample = {
   websiteId: string;
   concurrentRequests: number;
   requestRate: number;
+  activeConnections: number | null;
+  processingRequests: number | null;
+  bytesInPerSecond: bigint | null;
+  bytesOutPerSecond: bigint | null;
 };
 
 type ProbeMetricSample = {
   recordedAt: Date;
   websiteId: string;
   isUp: boolean;
+  statusCode: number | null;
   responseTimeMs: number | null;
   ttfbMs: number | null;
 };
@@ -64,13 +71,29 @@ type TrafficBucket = {
   requestRate: number;
   peakConcurrentRequests: number;
   trafficLoad: TrafficLoadType;
+  activeConnections: number | null;
+  processingRequests: number | null;
+  bytesInPerSecond: number | null;
+  bytesOutPerSecond: number | null;
 };
 
 type PerformanceBucket = {
   bucketStart: Date;
   avgResponseTimeMs: number | null;
+  p95ResponseTimeMs: number | null;
   avgTtfbMs: number | null;
   uptimePercent: number | null;
+  successfulChecks: number;
+  failedChecks: number;
+};
+
+type HttpStatusBucket = {
+  bucketStart: Date;
+  status2xx: number;
+  status3xx: number;
+  status4xx: number;
+  status5xx: number;
+  total: number;
 };
 
 type ResourceBucket = {
@@ -96,9 +119,13 @@ type DiskIoBucket = {
 
 @Injectable()
 export class DashboardChartsService {
+  private readonly logger = createAppLogger(DashboardChartsService.name);
+  private readonly minP95Samples = 3;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly trafficLoadService: TrafficLoadService,
+    private readonly tenantAccess: TenantAccessService,
   ) {}
 
   async getOverviewCharts(
@@ -128,6 +155,15 @@ export class DashboardChartsService {
       ),
     ]);
 
+    this.logger.debug('dashboard.charts.overview.loaded', {
+      userId,
+      range: range.range,
+      interval: range.interval,
+      websiteCount: websites.length,
+      vpsNodeCount: vpsNodes.length,
+      activeAlertCount: activeAlerts,
+    });
+
     const websiteCharts = websites.map((website) =>
       this.buildWebsiteCharts(website, range, webMetrics, probeMetrics),
     );
@@ -151,11 +187,9 @@ export class DashboardChartsService {
     intervalInput?: string,
   ) {
     const range = this.resolveRange(rangeInput, intervalInput);
+    await this.tenantAccess.assertWebsiteAccess(userId, websiteId);
     const website = await this.prisma.website.findFirst({
-      where: {
-        id: websiteId,
-        userId,
-      },
+      where: { id: websiteId },
       select: {
         id: true,
         domain: true,
@@ -163,6 +197,10 @@ export class DashboardChartsService {
     });
 
     if (!website) {
+      this.logger.warn('dashboard.charts.website.not_found', {
+        userId,
+        websiteId,
+      });
       throw new NotFoundException('Website not found');
     }
 
@@ -170,6 +208,15 @@ export class DashboardChartsService {
       this.getWebMetrics([website.id], range),
       this.getProbeMetrics([website.id], range),
     ]);
+
+    this.logger.debug('dashboard.charts.website.loaded', {
+      userId,
+      websiteId,
+      range: range.range,
+      interval: range.interval,
+      webSampleCount: webMetrics.length,
+      probeSampleCount: probeMetrics.length,
+    });
 
     return {
       generatedAt: new Date(),
@@ -190,10 +237,11 @@ export class DashboardChartsService {
     intervalInput?: string,
   ) {
     const range = this.resolveRange(rangeInput, intervalInput);
+    const tenantIds = await this.tenantAccess.getAccessibleTenantIds(userId);
     const vpsNode = await this.prisma.vpsNode.findFirst({
       where: {
         id: vpsNodeId,
-        OR: [{ userId }, { websites: { some: { userId } } }],
+        websites: { some: { tenantId: { in: tenantIds } } },
       },
       select: {
         id: true,
@@ -202,10 +250,22 @@ export class DashboardChartsService {
     });
 
     if (!vpsNode) {
+      this.logger.warn('dashboard.charts.vps.not_found', {
+        userId,
+        vpsNodeId,
+      });
       throw new NotFoundException('VPS node not found');
     }
 
     const vpsMetrics = await this.getVpsMetrics([vpsNode.id], range);
+
+    this.logger.debug('dashboard.charts.vps.loaded', {
+      userId,
+      vpsNodeId,
+      range: range.range,
+      interval: range.interval,
+      sampleCount: vpsMetrics.length,
+    });
 
     return {
       generatedAt: new Date(),
@@ -292,9 +352,10 @@ export class DashboardChartsService {
     };
   }
 
-  private getUserWebsites(userId: string) {
+  private async getUserWebsites(userId: string) {
+    const tenantIds = await this.tenantAccess.getAccessibleTenantIds(userId);
     return this.prisma.website.findMany({
-      where: { userId },
+      where: { tenantId: { in: tenantIds } },
       orderBy: { domain: 'asc' },
       select: {
         id: true,
@@ -303,10 +364,11 @@ export class DashboardChartsService {
     });
   }
 
-  private getUserVpsNodes(userId: string) {
+  private async getUserVpsNodes(userId: string) {
+    const tenantIds = await this.tenantAccess.getAccessibleTenantIds(userId);
     return this.prisma.vpsNode.findMany({
       where: {
-        OR: [{ userId }, { websites: { some: { userId } } }],
+        websites: { some: { tenantId: { in: tenantIds } } },
       },
       distinct: ['id'],
       orderBy: { name: 'asc' },
@@ -336,6 +398,10 @@ export class DashboardChartsService {
         websiteId: true,
         concurrentRequests: true,
         requestRate: true,
+        activeConnections: true,
+        processingRequests: true,
+        bytesInPerSecond: true,
+        bytesOutPerSecond: true,
       },
     });
   }
@@ -359,6 +425,7 @@ export class DashboardChartsService {
         recordedAt: true,
         websiteId: true,
         isUp: true,
+        statusCode: true,
         responseTimeMs: true,
         ttfbMs: true,
       },
@@ -397,18 +464,12 @@ export class DashboardChartsService {
     });
   }
 
-  private countActiveAlerts(userId: string) {
+  private async countActiveAlerts(userId: string) {
+    const tenantIds = await this.tenantAccess.getAccessibleTenantIds(userId);
     return this.prisma.alert.count({
       where: {
         status: 'ACTIVE',
-        OR: [
-          { website: { userId } },
-          {
-            vpsNode: {
-              OR: [{ userId }, { websites: { some: { userId } } }],
-            },
-          },
-        ],
+        website: { tenantId: { in: tenantIds } },
       },
     });
   }
@@ -431,6 +492,7 @@ export class DashboardChartsService {
       domain: website.domain,
       traffic: this.buildTrafficSeries(range, websiteWebMetrics),
       performance: this.buildPerformanceSeries(range, websiteProbeMetrics),
+      httpStatus: this.buildHttpStatusSeries(range, websiteProbeMetrics),
     };
   }
 
@@ -478,6 +540,26 @@ export class DashboardChartsService {
         requestRate,
         peakConcurrentRequests,
         trafficLoad,
+        activeConnections: this.nullableAverage(
+          bucketSamples
+            .map((sample) => sample.activeConnections)
+            .filter((value): value is number => value !== null),
+        ),
+        processingRequests: this.nullableAverage(
+          bucketSamples
+            .map((sample) => sample.processingRequests)
+            .filter((value): value is number => value !== null),
+        ),
+        bytesInPerSecond: this.nullableAverage(
+          bucketSamples
+            .map((sample) => this.toNullableNumber(sample.bytesInPerSecond))
+            .filter((value): value is number => value !== null),
+        ),
+        bytesOutPerSecond: this.nullableAverage(
+          bucketSamples
+            .map((sample) => this.toNullableNumber(sample.bytesOutPerSecond))
+            .filter((value): value is number => value !== null),
+        ),
       };
     });
   }
@@ -494,19 +576,50 @@ export class DashboardChartsService {
       const ttfbTimes = bucketSamples
         .map((sample) => sample.ttfbMs)
         .filter((value): value is number => value !== null);
+      const successfulChecks = bucketSamples.filter((sample) => sample.isUp).length;
+      const failedChecks = bucketSamples.filter((sample) => !sample.isUp).length;
 
       return {
         bucketStart,
         avgResponseTimeMs: this.nullableAverage(responseTimes),
+        p95ResponseTimeMs:
+          responseTimes.length < this.minP95Samples
+            ? null
+            : this.percentile(responseTimes, 95),
         avgTtfbMs: this.nullableAverage(ttfbTimes),
         uptimePercent:
           bucketSamples.length === 0
             ? null
-            : this.round(
-                (bucketSamples.filter((sample) => sample.isUp).length /
-                  bucketSamples.length) *
-                  100,
-              ),
+            : this.round((successfulChecks / bucketSamples.length) * 100),
+        successfulChecks,
+        failedChecks,
+      };
+    });
+  }
+
+  private buildHttpStatusSeries(
+    range: ResolvedChartRange,
+    samples: ProbeMetricSample[],
+  ): HttpStatusBucket[] {
+    return range.bucketStarts.map((bucketStart) => {
+      const bucketSamples = this.filterBucket(samples, bucketStart, range);
+      const statusCodes = bucketSamples
+        .map((sample) => sample.statusCode)
+        .filter((statusCode): statusCode is number => statusCode !== null);
+
+      return {
+        bucketStart,
+        status2xx: statusCodes.filter(
+          (statusCode) => statusCode >= 200 && statusCode < 300,
+        ).length,
+        status3xx: statusCodes.filter(
+          (statusCode) => statusCode >= 300 && statusCode < 400,
+        ).length,
+        status4xx: statusCodes.filter(
+          (statusCode) => statusCode >= 400 && statusCode < 500,
+        ).length,
+        status5xx: statusCodes.filter((statusCode) => statusCode >= 500).length,
+        total: statusCodes.length,
       };
     });
   }
@@ -693,6 +806,15 @@ export class DashboardChartsService {
     return Math.max(...values);
   }
 
+  private percentile(values: number[], percentile: number) {
+    if (values.length === 0) return null;
+
+    const sorted = [...values].sort((a, b) => a - b);
+    const index = Math.ceil((percentile / 100) * sorted.length) - 1;
+
+    return this.round(sorted[Math.min(Math.max(index, 0), sorted.length - 1)]);
+  }
+
   private calculatePercent(used: number, total: number) {
     if (total <= 0) return 0;
 
@@ -704,6 +826,12 @@ export class DashboardChartsService {
   }
 
   private toNumber(value: bigint) {
+    return Number(value);
+  }
+
+  private toNullableNumber(value: bigint | number | null | undefined) {
+    if (value === null || value === undefined) return null;
+
     return Number(value);
   }
 }

@@ -35,9 +35,23 @@ const appConfig = registerAs('app', () => {
   const env = result.data;
 
   return {
+    appEnv: env.APP_ENV,
     nodeEnv: env.NODE_ENV,
     port: env.PORT,
+    agentApiBaseUrl: env.AGENT_API_BASE_URL.replace(/\/$/, ''),
     databaseUrl: env.DATABASE_URL,
+    storage: {
+      url: env.SUPABASE_URL.replace(/\/$/, ''),
+      secretKey: env.SUPABASE_SECRET_KEY,
+      bucket: env.SUPABASE_STORAGE_BUCKET,
+      provider: env.STORAGE_PROVIDER,
+      localStoragePath: env.LOCAL_STORAGE_PATH,
+      publicBaseUrl:
+        env.STORAGE_PUBLIC_BASE_URL?.replace(/\/$/, '') ??
+        (env.APP_ENV === 'development' || env.APP_ENV === 'test'
+          ? `http://localhost:${env.PORT}`
+          : env.AGENT_API_BASE_URL.replace(/\/$/, '')),
+    },
     corsAllowedOrigins: env.CORS_ALLOWED_ORIGINS,
     otpExpiredTime: env.OTP_EXPIRED_TIME_KEY,
     otpRetryTime: env.OTP_RETRY_TIME,
@@ -66,6 +80,21 @@ const appConfig = registerAs('app', () => {
         env.UPTIME_PROBE_ACCEPT_STATUS_CODES,
       ),
       userAgent: env.UPTIME_PROBE_USER_AGENT,
+    },
+    tickets: {
+      autoCloseEnabled: env.TICKET_AUTO_CLOSE_ENABLED,
+      autoCloseGraceDays: env.TICKET_AUTO_CLOSE_GRACE_DAYS,
+      autoCloseCronExpression: env.TICKET_AUTO_CLOSE_CRON,
+    },
+    mail: {
+      smtpHost: env.EMAIL_SMTP_HOST,
+      smtpPort: env.EMAIL_SMTP_PORT,
+      smtpSecure: env.EMAIL_SMTP_SECURE,
+      smtpTlsRejectUnauthorized: env.EMAIL_SMTP_TLS_REJECT_UNAUTHORIZED,
+      smtpUser: env.EMAIL_SMTP_USER,
+      smtpPassword: env.EMAIL_SMTP_PASSWORD,
+      from: env.EMAIL_FROM,
+      phoneOtpMockDeliveryEmail: env.PHONE_OTP_MOCK_DELIVERY_EMAIL,
     },
   };
 });

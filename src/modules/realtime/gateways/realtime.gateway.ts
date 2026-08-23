@@ -11,7 +11,6 @@ import { RealtimeService } from '#/modules/realtime/services/realtime.service.js
 import { EVENT_NAMES } from '#/common/events/event.constants.js';
 import { TrafficLoadService } from '#/modules/metrics/services/traffic-load.service.js';
 
-import type { MetricsIngestedEventPayload } from '#/modules/event/event-dispatcher.service.js';
 import type { WebsiteMetricsEvaluatedEvent } from '#/common/events/website-metrics-evaluated.event.js';
 import type { WebsiteProbeEvaluatedEvent } from '#/common/events/website-probe-evaluated.event.js';
 import { createAppLogger } from '#/common/logging/app-logger.js';
@@ -215,72 +214,8 @@ export class RealtimeGateway
   }
 
   // =========================================================
-  // STEP 1 — VPS LIVE TICKS (REAL-TIME INFRA METRICS)
-  // =========================================================
-  @OnEvent(EVENT_NAMES.METRICS_INGESTED, { async: true })
-  async handleMetricsIngestedEvent(
-    event: MetricsIngestedEventPayload,
-  ): Promise<void> {
-    try {
-      const { vpsNodeId, batch } = event;
-
-      for (const entry of batch) {
-        const payload = {
-          vpsNodeId,
-          timestamp: entry.timestamp,
-          metrics: {
-            cpuUsagePercent: entry.metrics.cpuMean,
-            memoryUsedMB: entry.metrics.ramMeanMB,
-            memoryTotalMB: entry.metrics.ramTotalMB,
-            liteSpeedConnections: entry.metrics.lsConnectionsPeak,
-            diskReadBytesPerSecond: entry.metrics.diskReadBytesPerSecondMean,
-            diskWriteBytesPerSecond: entry.metrics.diskWriteBytesPerSecondMean,
-            diskIops: entry.metrics.diskIopsMean,
-            storageTotalMB: entry.metrics.storageTotalMB,
-            storageAvailableMB: entry.metrics.storageAvailableMB,
-          },
-        };
-
-        this.server.to(`vps:${vpsNodeId}`).emit('vps:live_tick', payload);
-      }
-
-      const monitoringSnapshot =
-        await this.realtimeService.getVpsMonitoringSnapshot(vpsNodeId);
-
-      if (monitoringSnapshot) {
-        this.server
-          .to(`vps:${vpsNodeId}`)
-          .emit(EVENT_NAMES.MONITORING_VPS_TICK, monitoringSnapshot);
-      }
-
-      const overviewUserIds =
-        await this.realtimeService.getUserIdsByVpsNodeId(vpsNodeId);
-
-      await Promise.all(
-        overviewUserIds.map(async (userId) => {
-          const overviewTick = await this.realtimeService.getOverviewVpsTick(
-            userId,
-            vpsNodeId,
-          );
-
-          if (!overviewTick) {
-            return;
-          }
-
-          this.server
-            .to(`user:${userId}`)
-            .emit(EVENT_NAMES.OVERVIEW_VPS_TICK, overviewTick);
-        }),
-      );
-    } catch (error: unknown) {
-      this.logger.error('socket.vps_live_tick.failed', error as Error, {
-        vpsNodeId: event.vpsNodeId,
-      });
-    }
-  }
-
-  // =========================================================
-  // STEP 2 — WEBSITE METRICS STREAM (UX-FOCUSED LAYER)
+  // WEBSITE METRICS STREAM (UX-FOCUSED LAYER)
+  // VPS host-metrics live ticks resume with monitoring-agent (ADR 0009).
   // =========================================================
   @OnEvent(EVENT_NAMES.WEBSITE_METRICS_EVALUATED, { async: true })
   async handleWebsiteMetricsEvaluated(
@@ -305,6 +240,7 @@ export class RealtimeGateway
           websiteId: payload.websiteId,
           domain: payload.domain,
           traffic: payload.traffic,
+          metrics: event.metrics,
           timestamp: payload.timestamp,
         });
 
@@ -335,6 +271,8 @@ export class RealtimeGateway
         this.server
           .to(`user:${userId}`)
           .emit(EVENT_NAMES.OVERVIEW_WEBSITE_TICK, overviewTick);
+
+        await this.emitWebsiteDetailsTickForWebsite(event.websiteId);
       }
     } catch (error: unknown) {
       this.logger.error('socket.website_metrics_stream.failed', error as Error, {
@@ -392,6 +330,8 @@ export class RealtimeGateway
       this.server
         .to(`user:${userId}`)
         .emit(EVENT_NAMES.OVERVIEW_WEBSITE_TICK, overviewTick);
+
+      await this.emitWebsiteDetailsTickForWebsite(event.websiteId);
     } catch (error: unknown) {
       this.logger.error('socket.website_probe_stream.failed', error as Error, {
         websiteId: event.websiteId,
@@ -415,6 +355,7 @@ export class RealtimeGateway
         .emit(EVENT_NAMES.INCIDENT_CREATED, event);
 
       await this.emitOverviewSnapshotForWebsite(event.websiteId);
+      await this.emitWebsiteDetailsTickForWebsite(event.websiteId);
     } catch (error: unknown) {
       this.logger.error('socket.incident_created_stream.failed', error as Error, {
         websiteId: event.websiteId,
@@ -437,12 +378,35 @@ export class RealtimeGateway
         .emit(EVENT_NAMES.INCIDENT_RESOLVED, event);
 
       await this.emitOverviewSnapshotForWebsite(event.websiteId);
+      await this.emitWebsiteDetailsTickForWebsite(event.websiteId);
     } catch (error: unknown) {
       this.logger.error('socket.incident_resolved_stream.failed', error as Error, {
         websiteId: event.websiteId,
         alertId: event.alertId,
       });
     }
+  }
+
+  private async emitWebsiteDetailsTickForWebsite(
+    websiteId: string,
+  ): Promise<void> {
+    const userId = await this.realtimeService.getUserIdByWebsiteId(websiteId);
+
+    if (!userId) {
+      return;
+    }
+
+    const detailsTick = await this.realtimeService.getWebsiteDetailsTick(
+      websiteId,
+    );
+
+    if (!detailsTick) {
+      return;
+    }
+
+    this.server
+      .to(`user:${userId}`)
+      .emit(EVENT_NAMES.DASHBOARD_WEBSITE_DETAILS_TICK, detailsTick);
   }
 
   private async emitOverviewSnapshotForWebsite(
