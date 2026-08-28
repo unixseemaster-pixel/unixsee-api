@@ -32,6 +32,7 @@ export type UserMinAggregateOutputType = {
   password: string | null
   fullName: string | null
   role: $Enums.Role | null
+  authorized: boolean | null
   status: $Enums.UserAccountStatus | null
   locale: string | null
   hashedRt: string | null
@@ -52,6 +53,7 @@ export type UserMaxAggregateOutputType = {
   password: string | null
   fullName: string | null
   role: $Enums.Role | null
+  authorized: boolean | null
   status: $Enums.UserAccountStatus | null
   locale: string | null
   hashedRt: string | null
@@ -72,6 +74,7 @@ export type UserCountAggregateOutputType = {
   password: number
   fullName: number
   role: number
+  authorized: number
   status: number
   locale: number
   hashedRt: number
@@ -94,6 +97,7 @@ export type UserMinAggregateInputType = {
   password?: true
   fullName?: true
   role?: true
+  authorized?: true
   status?: true
   locale?: true
   hashedRt?: true
@@ -114,6 +118,7 @@ export type UserMaxAggregateInputType = {
   password?: true
   fullName?: true
   role?: true
+  authorized?: true
   status?: true
   locale?: true
   hashedRt?: true
@@ -134,6 +139,7 @@ export type UserCountAggregateInputType = {
   password?: true
   fullName?: true
   role?: true
+  authorized?: true
   status?: true
   locale?: true
   hashedRt?: true
@@ -227,6 +233,7 @@ export type UserGroupByOutputType = {
   password: string | null
   fullName: string | null
   role: $Enums.Role
+  authorized: boolean
   status: $Enums.UserAccountStatus
   locale: string
   hashedRt: string | null
@@ -268,6 +275,7 @@ export type UserWhereInput = {
   password?: Prisma.StringNullableFilter<"User"> | string | null
   fullName?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
+  authorized?: Prisma.BoolFilter<"User"> | boolean
   status?: Prisma.EnumUserAccountStatusFilter<"User"> | $Enums.UserAccountStatus
   locale?: Prisma.StringFilter<"User"> | string
   hashedRt?: Prisma.StringNullableFilter<"User"> | string | null
@@ -296,6 +304,7 @@ export type UserWhereInput = {
   requestedAgentCommands?: Prisma.AgentCommandListRelationFilter
   auditRecords?: Prisma.AuditRecordListRelationFilter
   operationalActions?: Prisma.OperationalActionListRelationFilter
+  billingPeriodRows?: Prisma.BillingPeriodRowListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -306,6 +315,7 @@ export type UserOrderByWithRelationInput = {
   password?: Prisma.SortOrderInput | Prisma.SortOrder
   fullName?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
+  authorized?: Prisma.SortOrder
   status?: Prisma.SortOrder
   locale?: Prisma.SortOrder
   hashedRt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -334,6 +344,7 @@ export type UserOrderByWithRelationInput = {
   requestedAgentCommands?: Prisma.AgentCommandOrderByRelationAggregateInput
   auditRecords?: Prisma.AuditRecordOrderByRelationAggregateInput
   operationalActions?: Prisma.OperationalActionOrderByRelationAggregateInput
+  billingPeriodRows?: Prisma.BillingPeriodRowOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -347,6 +358,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringNullableFilter<"User"> | string | null
   fullName?: Prisma.StringNullableFilter<"User"> | string | null
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
+  authorized?: Prisma.BoolFilter<"User"> | boolean
   status?: Prisma.EnumUserAccountStatusFilter<"User"> | $Enums.UserAccountStatus
   locale?: Prisma.StringFilter<"User"> | string
   hashedRt?: Prisma.StringNullableFilter<"User"> | string | null
@@ -375,6 +387,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   requestedAgentCommands?: Prisma.AgentCommandListRelationFilter
   auditRecords?: Prisma.AuditRecordListRelationFilter
   operationalActions?: Prisma.OperationalActionListRelationFilter
+  billingPeriodRows?: Prisma.BillingPeriodRowListRelationFilter
 }, "id" | "phoneNumber" | "email" | "username">
 
 export type UserOrderByWithAggregationInput = {
@@ -385,6 +398,7 @@ export type UserOrderByWithAggregationInput = {
   password?: Prisma.SortOrderInput | Prisma.SortOrder
   fullName?: Prisma.SortOrderInput | Prisma.SortOrder
   role?: Prisma.SortOrder
+  authorized?: Prisma.SortOrder
   status?: Prisma.SortOrder
   locale?: Prisma.SortOrder
   hashedRt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -411,6 +425,7 @@ export type UserScalarWhereWithAggregatesInput = {
   password?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   fullName?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
+  authorized?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   status?: Prisma.EnumUserAccountStatusWithAggregatesFilter<"User"> | $Enums.UserAccountStatus
   locale?: Prisma.StringWithAggregatesFilter<"User"> | string
   hashedRt?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -431,6 +446,7 @@ export type UserCreateInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -459,6 +475,7 @@ export type UserCreateInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -469,6 +486,7 @@ export type UserUncheckedCreateInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -497,6 +515,7 @@ export type UserUncheckedCreateInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUpdateInput = {
@@ -507,6 +526,7 @@ export type UserUpdateInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -535,6 +555,7 @@ export type UserUpdateInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -545,6 +566,7 @@ export type UserUncheckedUpdateInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -573,6 +595,7 @@ export type UserUncheckedUpdateInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -583,6 +606,7 @@ export type UserCreateManyInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -603,6 +627,7 @@ export type UserUpdateManyMutationInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -623,6 +648,7 @@ export type UserUncheckedUpdateManyInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -643,6 +669,7 @@ export type UserCountOrderByAggregateInput = {
   password?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  authorized?: Prisma.SortOrder
   status?: Prisma.SortOrder
   locale?: Prisma.SortOrder
   hashedRt?: Prisma.SortOrder
@@ -663,6 +690,7 @@ export type UserMaxOrderByAggregateInput = {
   password?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  authorized?: Prisma.SortOrder
   status?: Prisma.SortOrder
   locale?: Prisma.SortOrder
   hashedRt?: Prisma.SortOrder
@@ -683,6 +711,7 @@ export type UserMinOrderByAggregateInput = {
   password?: Prisma.SortOrder
   fullName?: Prisma.SortOrder
   role?: Prisma.SortOrder
+  authorized?: Prisma.SortOrder
   status?: Prisma.SortOrder
   locale?: Prisma.SortOrder
   hashedRt?: Prisma.SortOrder
@@ -715,6 +744,10 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type EnumRoleFieldUpdateOperationsInput = {
   set?: $Enums.Role
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type EnumUserAccountStatusFieldUpdateOperationsInput = {
@@ -867,6 +900,22 @@ export type UserUpdateOneWithoutComplementaryRequestsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutComplementaryRequestsInput, Prisma.UserUpdateWithoutComplementaryRequestsInput>, Prisma.UserUncheckedUpdateWithoutComplementaryRequestsInput>
 }
 
+export type UserCreateNestedOneWithoutBillingPeriodRowsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBillingPeriodRowsInput, Prisma.UserUncheckedCreateWithoutBillingPeriodRowsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBillingPeriodRowsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutBillingPeriodRowsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBillingPeriodRowsInput, Prisma.UserUncheckedCreateWithoutBillingPeriodRowsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBillingPeriodRowsInput
+  upsert?: Prisma.UserUpsertWithoutBillingPeriodRowsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBillingPeriodRowsInput, Prisma.UserUpdateWithoutBillingPeriodRowsInput>, Prisma.UserUncheckedUpdateWithoutBillingPeriodRowsInput>
+}
+
 export type UserCreateNestedOneWithoutCreatedTicketsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedTicketsInput, Prisma.UserUncheckedCreateWithoutCreatedTicketsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedTicketsInput
@@ -1005,6 +1054,7 @@ export type UserCreateWithoutMembershipsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1032,6 +1082,7 @@ export type UserCreateWithoutMembershipsInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -1042,6 +1093,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1069,6 +1121,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -1095,6 +1148,7 @@ export type UserUpdateWithoutMembershipsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1122,6 +1176,7 @@ export type UserUpdateWithoutMembershipsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -1132,6 +1187,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1159,6 +1215,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutAuthorizationCasesInput = {
@@ -1169,6 +1226,7 @@ export type UserCreateWithoutAuthorizationCasesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1196,6 +1254,7 @@ export type UserCreateWithoutAuthorizationCasesInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAuthorizationCasesInput = {
@@ -1206,6 +1265,7 @@ export type UserUncheckedCreateWithoutAuthorizationCasesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1233,6 +1293,7 @@ export type UserUncheckedCreateWithoutAuthorizationCasesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAuthorizationCasesInput = {
@@ -1248,6 +1309,7 @@ export type UserCreateWithoutDecidedAuthorizationCasesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1275,6 +1337,7 @@ export type UserCreateWithoutDecidedAuthorizationCasesInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutDecidedAuthorizationCasesInput = {
@@ -1285,6 +1348,7 @@ export type UserUncheckedCreateWithoutDecidedAuthorizationCasesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1312,6 +1376,7 @@ export type UserUncheckedCreateWithoutDecidedAuthorizationCasesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutDecidedAuthorizationCasesInput = {
@@ -1338,6 +1403,7 @@ export type UserUpdateWithoutAuthorizationCasesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1365,6 +1431,7 @@ export type UserUpdateWithoutAuthorizationCasesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuthorizationCasesInput = {
@@ -1375,6 +1442,7 @@ export type UserUncheckedUpdateWithoutAuthorizationCasesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1402,6 +1470,7 @@ export type UserUncheckedUpdateWithoutAuthorizationCasesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutDecidedAuthorizationCasesInput = {
@@ -1423,6 +1492,7 @@ export type UserUpdateWithoutDecidedAuthorizationCasesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1450,6 +1520,7 @@ export type UserUpdateWithoutDecidedAuthorizationCasesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDecidedAuthorizationCasesInput = {
@@ -1460,6 +1531,7 @@ export type UserUncheckedUpdateWithoutDecidedAuthorizationCasesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1487,6 +1559,7 @@ export type UserUncheckedUpdateWithoutDecidedAuthorizationCasesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutVpsNodesInput = {
@@ -1497,6 +1570,7 @@ export type UserCreateWithoutVpsNodesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1524,6 +1598,7 @@ export type UserCreateWithoutVpsNodesInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutVpsNodesInput = {
@@ -1534,6 +1609,7 @@ export type UserUncheckedCreateWithoutVpsNodesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1561,6 +1637,7 @@ export type UserUncheckedCreateWithoutVpsNodesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutVpsNodesInput = {
@@ -1587,6 +1664,7 @@ export type UserUpdateWithoutVpsNodesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1614,6 +1692,7 @@ export type UserUpdateWithoutVpsNodesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVpsNodesInput = {
@@ -1624,6 +1703,7 @@ export type UserUncheckedUpdateWithoutVpsNodesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1651,6 +1731,7 @@ export type UserUncheckedUpdateWithoutVpsNodesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutWebsitesInput = {
@@ -1661,6 +1742,7 @@ export type UserCreateWithoutWebsitesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1688,6 +1770,7 @@ export type UserCreateWithoutWebsitesInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutWebsitesInput = {
@@ -1698,6 +1781,7 @@ export type UserUncheckedCreateWithoutWebsitesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1725,6 +1809,7 @@ export type UserUncheckedCreateWithoutWebsitesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutWebsitesInput = {
@@ -1751,6 +1836,7 @@ export type UserUpdateWithoutWebsitesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1778,6 +1864,7 @@ export type UserUpdateWithoutWebsitesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWebsitesInput = {
@@ -1788,6 +1875,7 @@ export type UserUncheckedUpdateWithoutWebsitesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1815,6 +1903,7 @@ export type UserUncheckedUpdateWithoutWebsitesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutRequestedAgentCommandsInput = {
@@ -1825,6 +1914,7 @@ export type UserCreateWithoutRequestedAgentCommandsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1852,6 +1942,7 @@ export type UserCreateWithoutRequestedAgentCommandsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutAuthorInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutRequestedAgentCommandsInput = {
@@ -1862,6 +1953,7 @@ export type UserUncheckedCreateWithoutRequestedAgentCommandsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -1889,6 +1981,7 @@ export type UserUncheckedCreateWithoutRequestedAgentCommandsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutAuthorInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutRequestedAgentCommandsInput = {
@@ -1915,6 +2008,7 @@ export type UserUpdateWithoutRequestedAgentCommandsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1942,6 +2036,7 @@ export type UserUpdateWithoutRequestedAgentCommandsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutAuthorNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRequestedAgentCommandsInput = {
@@ -1952,6 +2047,7 @@ export type UserUncheckedUpdateWithoutRequestedAgentCommandsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1979,6 +2075,7 @@ export type UserUncheckedUpdateWithoutRequestedAgentCommandsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutAuthorNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutLinkedPlanRequestsInput = {
@@ -1989,6 +2086,7 @@ export type UserCreateWithoutLinkedPlanRequestsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2016,6 +2114,7 @@ export type UserCreateWithoutLinkedPlanRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutLinkedPlanRequestsInput = {
@@ -2026,6 +2125,7 @@ export type UserUncheckedCreateWithoutLinkedPlanRequestsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2053,6 +2153,7 @@ export type UserUncheckedCreateWithoutLinkedPlanRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutLinkedPlanRequestsInput = {
@@ -2068,6 +2169,7 @@ export type UserCreateWithoutCreatedPlanRequestsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2095,6 +2197,7 @@ export type UserCreateWithoutCreatedPlanRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedPlanRequestsInput = {
@@ -2105,6 +2208,7 @@ export type UserUncheckedCreateWithoutCreatedPlanRequestsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2132,6 +2236,7 @@ export type UserUncheckedCreateWithoutCreatedPlanRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedPlanRequestsInput = {
@@ -2158,6 +2263,7 @@ export type UserUpdateWithoutLinkedPlanRequestsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2185,6 +2291,7 @@ export type UserUpdateWithoutLinkedPlanRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLinkedPlanRequestsInput = {
@@ -2195,6 +2302,7 @@ export type UserUncheckedUpdateWithoutLinkedPlanRequestsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2222,6 +2330,7 @@ export type UserUncheckedUpdateWithoutLinkedPlanRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutCreatedPlanRequestsInput = {
@@ -2243,6 +2352,7 @@ export type UserUpdateWithoutCreatedPlanRequestsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2270,6 +2380,7 @@ export type UserUpdateWithoutCreatedPlanRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedPlanRequestsInput = {
@@ -2280,6 +2391,7 @@ export type UserUncheckedUpdateWithoutCreatedPlanRequestsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2307,6 +2419,7 @@ export type UserUncheckedUpdateWithoutCreatedPlanRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutComplementaryRequestsInput = {
@@ -2317,6 +2430,7 @@ export type UserCreateWithoutComplementaryRequestsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2344,6 +2458,7 @@ export type UserCreateWithoutComplementaryRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutComplementaryRequestsInput = {
@@ -2354,6 +2469,7 @@ export type UserUncheckedCreateWithoutComplementaryRequestsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2381,6 +2497,7 @@ export type UserUncheckedCreateWithoutComplementaryRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutComplementaryRequestsInput = {
@@ -2407,6 +2524,7 @@ export type UserUpdateWithoutComplementaryRequestsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2434,6 +2552,7 @@ export type UserUpdateWithoutComplementaryRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutComplementaryRequestsInput = {
@@ -2444,6 +2563,7 @@ export type UserUncheckedUpdateWithoutComplementaryRequestsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2471,6 +2591,179 @@ export type UserUncheckedUpdateWithoutComplementaryRequestsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutBillingPeriodRowsInput = {
+  id?: string
+  phoneNumber?: string | null
+  email?: string | null
+  username?: string | null
+  password?: string | null
+  fullName?: string | null
+  role?: $Enums.Role
+  authorized?: boolean
+  status?: $Enums.UserAccountStatus
+  locale?: string
+  hashedRt?: string | null
+  suspendedAt?: Date | string | null
+  suspendedReason?: string | null
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  avatarUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  websites?: Prisma.WebsiteCreateNestedManyWithoutUserInput
+  vpsNodes?: Prisma.VpsNodeCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutUserInput
+  decidedAuthorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutDecidedByInput
+  createdPlanRequests?: Prisma.PlanRequestCreateNestedManyWithoutCreatedByUserInput
+  linkedPlanRequests?: Prisma.PlanRequestCreateNestedManyWithoutLinkedUserInput
+  complementaryRequests?: Prisma.ComplementaryServiceRequestCreateNestedManyWithoutCreatedByUserInput
+  assignedTickets?: Prisma.TicketCreateNestedManyWithoutAssigneeInput
+  createdTickets?: Prisma.TicketCreateNestedManyWithoutCreatedByInput
+  ticketMessages?: Prisma.TicketMessageCreateNestedManyWithoutAuthorInput
+  notificationReads?: Prisma.NotificationReadCreateNestedManyWithoutUserInput
+  authoredNotifications?: Prisma.NotificationCreateNestedManyWithoutAuthorInput
+  unixseeMessageReads?: Prisma.UnixseeMessageReadCreateNestedManyWithoutUserInput
+  authoredUnixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutAuthorInput
+  requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
+  auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
+  operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+}
+
+export type UserUncheckedCreateWithoutBillingPeriodRowsInput = {
+  id?: string
+  phoneNumber?: string | null
+  email?: string | null
+  username?: string | null
+  password?: string | null
+  fullName?: string | null
+  role?: $Enums.Role
+  authorized?: boolean
+  status?: $Enums.UserAccountStatus
+  locale?: string
+  hashedRt?: string | null
+  suspendedAt?: Date | string | null
+  suspendedReason?: string | null
+  phoneVerifiedAt?: Date | string | null
+  emailVerifiedAt?: Date | string | null
+  avatarUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  websites?: Prisma.WebsiteUncheckedCreateNestedManyWithoutUserInput
+  vpsNodes?: Prisma.VpsNodeUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutUserInput
+  decidedAuthorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutDecidedByInput
+  createdPlanRequests?: Prisma.PlanRequestUncheckedCreateNestedManyWithoutCreatedByUserInput
+  linkedPlanRequests?: Prisma.PlanRequestUncheckedCreateNestedManyWithoutLinkedUserInput
+  complementaryRequests?: Prisma.ComplementaryServiceRequestUncheckedCreateNestedManyWithoutCreatedByUserInput
+  assignedTickets?: Prisma.TicketUncheckedCreateNestedManyWithoutAssigneeInput
+  createdTickets?: Prisma.TicketUncheckedCreateNestedManyWithoutCreatedByInput
+  ticketMessages?: Prisma.TicketMessageUncheckedCreateNestedManyWithoutAuthorInput
+  notificationReads?: Prisma.NotificationReadUncheckedCreateNestedManyWithoutUserInput
+  authoredNotifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutAuthorInput
+  unixseeMessageReads?: Prisma.UnixseeMessageReadUncheckedCreateNestedManyWithoutUserInput
+  authoredUnixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutAuthorInput
+  requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
+  auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
+  operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+}
+
+export type UserCreateOrConnectWithoutBillingPeriodRowsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutBillingPeriodRowsInput, Prisma.UserUncheckedCreateWithoutBillingPeriodRowsInput>
+}
+
+export type UserUpsertWithoutBillingPeriodRowsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutBillingPeriodRowsInput, Prisma.UserUncheckedUpdateWithoutBillingPeriodRowsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutBillingPeriodRowsInput, Prisma.UserUncheckedCreateWithoutBillingPeriodRowsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutBillingPeriodRowsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutBillingPeriodRowsInput, Prisma.UserUncheckedUpdateWithoutBillingPeriodRowsInput>
+}
+
+export type UserUpdateWithoutBillingPeriodRowsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  websites?: Prisma.WebsiteUpdateManyWithoutUserNestedInput
+  vpsNodes?: Prisma.VpsNodeUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutUserNestedInput
+  decidedAuthorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutDecidedByNestedInput
+  createdPlanRequests?: Prisma.PlanRequestUpdateManyWithoutCreatedByUserNestedInput
+  linkedPlanRequests?: Prisma.PlanRequestUpdateManyWithoutLinkedUserNestedInput
+  complementaryRequests?: Prisma.ComplementaryServiceRequestUpdateManyWithoutCreatedByUserNestedInput
+  assignedTickets?: Prisma.TicketUpdateManyWithoutAssigneeNestedInput
+  createdTickets?: Prisma.TicketUpdateManyWithoutCreatedByNestedInput
+  ticketMessages?: Prisma.TicketMessageUpdateManyWithoutAuthorNestedInput
+  notificationReads?: Prisma.NotificationReadUpdateManyWithoutUserNestedInput
+  authoredNotifications?: Prisma.NotificationUpdateManyWithoutAuthorNestedInput
+  unixseeMessageReads?: Prisma.UnixseeMessageReadUpdateManyWithoutUserNestedInput
+  authoredUnixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutAuthorNestedInput
+  requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
+  auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
+  operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+}
+
+export type UserUncheckedUpdateWithoutBillingPeriodRowsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suspendedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  suspendedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  websites?: Prisma.WebsiteUncheckedUpdateManyWithoutUserNestedInput
+  vpsNodes?: Prisma.VpsNodeUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutUserNestedInput
+  decidedAuthorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutDecidedByNestedInput
+  createdPlanRequests?: Prisma.PlanRequestUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  linkedPlanRequests?: Prisma.PlanRequestUncheckedUpdateManyWithoutLinkedUserNestedInput
+  complementaryRequests?: Prisma.ComplementaryServiceRequestUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  assignedTickets?: Prisma.TicketUncheckedUpdateManyWithoutAssigneeNestedInput
+  createdTickets?: Prisma.TicketUncheckedUpdateManyWithoutCreatedByNestedInput
+  ticketMessages?: Prisma.TicketMessageUncheckedUpdateManyWithoutAuthorNestedInput
+  notificationReads?: Prisma.NotificationReadUncheckedUpdateManyWithoutUserNestedInput
+  authoredNotifications?: Prisma.NotificationUncheckedUpdateManyWithoutAuthorNestedInput
+  unixseeMessageReads?: Prisma.UnixseeMessageReadUncheckedUpdateManyWithoutUserNestedInput
+  authoredUnixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutAuthorNestedInput
+  requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
+  auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
+  operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
 }
 
 export type UserCreateWithoutCreatedTicketsInput = {
@@ -2481,6 +2774,7 @@ export type UserCreateWithoutCreatedTicketsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2508,6 +2802,7 @@ export type UserCreateWithoutCreatedTicketsInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutCreatedTicketsInput = {
@@ -2518,6 +2813,7 @@ export type UserUncheckedCreateWithoutCreatedTicketsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2545,6 +2841,7 @@ export type UserUncheckedCreateWithoutCreatedTicketsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutCreatedTicketsInput = {
@@ -2560,6 +2857,7 @@ export type UserCreateWithoutAssignedTicketsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2587,6 +2885,7 @@ export type UserCreateWithoutAssignedTicketsInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAssignedTicketsInput = {
@@ -2597,6 +2896,7 @@ export type UserUncheckedCreateWithoutAssignedTicketsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2624,6 +2924,7 @@ export type UserUncheckedCreateWithoutAssignedTicketsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAssignedTicketsInput = {
@@ -2650,6 +2951,7 @@ export type UserUpdateWithoutCreatedTicketsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2677,6 +2979,7 @@ export type UserUpdateWithoutCreatedTicketsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCreatedTicketsInput = {
@@ -2687,6 +2990,7 @@ export type UserUncheckedUpdateWithoutCreatedTicketsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2714,6 +3018,7 @@ export type UserUncheckedUpdateWithoutCreatedTicketsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUpsertWithoutAssignedTicketsInput = {
@@ -2735,6 +3040,7 @@ export type UserUpdateWithoutAssignedTicketsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2762,6 +3068,7 @@ export type UserUpdateWithoutAssignedTicketsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAssignedTicketsInput = {
@@ -2772,6 +3079,7 @@ export type UserUncheckedUpdateWithoutAssignedTicketsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2799,6 +3107,7 @@ export type UserUncheckedUpdateWithoutAssignedTicketsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutTicketMessagesInput = {
@@ -2809,6 +3118,7 @@ export type UserCreateWithoutTicketMessagesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2836,6 +3146,7 @@ export type UserCreateWithoutTicketMessagesInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutTicketMessagesInput = {
@@ -2846,6 +3157,7 @@ export type UserUncheckedCreateWithoutTicketMessagesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -2873,6 +3185,7 @@ export type UserUncheckedCreateWithoutTicketMessagesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutTicketMessagesInput = {
@@ -2899,6 +3212,7 @@ export type UserUpdateWithoutTicketMessagesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2926,6 +3240,7 @@ export type UserUpdateWithoutTicketMessagesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTicketMessagesInput = {
@@ -2936,6 +3251,7 @@ export type UserUncheckedUpdateWithoutTicketMessagesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2963,6 +3279,7 @@ export type UserUncheckedUpdateWithoutTicketMessagesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutAuthoredNotificationsInput = {
@@ -2973,6 +3290,7 @@ export type UserCreateWithoutAuthoredNotificationsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3000,6 +3318,7 @@ export type UserCreateWithoutAuthoredNotificationsInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAuthoredNotificationsInput = {
@@ -3010,6 +3329,7 @@ export type UserUncheckedCreateWithoutAuthoredNotificationsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3037,6 +3357,7 @@ export type UserUncheckedCreateWithoutAuthoredNotificationsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAuthoredNotificationsInput = {
@@ -3063,6 +3384,7 @@ export type UserUpdateWithoutAuthoredNotificationsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3090,6 +3412,7 @@ export type UserUpdateWithoutAuthoredNotificationsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuthoredNotificationsInput = {
@@ -3100,6 +3423,7 @@ export type UserUncheckedUpdateWithoutAuthoredNotificationsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3127,6 +3451,7 @@ export type UserUncheckedUpdateWithoutAuthoredNotificationsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutNotificationReadsInput = {
@@ -3137,6 +3462,7 @@ export type UserCreateWithoutNotificationReadsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3164,6 +3490,7 @@ export type UserCreateWithoutNotificationReadsInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationReadsInput = {
@@ -3174,6 +3501,7 @@ export type UserUncheckedCreateWithoutNotificationReadsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3201,6 +3529,7 @@ export type UserUncheckedCreateWithoutNotificationReadsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationReadsInput = {
@@ -3227,6 +3556,7 @@ export type UserUpdateWithoutNotificationReadsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3254,6 +3584,7 @@ export type UserUpdateWithoutNotificationReadsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationReadsInput = {
@@ -3264,6 +3595,7 @@ export type UserUncheckedUpdateWithoutNotificationReadsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3291,6 +3623,7 @@ export type UserUncheckedUpdateWithoutNotificationReadsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutAuditRecordsInput = {
@@ -3301,6 +3634,7 @@ export type UserCreateWithoutAuditRecordsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3328,6 +3662,7 @@ export type UserCreateWithoutAuditRecordsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutAuthorInput
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAuditRecordsInput = {
@@ -3338,6 +3673,7 @@ export type UserUncheckedCreateWithoutAuditRecordsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3365,6 +3701,7 @@ export type UserUncheckedCreateWithoutAuditRecordsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutAuthorInput
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAuditRecordsInput = {
@@ -3391,6 +3728,7 @@ export type UserUpdateWithoutAuditRecordsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3418,6 +3756,7 @@ export type UserUpdateWithoutAuditRecordsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutAuthorNestedInput
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditRecordsInput = {
@@ -3428,6 +3767,7 @@ export type UserUncheckedUpdateWithoutAuditRecordsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3455,6 +3795,7 @@ export type UserUncheckedUpdateWithoutAuditRecordsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutAuthorNestedInput
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutOperationalActionsInput = {
@@ -3465,6 +3806,7 @@ export type UserCreateWithoutOperationalActionsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3492,6 +3834,7 @@ export type UserCreateWithoutOperationalActionsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutAuthorInput
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutOperationalActionsInput = {
@@ -3502,6 +3845,7 @@ export type UserUncheckedCreateWithoutOperationalActionsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3529,6 +3873,7 @@ export type UserUncheckedCreateWithoutOperationalActionsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutAuthorInput
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutOperationalActionsInput = {
@@ -3555,6 +3900,7 @@ export type UserUpdateWithoutOperationalActionsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3582,6 +3928,7 @@ export type UserUpdateWithoutOperationalActionsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutAuthorNestedInput
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOperationalActionsInput = {
@@ -3592,6 +3939,7 @@ export type UserUncheckedUpdateWithoutOperationalActionsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3619,6 +3967,7 @@ export type UserUncheckedUpdateWithoutOperationalActionsInput = {
   authoredUnixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutAuthorNestedInput
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutAuthoredUnixseeMessagesInput = {
@@ -3629,6 +3978,7 @@ export type UserCreateWithoutAuthoredUnixseeMessagesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3656,6 +4006,7 @@ export type UserCreateWithoutAuthoredUnixseeMessagesInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAuthoredUnixseeMessagesInput = {
@@ -3666,6 +4017,7 @@ export type UserUncheckedCreateWithoutAuthoredUnixseeMessagesInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3693,6 +4045,7 @@ export type UserUncheckedCreateWithoutAuthoredUnixseeMessagesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAuthoredUnixseeMessagesInput = {
@@ -3719,6 +4072,7 @@ export type UserUpdateWithoutAuthoredUnixseeMessagesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3746,6 +4100,7 @@ export type UserUpdateWithoutAuthoredUnixseeMessagesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuthoredUnixseeMessagesInput = {
@@ -3756,6 +4111,7 @@ export type UserUncheckedUpdateWithoutAuthoredUnixseeMessagesInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3783,6 +4139,7 @@ export type UserUncheckedUpdateWithoutAuthoredUnixseeMessagesInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutUnixseeMessageReadsInput = {
@@ -3793,6 +4150,7 @@ export type UserCreateWithoutUnixseeMessageReadsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3820,6 +4178,7 @@ export type UserCreateWithoutUnixseeMessageReadsInput = {
   requestedAgentCommands?: Prisma.AgentCommandCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutUnixseeMessageReadsInput = {
@@ -3830,6 +4189,7 @@ export type UserUncheckedCreateWithoutUnixseeMessageReadsInput = {
   password?: string | null
   fullName?: string | null
   role?: $Enums.Role
+  authorized?: boolean
   status?: $Enums.UserAccountStatus
   locale?: string
   hashedRt?: string | null
@@ -3857,6 +4217,7 @@ export type UserUncheckedCreateWithoutUnixseeMessageReadsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedCreateNestedManyWithoutRequesterInput
   auditRecords?: Prisma.AuditRecordUncheckedCreateNestedManyWithoutActorInput
   operationalActions?: Prisma.OperationalActionUncheckedCreateNestedManyWithoutRequesterInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutUnixseeMessageReadsInput = {
@@ -3883,6 +4244,7 @@ export type UserUpdateWithoutUnixseeMessageReadsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3910,6 +4272,7 @@ export type UserUpdateWithoutUnixseeMessageReadsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUnixseeMessageReadsInput = {
@@ -3920,6 +4283,7 @@ export type UserUncheckedUpdateWithoutUnixseeMessageReadsInput = {
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  authorized?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   hashedRt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3947,6 +4311,7 @@ export type UserUncheckedUpdateWithoutUnixseeMessageReadsInput = {
   requestedAgentCommands?: Prisma.AgentCommandUncheckedUpdateManyWithoutRequesterNestedInput
   auditRecords?: Prisma.AuditRecordUncheckedUpdateManyWithoutActorNestedInput
   operationalActions?: Prisma.OperationalActionUncheckedUpdateManyWithoutRequesterNestedInput
+  billingPeriodRows?: Prisma.BillingPeriodRowUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 
@@ -3973,6 +4338,7 @@ export type UserCountOutputType = {
   requestedAgentCommands: number
   auditRecords: number
   operationalActions: number
+  billingPeriodRows: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3994,6 +4360,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   requestedAgentCommands?: boolean | UserCountOutputTypeCountRequestedAgentCommandsArgs
   auditRecords?: boolean | UserCountOutputTypeCountAuditRecordsArgs
   operationalActions?: boolean | UserCountOutputTypeCountOperationalActionsArgs
+  billingPeriodRows?: boolean | UserCountOutputTypeCountBillingPeriodRowsArgs
 }
 
 /**
@@ -4132,6 +4499,13 @@ export type UserCountOutputTypeCountOperationalActionsArgs<ExtArgs extends runti
   where?: Prisma.OperationalActionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountBillingPeriodRowsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BillingPeriodRowWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4141,6 +4515,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   password?: boolean
   fullName?: boolean
   role?: boolean
+  authorized?: boolean
   status?: boolean
   locale?: boolean
   hashedRt?: boolean
@@ -4169,6 +4544,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   requestedAgentCommands?: boolean | Prisma.User$requestedAgentCommandsArgs<ExtArgs>
   auditRecords?: boolean | Prisma.User$auditRecordsArgs<ExtArgs>
   operationalActions?: boolean | Prisma.User$operationalActionsArgs<ExtArgs>
+  billingPeriodRows?: boolean | Prisma.User$billingPeriodRowsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -4180,6 +4556,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   fullName?: boolean
   role?: boolean
+  authorized?: boolean
   status?: boolean
   locale?: boolean
   hashedRt?: boolean
@@ -4200,6 +4577,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   fullName?: boolean
   role?: boolean
+  authorized?: boolean
   status?: boolean
   locale?: boolean
   hashedRt?: boolean
@@ -4220,6 +4598,7 @@ export type UserSelectScalar = {
   password?: boolean
   fullName?: boolean
   role?: boolean
+  authorized?: boolean
   status?: boolean
   locale?: boolean
   hashedRt?: boolean
@@ -4232,7 +4611,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phoneNumber" | "email" | "username" | "password" | "fullName" | "role" | "status" | "locale" | "hashedRt" | "suspendedAt" | "suspendedReason" | "phoneVerifiedAt" | "emailVerifiedAt" | "avatarUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phoneNumber" | "email" | "username" | "password" | "fullName" | "role" | "authorized" | "status" | "locale" | "hashedRt" | "suspendedAt" | "suspendedReason" | "phoneVerifiedAt" | "emailVerifiedAt" | "avatarUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   websites?: boolean | Prisma.User$websitesArgs<ExtArgs>
   vpsNodes?: boolean | Prisma.User$vpsNodesArgs<ExtArgs>
@@ -4252,6 +4631,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   requestedAgentCommands?: boolean | Prisma.User$requestedAgentCommandsArgs<ExtArgs>
   auditRecords?: boolean | Prisma.User$auditRecordsArgs<ExtArgs>
   operationalActions?: boolean | Prisma.User$operationalActionsArgs<ExtArgs>
+  billingPeriodRows?: boolean | Prisma.User$billingPeriodRowsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -4278,6 +4658,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     requestedAgentCommands: Prisma.$AgentCommandPayload<ExtArgs>[]
     auditRecords: Prisma.$AuditRecordPayload<ExtArgs>[]
     operationalActions: Prisma.$OperationalActionPayload<ExtArgs>[]
+    billingPeriodRows: Prisma.$BillingPeriodRowPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4287,6 +4668,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     password: string | null
     fullName: string | null
     role: $Enums.Role
+    authorized: boolean
     status: $Enums.UserAccountStatus
     locale: string
     hashedRt: string | null
@@ -4709,6 +5091,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   requestedAgentCommands<T extends Prisma.User$requestedAgentCommandsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$requestedAgentCommandsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AgentCommandPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditRecords<T extends Prisma.User$auditRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   operationalActions<T extends Prisma.User$operationalActionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$operationalActionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperationalActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  billingPeriodRows<T extends Prisma.User$billingPeriodRowsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$billingPeriodRowsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BillingPeriodRowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4745,6 +5128,7 @@ export interface UserFieldRefs {
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly fullName: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
+  readonly authorized: Prisma.FieldRef<"User", 'Boolean'>
   readonly status: Prisma.FieldRef<"User", 'UserAccountStatus'>
   readonly locale: Prisma.FieldRef<"User", 'String'>
   readonly hashedRt: Prisma.FieldRef<"User", 'String'>
@@ -5577,6 +5961,30 @@ export type User$operationalActionsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.OperationalActionScalarFieldEnum | Prisma.OperationalActionScalarFieldEnum[]
+}
+
+/**
+ * User.billingPeriodRows
+ */
+export type User$billingPeriodRowsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BillingPeriodRow
+   */
+  select?: Prisma.BillingPeriodRowSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BillingPeriodRow
+   */
+  omit?: Prisma.BillingPeriodRowOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BillingPeriodRowInclude<ExtArgs> | null
+  where?: Prisma.BillingPeriodRowWhereInput
+  orderBy?: Prisma.BillingPeriodRowOrderByWithRelationInput | Prisma.BillingPeriodRowOrderByWithRelationInput[]
+  cursor?: Prisma.BillingPeriodRowWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BillingPeriodRowScalarFieldEnum | Prisma.BillingPeriodRowScalarFieldEnum[]
 }
 
 /**

@@ -25,6 +25,16 @@ export const envSchema = z.object({
 
   PORT: z.coerce.number().int().positive().default(4000),
 
+  /**
+   * Reverse proxies in front of the API whose `X-Forwarded-For` entries may be
+   * believed. Express walks the chain right-to-left this many hops to resolve
+   * `request.ip`, so it lands on the address our own proxy observed rather than
+   * on the leftmost, entirely client-supplied entry. `0` trusts no forwarded
+   * headers at all (the app is exposed directly). Setting it above the real
+   * number of proxies re-opens IP spoofing, and with it every per-IP ceiling.
+   */
+  TRUST_PROXY_HOPS: z.coerce.number().int().min(0).default(1),
+
   /** Nest origin for agent enroll/heartbeat (no /api/v1 suffix). */
   AGENT_API_BASE_URL: z
     .url('AGENT_API_BASE_URL must be a valid URL')
@@ -42,13 +52,8 @@ export const envSchema = z.object({
     .trim()
     .min(1, 'SUPABASE_STORAGE_BUCKET is required'),
 
-  STORAGE_PROVIDER: z
-    .enum(['filesystem', 's3'])
-    .default('filesystem'),
-  LOCAL_STORAGE_PATH: z
-    .string()
-    .trim()
-    .default('./storage/uploads'),
+  STORAGE_PROVIDER: z.enum(['filesystem', 's3']).default('filesystem'),
+  LOCAL_STORAGE_PATH: z.string().trim().default('./storage/uploads'),
 
   /** Public origin for browser-facing storage download URLs. */
   STORAGE_PUBLIC_BASE_URL: z.url().optional(),
@@ -72,6 +77,35 @@ export const envSchema = z.object({
 
   OTP_EXPIRED_TIME_KEY: z.coerce.number().int().positive(),
   OTP_RETRY_TIME: z.coerce.number().int().positive(),
+
+  /** Failed verification attempts allowed per issued code before it is dead. */
+  OTP_MAX_VERIFY_ATTEMPTS: z.coerce.number().int().positive().default(5),
+  /** Codes a single phone/email may be issued inside the rolling window. */
+  OTP_MAX_REQUESTS_PER_WINDOW: z.coerce.number().int().positive().default(5),
+  OTP_REQUEST_WINDOW_MINUTES: z.coerce.number().int().positive().default(60),
+
+  /** Per-IP ceiling on OTP issue requests, independent of the target. */
+  OTP_IP_REQUEST_LIMIT: z.coerce.number().int().positive().default(10),
+  OTP_IP_REQUEST_WINDOW_SECONDS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(600),
+  /** Per-IP ceiling on OTP verification attempts, independent of the target. */
+  OTP_IP_VERIFY_LIMIT: z.coerce.number().int().positive().default(20),
+  OTP_IP_VERIFY_WINDOW_SECONDS: z.coerce.number().int().positive().default(600),
+
+  /**
+   * Ceiling on verification attempts aimed at one phone/email from any address.
+   * Complements the per-challenge attempt limit, which cannot count attempts
+   * against a target that has no outstanding challenge.
+   */
+  OTP_TARGET_VERIFY_LIMIT: z.coerce.number().int().positive().default(10),
+  OTP_TARGET_VERIFY_WINDOW_SECONDS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(600),
 
   CORS_ALLOWED_ORIGINS: z
     .string()
@@ -113,7 +147,12 @@ export const envSchema = z.object({
     .default('Unixsee-Uptime-Probe/1.0 (+https://unixsee.com)'),
 
   TICKET_AUTO_CLOSE_ENABLED: booleanEnv.default(true),
-  TICKET_AUTO_CLOSE_GRACE_DAYS: z.coerce.number().int().min(5).max(7).default(7),
+  TICKET_AUTO_CLOSE_GRACE_DAYS: z.coerce
+    .number()
+    .int()
+    .min(5)
+    .max(7)
+    .default(7),
   TICKET_AUTO_CLOSE_CRON: z.string().trim().min(1).default('0 * * * *'),
 
   // Temporary phone-OTP delivery via SMTP (SMS stand-in).

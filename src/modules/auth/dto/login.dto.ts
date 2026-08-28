@@ -1,11 +1,9 @@
-import { VALIDATE_PHONE_NUMBER_REGEX } from '#/utils/constants.js';
+import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+
 import {
-  IsEmail,
-  IsOptional,
-  IsString,
-  Matches,
-  MinLength,
-} from 'class-validator';
+  IsInternationalPhone,
+  TransformToE164Phone,
+} from '#/common/validation/is-international-phone.decorator.js';
 
 export class LoginDto {
   @IsEmail()
@@ -21,9 +19,8 @@ export class LoginDto {
   password!: string;
 
   @IsOptional()
+  @TransformToE164Phone()
   @IsString()
-  @Matches(VALIDATE_PHONE_NUMBER_REGEX, {
-    message: 'Invalid phone number.',
-  })
+  @IsInternationalPhone()
   phoneNumber?: string;
 }

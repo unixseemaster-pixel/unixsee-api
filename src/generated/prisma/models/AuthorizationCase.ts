@@ -901,10 +901,6 @@ export type EnumContactChallengeStateFieldUpdateOperationsInput = {
   set?: $Enums.ContactChallengeState
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type AuthorizationCaseUpdatestaffFieldsToFixInput = {
   set?: string[]
   push?: string | string[]

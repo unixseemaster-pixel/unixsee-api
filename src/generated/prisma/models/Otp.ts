@@ -14,86 +14,134 @@ import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model Otp
- * 
+ * One outstanding OTP challenge per delivery target. The plaintext code is
+ * never persisted: only its bcrypt digest is stored, so a database read
+ * cannot recover a usable code.
  */
 export type OtpModel = runtime.Types.Result.DefaultSelection<Prisma.$OtpPayload>
 
 export type AggregateOtp = {
   _count: OtpCountAggregateOutputType | null
+  _avg: OtpAvgAggregateOutputType | null
+  _sum: OtpSumAggregateOutputType | null
   _min: OtpMinAggregateOutputType | null
   _max: OtpMaxAggregateOutputType | null
 }
 
+export type OtpAvgAggregateOutputType = {
+  attemptCount: number | null
+  requestCount: number | null
+}
+
+export type OtpSumAggregateOutputType = {
+  attemptCount: number | null
+  requestCount: number | null
+}
+
 export type OtpMinAggregateOutputType = {
   id: string | null
-  otp: string | null
+  otpHash: string | null
   phoneNumber: string | null
   expiredTime: Date | null
   identifier: string | null
   lastRequestedTime: Date | null
   context: $Enums.OtpContext | null
+  attemptCount: number | null
+  consumedAt: Date | null
+  requestCount: number | null
+  requestWindowStartedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type OtpMaxAggregateOutputType = {
   id: string | null
-  otp: string | null
+  otpHash: string | null
   phoneNumber: string | null
   expiredTime: Date | null
   identifier: string | null
   lastRequestedTime: Date | null
   context: $Enums.OtpContext | null
+  attemptCount: number | null
+  consumedAt: Date | null
+  requestCount: number | null
+  requestWindowStartedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type OtpCountAggregateOutputType = {
   id: number
-  otp: number
+  otpHash: number
   phoneNumber: number
   expiredTime: number
   identifier: number
   lastRequestedTime: number
   context: number
+  attemptCount: number
+  consumedAt: number
+  requestCount: number
+  requestWindowStartedAt: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
 
+export type OtpAvgAggregateInputType = {
+  attemptCount?: true
+  requestCount?: true
+}
+
+export type OtpSumAggregateInputType = {
+  attemptCount?: true
+  requestCount?: true
+}
+
 export type OtpMinAggregateInputType = {
   id?: true
-  otp?: true
+  otpHash?: true
   phoneNumber?: true
   expiredTime?: true
   identifier?: true
   lastRequestedTime?: true
   context?: true
+  attemptCount?: true
+  consumedAt?: true
+  requestCount?: true
+  requestWindowStartedAt?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type OtpMaxAggregateInputType = {
   id?: true
-  otp?: true
+  otpHash?: true
   phoneNumber?: true
   expiredTime?: true
   identifier?: true
   lastRequestedTime?: true
   context?: true
+  attemptCount?: true
+  consumedAt?: true
+  requestCount?: true
+  requestWindowStartedAt?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type OtpCountAggregateInputType = {
   id?: true
-  otp?: true
+  otpHash?: true
   phoneNumber?: true
   expiredTime?: true
   identifier?: true
   lastRequestedTime?: true
   context?: true
+  attemptCount?: true
+  consumedAt?: true
+  requestCount?: true
+  requestWindowStartedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -137,6 +185,18 @@ export type OtpAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: OtpAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: OtpSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: OtpMinAggregateInputType
@@ -167,21 +227,29 @@ export type OtpGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   _count?: OtpCountAggregateInputType | true
+  _avg?: OtpAvgAggregateInputType
+  _sum?: OtpSumAggregateInputType
   _min?: OtpMinAggregateInputType
   _max?: OtpMaxAggregateInputType
 }
 
 export type OtpGroupByOutputType = {
   id: string
-  otp: string
+  otpHash: string
   phoneNumber: string | null
   expiredTime: Date
   identifier: string | null
   lastRequestedTime: Date | null
   context: $Enums.OtpContext | null
+  attemptCount: number
+  consumedAt: Date | null
+  requestCount: number
+  requestWindowStartedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: OtpCountAggregateOutputType | null
+  _avg: OtpAvgAggregateOutputType | null
+  _sum: OtpSumAggregateOutputType | null
   _min: OtpMinAggregateOutputType | null
   _max: OtpMaxAggregateOutputType | null
 }
@@ -206,56 +274,74 @@ export type OtpWhereInput = {
   OR?: Prisma.OtpWhereInput[]
   NOT?: Prisma.OtpWhereInput | Prisma.OtpWhereInput[]
   id?: Prisma.UuidFilter<"Otp"> | string
-  otp?: Prisma.StringFilter<"Otp"> | string
+  otpHash?: Prisma.StringFilter<"Otp"> | string
   phoneNumber?: Prisma.StringNullableFilter<"Otp"> | string | null
   expiredTime?: Prisma.DateTimeFilter<"Otp"> | Date | string
   identifier?: Prisma.StringNullableFilter<"Otp"> | string | null
   lastRequestedTime?: Prisma.DateTimeNullableFilter<"Otp"> | Date | string | null
   context?: Prisma.EnumOtpContextNullableFilter<"Otp"> | $Enums.OtpContext | null
+  attemptCount?: Prisma.IntFilter<"Otp"> | number
+  consumedAt?: Prisma.DateTimeNullableFilter<"Otp"> | Date | string | null
+  requestCount?: Prisma.IntFilter<"Otp"> | number
+  requestWindowStartedAt?: Prisma.DateTimeNullableFilter<"Otp"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
 }
 
 export type OtpOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  otp?: Prisma.SortOrder
+  otpHash?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   expiredTime?: Prisma.SortOrder
   identifier?: Prisma.SortOrderInput | Prisma.SortOrder
   lastRequestedTime?: Prisma.SortOrderInput | Prisma.SortOrder
   context?: Prisma.SortOrderInput | Prisma.SortOrder
+  attemptCount?: Prisma.SortOrder
+  consumedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  requestCount?: Prisma.SortOrder
+  requestWindowStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type OtpWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  otp?: string
   phoneNumber?: string
   identifier?: string
   AND?: Prisma.OtpWhereInput | Prisma.OtpWhereInput[]
   OR?: Prisma.OtpWhereInput[]
   NOT?: Prisma.OtpWhereInput | Prisma.OtpWhereInput[]
+  otpHash?: Prisma.StringFilter<"Otp"> | string
   expiredTime?: Prisma.DateTimeFilter<"Otp"> | Date | string
   lastRequestedTime?: Prisma.DateTimeNullableFilter<"Otp"> | Date | string | null
   context?: Prisma.EnumOtpContextNullableFilter<"Otp"> | $Enums.OtpContext | null
+  attemptCount?: Prisma.IntFilter<"Otp"> | number
+  consumedAt?: Prisma.DateTimeNullableFilter<"Otp"> | Date | string | null
+  requestCount?: Prisma.IntFilter<"Otp"> | number
+  requestWindowStartedAt?: Prisma.DateTimeNullableFilter<"Otp"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Otp"> | Date | string
-}, "id" | "otp" | "phoneNumber" | "identifier">
+}, "id" | "phoneNumber" | "identifier">
 
 export type OtpOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  otp?: Prisma.SortOrder
+  otpHash?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   expiredTime?: Prisma.SortOrder
   identifier?: Prisma.SortOrderInput | Prisma.SortOrder
   lastRequestedTime?: Prisma.SortOrderInput | Prisma.SortOrder
   context?: Prisma.SortOrderInput | Prisma.SortOrder
+  attemptCount?: Prisma.SortOrder
+  consumedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  requestCount?: Prisma.SortOrder
+  requestWindowStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.OtpCountOrderByAggregateInput
+  _avg?: Prisma.OtpAvgOrderByAggregateInput
   _max?: Prisma.OtpMaxOrderByAggregateInput
   _min?: Prisma.OtpMinOrderByAggregateInput
+  _sum?: Prisma.OtpSumOrderByAggregateInput
 }
 
 export type OtpScalarWhereWithAggregatesInput = {
@@ -263,134 +349,188 @@ export type OtpScalarWhereWithAggregatesInput = {
   OR?: Prisma.OtpScalarWhereWithAggregatesInput[]
   NOT?: Prisma.OtpScalarWhereWithAggregatesInput | Prisma.OtpScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Otp"> | string
-  otp?: Prisma.StringWithAggregatesFilter<"Otp"> | string
+  otpHash?: Prisma.StringWithAggregatesFilter<"Otp"> | string
   phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"Otp"> | string | null
   expiredTime?: Prisma.DateTimeWithAggregatesFilter<"Otp"> | Date | string
   identifier?: Prisma.StringNullableWithAggregatesFilter<"Otp"> | string | null
   lastRequestedTime?: Prisma.DateTimeNullableWithAggregatesFilter<"Otp"> | Date | string | null
   context?: Prisma.EnumOtpContextNullableWithAggregatesFilter<"Otp"> | $Enums.OtpContext | null
+  attemptCount?: Prisma.IntWithAggregatesFilter<"Otp"> | number
+  consumedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Otp"> | Date | string | null
+  requestCount?: Prisma.IntWithAggregatesFilter<"Otp"> | number
+  requestWindowStartedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Otp"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Otp"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Otp"> | Date | string
 }
 
 export type OtpCreateInput = {
   id?: string
-  otp: string
+  otpHash: string
   phoneNumber?: string | null
   expiredTime: Date | string
   identifier?: string | null
   lastRequestedTime?: Date | string | null
   context?: $Enums.OtpContext | null
+  attemptCount?: number
+  consumedAt?: Date | string | null
+  requestCount?: number
+  requestWindowStartedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type OtpUncheckedCreateInput = {
   id?: string
-  otp: string
+  otpHash: string
   phoneNumber?: string | null
   expiredTime: Date | string
   identifier?: string | null
   lastRequestedTime?: Date | string | null
   context?: $Enums.OtpContext | null
+  attemptCount?: number
+  consumedAt?: Date | string | null
+  requestCount?: number
+  requestWindowStartedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type OtpUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  otp?: Prisma.StringFieldUpdateOperationsInput | string
+  otpHash?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   identifier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastRequestedTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   context?: Prisma.NullableEnumOtpContextFieldUpdateOperationsInput | $Enums.OtpContext | null
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consumedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestCount?: Prisma.IntFieldUpdateOperationsInput | number
+  requestWindowStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OtpUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  otp?: Prisma.StringFieldUpdateOperationsInput | string
+  otpHash?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   identifier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastRequestedTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   context?: Prisma.NullableEnumOtpContextFieldUpdateOperationsInput | $Enums.OtpContext | null
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consumedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestCount?: Prisma.IntFieldUpdateOperationsInput | number
+  requestWindowStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OtpCreateManyInput = {
   id?: string
-  otp: string
+  otpHash: string
   phoneNumber?: string | null
   expiredTime: Date | string
   identifier?: string | null
   lastRequestedTime?: Date | string | null
   context?: $Enums.OtpContext | null
+  attemptCount?: number
+  consumedAt?: Date | string | null
+  requestCount?: number
+  requestWindowStartedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type OtpUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  otp?: Prisma.StringFieldUpdateOperationsInput | string
+  otpHash?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   identifier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastRequestedTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   context?: Prisma.NullableEnumOtpContextFieldUpdateOperationsInput | $Enums.OtpContext | null
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consumedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestCount?: Prisma.IntFieldUpdateOperationsInput | number
+  requestWindowStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OtpUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  otp?: Prisma.StringFieldUpdateOperationsInput | string
+  otpHash?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   expiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   identifier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastRequestedTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   context?: Prisma.NullableEnumOtpContextFieldUpdateOperationsInput | $Enums.OtpContext | null
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  consumedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  requestCount?: Prisma.IntFieldUpdateOperationsInput | number
+  requestWindowStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OtpCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  otp?: Prisma.SortOrder
+  otpHash?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   expiredTime?: Prisma.SortOrder
   identifier?: Prisma.SortOrder
   lastRequestedTime?: Prisma.SortOrder
   context?: Prisma.SortOrder
+  attemptCount?: Prisma.SortOrder
+  consumedAt?: Prisma.SortOrder
+  requestCount?: Prisma.SortOrder
+  requestWindowStartedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
+export type OtpAvgOrderByAggregateInput = {
+  attemptCount?: Prisma.SortOrder
+  requestCount?: Prisma.SortOrder
+}
+
 export type OtpMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  otp?: Prisma.SortOrder
+  otpHash?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   expiredTime?: Prisma.SortOrder
   identifier?: Prisma.SortOrder
   lastRequestedTime?: Prisma.SortOrder
   context?: Prisma.SortOrder
+  attemptCount?: Prisma.SortOrder
+  consumedAt?: Prisma.SortOrder
+  requestCount?: Prisma.SortOrder
+  requestWindowStartedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type OtpMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  otp?: Prisma.SortOrder
+  otpHash?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   expiredTime?: Prisma.SortOrder
   identifier?: Prisma.SortOrder
   lastRequestedTime?: Prisma.SortOrder
   context?: Prisma.SortOrder
+  attemptCount?: Prisma.SortOrder
+  consumedAt?: Prisma.SortOrder
+  requestCount?: Prisma.SortOrder
+  requestWindowStartedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type OtpSumOrderByAggregateInput = {
+  attemptCount?: Prisma.SortOrder
+  requestCount?: Prisma.SortOrder
 }
 
 export type NullableEnumOtpContextFieldUpdateOperationsInput = {
@@ -401,65 +541,94 @@ export type NullableEnumOtpContextFieldUpdateOperationsInput = {
 
 export type OtpSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  otp?: boolean
+  otpHash?: boolean
   phoneNumber?: boolean
   expiredTime?: boolean
   identifier?: boolean
   lastRequestedTime?: boolean
   context?: boolean
+  attemptCount?: boolean
+  consumedAt?: boolean
+  requestCount?: boolean
+  requestWindowStartedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["otp"]>
 
 export type OtpSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  otp?: boolean
+  otpHash?: boolean
   phoneNumber?: boolean
   expiredTime?: boolean
   identifier?: boolean
   lastRequestedTime?: boolean
   context?: boolean
+  attemptCount?: boolean
+  consumedAt?: boolean
+  requestCount?: boolean
+  requestWindowStartedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["otp"]>
 
 export type OtpSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  otp?: boolean
+  otpHash?: boolean
   phoneNumber?: boolean
   expiredTime?: boolean
   identifier?: boolean
   lastRequestedTime?: boolean
   context?: boolean
+  attemptCount?: boolean
+  consumedAt?: boolean
+  requestCount?: boolean
+  requestWindowStartedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["otp"]>
 
 export type OtpSelectScalar = {
   id?: boolean
-  otp?: boolean
+  otpHash?: boolean
   phoneNumber?: boolean
   expiredTime?: boolean
   identifier?: boolean
   lastRequestedTime?: boolean
   context?: boolean
+  attemptCount?: boolean
+  consumedAt?: boolean
+  requestCount?: boolean
+  requestWindowStartedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OtpOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "otp" | "phoneNumber" | "expiredTime" | "identifier" | "lastRequestedTime" | "context" | "createdAt" | "updatedAt", ExtArgs["result"]["otp"]>
+export type OtpOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "otpHash" | "phoneNumber" | "expiredTime" | "identifier" | "lastRequestedTime" | "context" | "attemptCount" | "consumedAt" | "requestCount" | "requestWindowStartedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["otp"]>
 
 export type $OtpPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Otp"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    otp: string
+    otpHash: string
     phoneNumber: string | null
     expiredTime: Date
     identifier: string | null
     lastRequestedTime: Date | null
     context: $Enums.OtpContext | null
+    /**
+     * Failed verification attempts against the current code. Reset on reissue.
+     */
+    attemptCount: number
+    /**
+     * Set once the code verifies successfully; blocks replay of the same code.
+     */
+    consumedAt: Date | null
+    /**
+     * Issue requests inside the current per-target window, for abuse limiting.
+     */
+    requestCount: number
+    requestWindowStartedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["otp"]>
@@ -886,12 +1055,16 @@ export interface Prisma__OtpClient<T, Null = never, ExtArgs extends runtime.Type
  */
 export interface OtpFieldRefs {
   readonly id: Prisma.FieldRef<"Otp", 'String'>
-  readonly otp: Prisma.FieldRef<"Otp", 'String'>
+  readonly otpHash: Prisma.FieldRef<"Otp", 'String'>
   readonly phoneNumber: Prisma.FieldRef<"Otp", 'String'>
   readonly expiredTime: Prisma.FieldRef<"Otp", 'DateTime'>
   readonly identifier: Prisma.FieldRef<"Otp", 'String'>
   readonly lastRequestedTime: Prisma.FieldRef<"Otp", 'DateTime'>
   readonly context: Prisma.FieldRef<"Otp", 'OtpContext'>
+  readonly attemptCount: Prisma.FieldRef<"Otp", 'Int'>
+  readonly consumedAt: Prisma.FieldRef<"Otp", 'DateTime'>
+  readonly requestCount: Prisma.FieldRef<"Otp", 'Int'>
+  readonly requestWindowStartedAt: Prisma.FieldRef<"Otp", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Otp", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Otp", 'DateTime'>
 }

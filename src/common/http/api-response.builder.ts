@@ -23,6 +23,10 @@ export class ApiResponseBuilder {
       code: 'NOT_FOUND',
       message: 'Resource not found',
     },
+    [HttpStatus.CONFLICT]: {
+      code: 'CONFLICT',
+      message: 'Conflict',
+    },
     [HttpStatus.TOO_MANY_REQUESTS]: {
       code: 'TOO_MANY_REQUESTS',
       message: 'Too many requests',

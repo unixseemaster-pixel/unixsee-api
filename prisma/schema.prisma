@@ -88,12 +88,42 @@ enum PlanRequestStatus {
 
 enum ComplementaryRequestStatus {
   SUBMITTED
+  ACCEPTED
   QUOTED
   ASSIGNED
   IN_PROGRESS
   COMPLETED
   WITHDRAWN
   CANCELLED
+}
+
+enum WebsiteManagementCoverage {
+  UNIXSEE_MANAGED
+  EXTERNAL_INFRASTRUCTURE
+  UNCLASSIFIED
+}
+
+enum ComplementaryWebsiteTargetType {
+  EXISTING_WEBSITE
+  TYPED_DOMAIN
+}
+
+enum ComplementaryWebsiteResolutionState {
+  PENDING_ACCEPTANCE
+  LINKED
+  DEFERRED_NO_TENANT
+}
+
+enum ComplementaryAuthorizationState {
+  AUTHORIZED
+  NOT_AUTHORIZED
+  NOT_AUTHORIZED_AT_ACTIVATION
+}
+
+enum ComplementaryEngagementPreference {
+  ONE_TIME
+  RECURRING
+  NOT_SURE
 }
 
 enum DiscoveryStatus {
@@ -172,6 +202,50 @@ enum AgentCommandStatus {
   EXPIRED
 }
 
+enum BillingItemKind {
+  MANAGED_PLAN
+  COMPLEMENTARY_SERVICE
+}
+
+enum BillingInterval {
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  NONE
+}
+
+enum BillingItemStatus {
+  SCHEDULED
+  ACTIVE
+  PAUSED
+  EXPIRED
+  CANCELLED
+  COMPLETED
+}
+
+enum BillingCommercialState {
+  ESTIMATED
+  QUOTED
+  AGREED
+  INVOICED_EXTERNALLY
+  SETTLED
+}
+
+enum BillingCommercialModel {
+  FIXED_SCOPE
+  RECURRING_RETAINER
+  QUOTA_PACKAGE
+  MILESTONE_PROJECT
+  CUSTOM_QUOTE
+}
+
+enum BillingPeriodReason {
+  ACTIVATION
+  RENEWAL
+  PLAN_REPLACEMENT
+  ADJUSTMENT
+}
+
 model User {
   id              String            @id @default(uuid()) @db.Uuid
   phoneNumber     String?           @unique @map("phone_number")
@@ -179,7 +253,8 @@ model User {
   username        String?           @unique
   password        String?
   fullName        String?           @map("full_name")
-  role            Role              @default(USER)
+  role            Role              @default(TENANT)
+  authorized      Boolean           @default(false)
   status          UserAccountStatus @default(ACTIVE)
   locale          String            @default("fa")
   hashedRt        String?           @map("hashed_rt")
@@ -205,9 +280,10 @@ model User {
   authoredNotifications   Notification[]                @relation("NotificationAuthor")
   unixseeMessageReads     UnixseeMessageRead[]
   authoredUnixseeMessages UnixseeMessage[]              @relation("UnixseeMessageAuthor")
-  requestedAgentCommands  AgentCommand[]                 @relation("AgentCommandRequester")
+  requestedAgentCommands  AgentCommand[]                @relation("AgentCommandRequester")
   auditRecords            AuditRecord[]                 @relation("AuditActor")
   operationalActions      OperationalAction[]           @relation("OperationalActionRequester")
+  billingPeriodRows       BillingPeriodRow[]            @relation("BillingPeriodCreator")
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -217,7 +293,7 @@ model User {
 
 model Tenant {
   id          String            @id @default(uuid()) @db.Uuid
-  name        String
+  name        String?
   displayName String?           @map("display_name")
   status      UserAccountStatus @default(ACTIVE)
 
@@ -230,6 +306,7 @@ model Tenant {
   notifications         Notification[]
   unixseeMessages       UnixseeMessage[]
   authorizationCases    AuthorizationCase[]
+  billingItems          BillingItem[]
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -272,8 +349,8 @@ model AuthorizationCase {
   city                      String                @default("")
   address                   String                @default("")
   postalCode                String                @default("") @map("postal_code")
-  nationalIdCardFileName      String?               @map("national_id_card_file_name")
-  nationalIdCardStorageKey    String?               @map("national_id_card_storage_key")
+  nationalIdCardFileName    String?               @map("national_id_card_file_name")
+  nationalIdCardStorageKey  String?               @map("national_id_card_storage_key")
   attestedTruthful          Boolean               @default(false) @map("attested_truthful")
 
   staffReason      String?   @map("staff_reason")
@@ -296,10 +373,10 @@ model AuthorizationCase {
 }
 
 model Server {
-  id        String  @id @default(uuid()) @db.Uuid
-  name      String  @unique
-  ipAddress String  @map("ip_address")
-  notes     String?
+  id              String  @id @default(uuid()) @db.Uuid
+  name            String  @unique
+  ipAddress       String  @map("ip_address")
+  notes           String?
   controlPanelUrl String? @map("control_panel_url")
 
   vpsNodes         VpsNode[]
@@ -362,7 +439,7 @@ model VpsNode {
   websites    Website[]
   discoveries WebsiteDiscovery[]
 
-  agentCommands AgentCommand[]
+  agentCommands           AgentCommand[]
   // Time-series metrics. Keep append-only for easy TimescaleDB migration later.
   vpsMetrics              VpsMetric[]
   webMetrics              WebMetric[]
@@ -383,11 +460,13 @@ model VpsNode {
 }
 
 model Website {
-  id        String  @id @default(uuid()) @db.Uuid
-  userId    String? @map("user_id") @db.Uuid
-  tenantId  String  @map("tenant_id") @db.Uuid
-  vpsNodeId String  @map("vps_node_id") @db.Uuid
-  planId    String? @map("plan_id") @db.Uuid
+  id                 String                    @id @default(uuid()) @db.Uuid
+  userId             String?                   @map("user_id") @db.Uuid
+  tenantId           String                    @map("tenant_id") @db.Uuid
+  vpsNodeId          String?                   @map("vps_node_id") @db.Uuid
+  planId             String?                   @map("plan_id") @db.Uuid
+  planActivatedAt    DateTime?                 @map("plan_activated_at") @db.Timestamptz(6)
+  managementCoverage WebsiteManagementCoverage @default(UNCLASSIFIED) @map("management_coverage")
 
   domain      String  @unique
   displayName String? @map("display_name")
@@ -397,9 +476,16 @@ model Website {
   homeDirectory   String? @map("home_directory")
   documentRoot    String? @map("document_root")
 
-  wordpressAdminUrl String? @map("wordpress_admin_url")
-  isActive Boolean                @default(true) @map("is_active")
-  status   WebsiteLifecycleStatus @default(ACTIVE)
+  wordpressAdminUrl      String?                @map("wordpress_admin_url")
+  wordpressAdminUsername  String?                @map("wordpress_admin_username")
+  wordpressAdminPassword String?                @map("wordpress_admin_password")
+
+  directAdminUrl      String?                @map("direct_admin_url")
+  directAdminUsername  String?                @map("direct_admin_username")
+  directAdminPassword String?                @map("direct_admin_password")
+
+  isActive          Boolean                @default(true) @map("is_active")
+  status            WebsiteLifecycleStatus @default(ACTIVE)
 
   // Latest website status snapshot for fast dashboard cards.
   // Historical probe data is stored in WebsiteProbeMetric.
@@ -408,10 +494,10 @@ model Website {
   lastResponseTimeMs Int?      @map("last_response_time_ms")
   lastProbeAt        DateTime? @map("last_probe_at") @db.Timestamptz(6)
 
-  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-  tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
-  vpsNode VpsNode @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
-  plan    Plan?   @relation(fields: [planId], references: [id], onDelete: SetNull)
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  vpsNode VpsNode? @relation(fields: [vpsNodeId], references: [id], onDelete: SetNull)
+  plan    Plan?    @relation(fields: [planId], references: [id], onDelete: SetNull)
 
   metrics               WebMetric[]
   probeMetrics          WebsiteProbeMetric[]
@@ -425,10 +511,11 @@ model Website {
   activities            Activity[]
   unixseeMessages       UnixseeMessage[]
   operationalActions    OperationalAction[]
+  billingItems          BillingItem[]
 
-  trafficSnapshots      WebsiteTrafficSnapshot[]
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  trafficSnapshots WebsiteTrafficSnapshot[]
+  createdAt        DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@index([userId])
   @@index([tenantId])
@@ -480,10 +567,10 @@ model WebsiteDiscovery {
 
   activeVisitorSamples WebsiteActiveVisitorSample[]
 
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  trafficSnapshot      WebsiteTrafficSnapshot?
-  agentCommands        AgentCommand[]
-  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  createdAt       DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  trafficSnapshot WebsiteTrafficSnapshot?
+  agentCommands   AgentCommand[]
+  updatedAt       DateTime                @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@unique([serverId, domain])
   @@index([status])
@@ -513,7 +600,7 @@ model WebsiteTrafficSnapshot {
   visitors24hStatus          Json?     @map("visitors_24h_status")
 
   discovery WebsiteDiscovery @relation(fields: [discoveryId], references: [id], onDelete: Cascade)
-  website   Website?          @relation(fields: [websiteId], references: [id], onDelete: SetNull)
+  website   Website?         @relation(fields: [websiteId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -555,6 +642,7 @@ model AgentCommand {
   @@index([discoveryId, requestedAt(sort: Desc)])
   @@map("agent_commands")
 }
+
 model WebsiteActiveVisitorSample {
   recordedAt      DateTime @map("recorded_at") @db.Timestamptz(6)
   discoveryId     String   @map("discovery_id") @db.Uuid
@@ -824,7 +912,7 @@ model Alert {
   metadata Json?
 
   website Website? @relation(fields: [websiteId], references: [id], onDelete: Cascade)
-  vpsNode VpsNode? @relation(fields: [vpsNodeId], references: [id], onDelete: Cascade)
+  vpsNode VpsNode? @relation(fields: [vpsNodeId], references: [id], onDelete: SetNull)
   server  Server?  @relation(fields: [serverId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -841,14 +929,26 @@ model Alert {
   @@map("alerts")
 }
 
+/// One outstanding OTP challenge per delivery target. The plaintext code is
+/// never persisted: only its bcrypt digest is stored, so a database read
+/// cannot recover a usable code.
 model Otp {
   id                String      @id @default(uuid()) @db.Uuid
-  otp               String      @unique
+  otpHash           String      @map("otp_hash")
   phoneNumber       String?     @unique @map("phone_number")
   expiredTime       DateTime    @map("expired_time") @db.Timestamptz(6)
   identifier        String?     @unique
   lastRequestedTime DateTime?   @map("last_requested_time") @db.Timestamptz(6)
   context           OtpContext? @default(LOGIN)
+
+  /// Failed verification attempts against the current code. Reset on reissue.
+  attemptCount Int       @default(0) @map("attempt_count")
+  /// Set once the code verifies successfully; blocks replay of the same code.
+  consumedAt   DateTime? @map("consumed_at") @db.Timestamptz(6)
+
+  /// Issue requests inside the current per-target window, for abuse limiting.
+  requestCount           Int       @default(0) @map("request_count")
+  requestWindowStartedAt DateTime? @map("request_window_started_at") @db.Timestamptz(6)
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -869,6 +969,7 @@ model Plan {
 
   websites     Website[]
   planRequests PlanRequest[]
+  billingItems BillingItem[]
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -900,6 +1001,7 @@ model PlanRequest {
   linkedUser    User?    @relation("PlanRequestLinkedUser", fields: [linkedUserId], references: [id], onDelete: SetNull)
   website       Website? @relation(fields: [websiteId], references: [id], onDelete: SetNull)
   createdByUser User?    @relation("PlanRequestCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  billingItems  BillingItem[]
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -931,17 +1033,26 @@ model ServiceCatalogItem {
 }
 
 model ComplementaryServiceRequest {
-  id              String                     @id @default(uuid()) @db.Uuid
-  catalogItemId   String                     @map("catalog_item_id") @db.Uuid
-  status          ComplementaryRequestStatus @default(SUBMITTED)
-  contactName     String                     @map("contact_name")
-  contactPhone    String                     @map("contact_phone")
-  contactEmail    String?                    @map("contact_email")
-  details         String?
-  tenantId        String?                    @map("tenant_id") @db.Uuid
-  websiteId       String?                    @map("website_id") @db.Uuid
-  createdByUserId String?                    @map("created_by_user_id") @db.Uuid
-  withdrawnAt     DateTime?                  @map("withdrawn_at") @db.Timestamptz(6)
+  id                      String                               @id @default(uuid()) @db.Uuid
+  catalogItemId           String                               @map("catalog_item_id") @db.Uuid
+  status                  ComplementaryRequestStatus           @default(SUBMITTED)
+  contactName             String                               @map("contact_name")
+  contactPhone            String?                              @map("contact_phone")
+  contactEmail            String?                              @map("contact_email")
+  details                 String?
+  title                   String?
+  engagementPreference    ComplementaryEngagementPreference?   @map("engagement_preference")
+  scope                   Json?
+  tenantId                String?                              @map("tenant_id") @db.Uuid
+  websiteId               String?                              @map("website_id") @db.Uuid
+  websiteDomain           String?                              @map("website_domain")
+  websiteTargetType       ComplementaryWebsiteTargetType?      @map("website_target_type")
+  websiteCoverageSnapshot WebsiteManagementCoverage?           @map("website_coverage_snapshot")
+  websiteResolutionState  ComplementaryWebsiteResolutionState? @map("website_resolution_state")
+  authorizationState      ComplementaryAuthorizationState?     @map("authorization_state")
+  createdByUserId         String?                              @map("created_by_user_id") @db.Uuid
+  withdrawnAt             DateTime?                            @map("withdrawn_at") @db.Timestamptz(6)
+  acceptedAt              DateTime?                            @map("accepted_at") @db.Timestamptz(6)
 
   catalogItem   ServiceCatalogItem @relation(fields: [catalogItemId], references: [id], onDelete: Restrict)
   tenant        Tenant?            @relation(fields: [tenantId], references: [id], onDelete: SetNull)
@@ -957,6 +1068,8 @@ model ComplementaryServiceRequest {
   @@index([status])
   @@index([catalogItemId])
   @@index([tenantId])
+  @@index([createdByUserId])
+  @@index([websiteDomain])
   @@map("complementary_service_requests")
 }
 
@@ -968,7 +1081,8 @@ model ServiceQuotation {
   notes      String?
   validUntil DateTime? @map("valid_until") @db.Timestamptz(6)
 
-  request ComplementaryServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  request      ComplementaryServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  billingItems BillingItem[]
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -978,21 +1092,84 @@ model ServiceQuotation {
 }
 
 model ServiceAssignment {
-  id           String    @id @default(uuid()) @db.Uuid
-  requestId    String    @map("request_id") @db.Uuid
-  assigneeNote String?   @map("assignee_note")
-  startedAt    DateTime? @map("started_at") @db.Timestamptz(6)
-  completedAt  DateTime? @map("completed_at") @db.Timestamptz(6)
+  id                 String                           @id @default(uuid()) @db.Uuid
+  requestId          String                           @map("request_id") @db.Uuid
+  assigneeNote       String?                          @map("assignee_note")
+  startedAt          DateTime?                        @map("started_at") @db.Timestamptz(6)
+  completedAt        DateTime?                        @map("completed_at") @db.Timestamptz(6)
+  authorizationState ComplementaryAuthorizationState? @map("authorization_state")
 
   request      ComplementaryServiceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
   usageRecords ServiceUsage[]
   deliverables ServiceDeliverable[]
+  billingItem  BillingItem?
 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@index([requestId])
   @@map("service_assignments")
+}
+
+model BillingItem {
+  id                   String                  @id @default(uuid()) @db.Uuid
+  tenantId             String                  @map("tenant_id") @db.Uuid
+  websiteId            String                  @map("website_id") @db.Uuid
+  kind                 BillingItemKind
+  planId               String?                 @map("plan_id") @db.Uuid
+  serviceAssignmentId  String?                 @unique @map("service_assignment_id") @db.Uuid
+  sourcePlanRequestId  String?                 @map("source_plan_request_id") @db.Uuid
+  sourceQuotationId    String?                 @map("source_quotation_id") @db.Uuid
+  labelSnapshot        String                  @map("label_snapshot")
+  commercialModel      BillingCommercialModel  @map("commercial_model")
+  amount               Decimal                 @db.Decimal(12, 2)
+  currency             String                  @default("IRR")
+  interval             BillingInterval
+  status               BillingItemStatus       @default(ACTIVE)
+  commercialState      BillingCommercialState  @default(AGREED) @map("commercial_state")
+  periodStartsAt       DateTime                @map("period_starts_at") @db.Timestamptz(6)
+  periodEndsAt         DateTime?               @map("period_ends_at") @db.Timestamptz(6)
+  renewsAt             DateTime?               @map("renews_at") @db.Timestamptz(6)
+  cancelledAt          DateTime?               @map("cancelled_at") @db.Timestamptz(6)
+  cancellationReason   String?                 @map("cancellation_reason")
+  nonRenewalReason     String?                 @map("non_renewal_reason")
+
+  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  website           Website            @relation(fields: [websiteId], references: [id], onDelete: Restrict)
+  plan              Plan?              @relation(fields: [planId], references: [id], onDelete: SetNull)
+  serviceAssignment ServiceAssignment? @relation(fields: [serviceAssignmentId], references: [id], onDelete: SetNull)
+  sourcePlanRequest PlanRequest?       @relation(fields: [sourcePlanRequestId], references: [id], onDelete: SetNull)
+  sourceQuotation   ServiceQuotation?  @relation(fields: [sourceQuotationId], references: [id], onDelete: SetNull)
+  periods           BillingPeriodRow[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([websiteId, kind, status])
+  @@index([renewsAt])
+  @@index([periodEndsAt])
+  @@map("billing_items")
+}
+
+model BillingPeriodRow {
+  id            String              @id @default(uuid()) @db.Uuid
+  billingItemId String              @map("billing_item_id") @db.Uuid
+  startsAt      DateTime            @map("starts_at") @db.Timestamptz(6)
+  endsAt        DateTime            @map("ends_at") @db.Timestamptz(6)
+  amount        Decimal             @db.Decimal(12, 2)
+  currency      String
+  interval      BillingInterval
+  reason        BillingPeriodReason
+  createdById   String?             @map("created_by_id") @db.Uuid
+
+  billingItem BillingItem @relation(fields: [billingItemId], references: [id], onDelete: Cascade)
+  createdBy   User?       @relation("BillingPeriodCreator", fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([billingItemId, startsAt])
+  @@map("billing_period_rows")
 }
 
 model ServiceUsage {
@@ -1263,4 +1440,68 @@ model UnixseeMessageRead {
 
   @@unique([messageId, userId])
   @@map("unixsee_message_reads")
+}
+
+enum NewsletterSubscriptionStatus {
+  ACTIVE
+  UNSUBSCRIBED
+}
+
+/// Public newsletter intake. Nest owns persistence for Phase 1; mailing-provider
+/// / WordPress sync remains deferred.
+model NewsletterSubscription {
+  id             String                         @id @default(uuid()) @db.Uuid
+  email          String                         @unique
+  locale         String?
+  source         String?
+  status         NewsletterSubscriptionStatus   @default(ACTIVE)
+  consentedAt    DateTime                       @default(now()) @map("consented_at") @db.Timestamptz(6)
+  unsubscribedAt DateTime?                      @map("unsubscribed_at") @db.Timestamptz(6)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([status])
+  @@map("newsletter_subscriptions")
+}
+
+enum ContactMessageSubject {
+  managedServer
+  migrationOptimization
+  woocommerceSupport
+  seo
+  graphicDesign
+  productDataEntry
+  socialMedia
+}
+
+enum ContactMessageStatus {
+  NEW
+  READ
+  ARCHIVED
+}
+
+/// Public contact-us intake. Nest owns persistence for Phase 1; staff inbox
+/// and notification email remain deferred.
+model ContactMessage {
+  id              String               @id @default(uuid()) @db.Uuid
+  subject         ContactMessageSubject
+  fullName        String               @map("full_name")
+  email           String
+  phone           String
+  website         String?
+  activityBasin   String?              @map("activity_basin")
+  message         String
+  attachmentKeys  Json                 @default("[]") @map("attachment_keys")
+  locale          String?
+  source          String?
+  status          ContactMessageStatus @default(NEW)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+  @@map("contact_messages")
 }

@@ -1,4 +1,4 @@
-import { IsOptional, IsUUID } from 'class-validator';
+import { IsBoolean, IsOptional, IsUUID } from 'class-validator';
 
 export class AssignDiscoveryDto {
   @IsUUID()
@@ -11,4 +11,8 @@ export class AssignDiscoveryDto {
   @IsOptional()
   @IsUUID()
   planId?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  confirmUnauthorized?: boolean;
 }

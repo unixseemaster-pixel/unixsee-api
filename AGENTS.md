@@ -1,59 +1,66 @@
-# Unixsee API Agent Instructions
+# Unixsee backend agent guide
 
-## Uptime and public probe architecture
+This folder is the standalone NestJS control-plane deployable. Start with the
+local docs index for implementation conventions; use monorepo docs for shared
+API, product, agent, or architecture contracts.
 
-- Customer-facing uptime, response time, TTFB, and uptime chart data must come from the core backend uptime module, not from the VPS monitor agent.
-- VPS monitor agents are responsible for server/resource telemetry, LiteSpeed/request-pressure metrics, and website discovery only.
-- Do not re-introduce agent-provided website probe persistence as the source of truth for customer dashboard uptime.
-- The uptime module must save public probe samples to `website_probe_metrics` with `probeSource = BACKEND`.
-- Dashboard REST chart endpoints should read public probe samples using `probeSource = BACKEND`.
-- Socket.io should emit only the latest public probe status/tick after the backend uptime module saves a probe result. Do not build historical charts from Socket.io.
+## Read first
 
-## Scheduling rules
+| Task                                       | Read                                                                                    |
+| ------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Any backend implementation                 | [`docs/README.md`](docs/README.md)                                                      |
+| Logging, config, scheduling, uptime probes | [`docs/development/conventions.md`](docs/development/conventions.md)                    |
+| Deployment/host operation                  | Relevant entry under [`docs/server/`](docs/server/) or [`docs/staging/`](docs/staging/) |
+| Realtime monitoring                        | [`docs/frontend/realtime-monitoring.md`](docs/frontend/realtime-monitoring.md)          |
 
-- Use NestJS scheduling primitives through `@nestjs/schedule` for scheduled uptime work.
-- Do not implement uptime scheduler loops with raw `setInterval` / `clearInterval` inside services.
-- Dynamic scheduling should use `SchedulerRegistry` and `CronJob` so cadence stays configurable and owned by Nest's scheduler lifecycle.
-- Uptime scheduler configuration must be read through typed application config, not direct `process.env` reads inside feature modules.
+## High-frequency backend rules
 
-## Configuration rules
+- Use `createAppLogger(ContextName)`; do not create raw Nest `Logger`
+  instances in feature code. Never log secrets or full sensitive payloads.
+- Add/validate environment variables in `src/utils/config/env.schema.ts` and
+  expose them through typed `app.config.ts`; feature services must not parse
+  `process.env` directly.
+- Use `@nestjs/schedule`, `SchedulerRegistry`, and `CronJob` for scheduled
+  work—not raw `setInterval` loops in services.
+- Public website uptime/TTFB comes from the backend uptime module and
+  `website_probe_metrics` with `probeSource = BACKEND`, not VPS monitor agents.
 
-- Add and validate environment variables in `src/utils/config/env.schema.ts`.
-- Expose typed runtime configuration through `src/utils/config/app.config.ts`.
-- Feature modules should inject `ConfigService<AppConfigType, true>` and read from `appConfig`.
-- Do not parse uptime module env variables directly inside uptime services.
+The local conventions document is canonical for detail and diagnostics.
 
-## Production split
+## Control-plane boundaries
 
-- Phase one production keeps the uptime module inside the core backend monolith.
-- Later, this module can be extracted into regional external probe workers, but the database/source contract should stay compatible.
+- NestJS owns auth, persistence, business rules, orchestration, agent
+  validation, and the APIs consumed by admin/client.
+- Keep the current JWT/OTP design; extend role/capability checks rather than
+  redesigning authentication.
+- Keep domain modules with audience-specific controllers. Do not recreate a
+  mega admin module.
+- Validate agent credentials/payloads. Agents connect outbound to NestJS; UIs
+  never connect to agents or VPS hosts.
+- Do not invent unavailable scripts, routes, DTOs, schema, or shipped status.
 
-## Uptime probe diagnostics
+## Monorepo contracts
 
-- Failed public uptime probes must log enough context to diagnose DNS, connect, TLS, timeout, HTTP status, and response phases.
-- Do not wait for the full HTML/body to determine uptime; response headers are enough for public availability and response-time/TTFB metrics.
-- Keep DNS timeout, IP family preference, and debug logging in typed config under `src/utils/config/env.schema.ts` and `src/utils/config/app.config.ts`.
-- Use `UPTIME_PROBE_DEBUG_LOGS=true` only for investigation because it logs successful probe details too.
-- If every external domain is marked down, first inspect the logged `phase`, `dnsMs`, `resolved`, `family`, `connectMs`, `tlsMs`, and `error` fields before changing dashboard or agent code.
+When this checkout is inside the monorepo and a task changes a shared contract,
+also read:
 
-## Logging and request tracing rules
+- Route/module map: [`../docs/backend/modules-and-routes.md`](../docs/backend/modules-and-routes.md)
+- API contracts: [`../docs/backend/contracts/`](../docs/backend/contracts/)
+- Audience/module ADRs: [`0004`](../docs/architecture/decisions/0004-api-audience-namespaces.md)
+  and [`0005`](../docs/architecture/decisions/0005-domain-modules-multi-audience-controllers.md)
+- Agent integration: [`../docs/agent/README.md`](../docs/agent/README.md)
+- Product behavior: [`../docs/product/phase-1-application-features.md`](../docs/product/phase-1-application-features.md)
 
-- Use the built-in NestJS logger only through `createAppLogger(ContextName)` from `src/common/logging/app-logger.ts`.
-- Do not create raw `new Logger(...)` instances in feature code. The wrapper automatically adds the current `requestId` and masks common sensitive fields.
-- Class context means the source class/module name attached to every log line. Use `private readonly logger = createAppLogger(MyService.name);` in services, controllers, guards, gateways, listeners, and scheduled workers.
-- Add the logger to classes that perform I/O, auth, DB writes/reads, event dispatching, socket work, scheduled jobs, or important business decisions. Pure stateless calculation helpers may stay unlogged unless they make a decision that must be audited.
-- Every HTTP request must pass through `requestContextMiddleware`, which creates or preserves the `x-request-id` header and stores it in `AsyncLocalStorage` for downstream logs.
-- When a user is authenticated, set the request user context with `RequestContext.setUserId(userId)` in guards or auth flows so later logs can be correlated.
-- Prefer stable event names instead of prose messages, for example `agent.ingest.stored`, `auth.login.completed`, `socket.connected`, or `uptime.probe.down`.
-- Pass structured metadata as the second argument: `this.logger.log('website.created', { websiteId, domain, userId })`.
-- Never log secrets, JWTs, refresh tokens, HMAC signatures, passwords, OTP codes, cookies, authorization headers, raw request bodies, or full telemetry batches.
-- Log batch summaries instead of per-row metric records. Include counts and duration: `batchSize`, `vpsInserted`, `webInserted`, `durationMs`.
-- Use `debug` for noisy flow details, `log` for important successful business events, `warn` for rejected or suspicious recoverable cases, `error` for failed operations, and `fatal` for startup/config failures.
-- Logger levels must be driven by `APP_ENV` first, then `NODE_ENV` as fallback. Environment policy: development enables `debug` and `verbose`; staging enables `debug` but not `verbose`; production enables only `log`, `warn`, `error`, and `fatal`; test enables only `error` and `fatal`.
-- In staging set `APP_ENV=staging` and `NODE_ENV=production`. In development set both to `development`. In production set both to `production`.
-- In production, keep `debug` and `verbose` disabled unless investigating an incident. Do not add high-volume success logs to hot paths.
-- For database writes, do not log before and after every row. Log after important create/update/delete operations or after a batch completes. Always log failed DB operations with error context.
-- For guards, log the rejection reason safely, such as missing header, timestamp drift, unknown machine, or invalid signature. Do not log the actual secret or signature.
-- For Socket.io, log connection/session results and authorization failures. Keep live tick broadcasts at `debug` or unlogged unless debugging.
-- For uptime probes, failed probes must include diagnostic fields such as domain, phase, statusCode, responseTimeMs, ttfbMs, dnsMs, connectMs, tlsHandshakeMs, and errorMessage. Successful probe details should stay behind debug logging.
-- Keep log fields shallow and serializable. Do not pass large nested objects, Prisma models with sensitive fields, request objects, response objects, or full Error objects as metadata. Pass the Error object only to `logger.error(event, error, fields)`.
+Do not use historical local design notes as a substitute for accepted shared
+contracts. Make cross-app contract changes in the monorepo.
+
+## Working and validation rules
+
+- Inspect the owning module, configuration, schema, tests, and current route
+  before changing behavior.
+- Keep changes focused and preserve unrelated work.
+- Add or update contracts alongside Nest changes that alter wire behavior.
+- Use only scripts present in `backend/package.json` and report only checks that
+  actually ran.
+- Format every touched Prettier-supported file, then run Prettier `--check` on
+  the same explicit list.

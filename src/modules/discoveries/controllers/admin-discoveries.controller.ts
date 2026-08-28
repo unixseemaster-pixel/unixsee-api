@@ -11,7 +11,9 @@ import {
 } from '@nestjs/common';
 
 import { ApiResponseBuilder } from '#/common/http/api-response.builder.js';
+import type { CurrentUserType } from '#/@types/express/index.js';
 import { DiscoveryStatus, Role } from '#/generated/prisma/enums.js';
+import { CurrentUser } from '#/modules/auth/decorators/current-user.decorator.js';
 import { Roles } from '#/modules/auth/decorators/roles.decorator.js';
 import { RolesGuard } from '#/modules/auth/guards/roles.guard.js';
 import { AssignDiscoveryDto } from '../dto/discoveries.dto.js';
@@ -45,8 +47,15 @@ export class AdminDiscoveriesController {
 
   @Post(':id/assign')
   @HttpCode(HttpStatus.OK)
-  async assign(@Param('id') id: string, @Body() body: AssignDiscoveryDto) {
-    const data = await this.discoveriesService.assign(id, body);
+  async assign(
+    @Param('id') id: string,
+    @Body() body: AssignDiscoveryDto,
+    @CurrentUser() user: CurrentUserType,
+  ) {
+    const data = await this.discoveriesService.assign(id, {
+      ...body,
+      actorId: user.id,
+    });
     return ApiResponseBuilder.ok(data);
   }
 }

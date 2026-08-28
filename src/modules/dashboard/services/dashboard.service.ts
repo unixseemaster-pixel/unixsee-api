@@ -161,7 +161,7 @@ export class DashboardService {
     const latestWebMetric = website.metrics[0] ?? null;
     const latestProbeMetric = website.probeMetrics[0] ?? null;
     const latestSslMetric = website.sslMetrics[0] ?? null;
-    const latestVpsMetric = website.vpsNode.vpsMetrics[0] ?? null;
+    const latestVpsMetric = website.vpsNode?.vpsMetrics[0] ?? null;
     const activeAlerts = website.alerts.filter(
       (alert) => alert.status === AlertStatus.ACTIVE,
     );

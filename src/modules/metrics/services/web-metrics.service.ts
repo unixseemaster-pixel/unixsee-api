@@ -23,7 +23,7 @@ export class WebMetricsService {
 
     return websites.map((website) => ({
       websiteId: website.websiteId,
-      vpsNodeId: website.vpsNodeId,
+      vpsNodeId: website.vpsNodeId ?? '',
       domain: website.domain,
       displayName: website.displayName,
       isActive: website.isActive,
@@ -55,7 +55,7 @@ export class WebMetricsService {
 
     return {
       websiteId: website.websiteId,
-      vpsNodeId: website.vpsNodeId,
+      vpsNodeId: website.vpsNodeId ?? '',
       domain: website.domain,
       displayName: website.displayName,
       isActive: website.isActive,

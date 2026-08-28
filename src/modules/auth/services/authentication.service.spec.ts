@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { UserAccountStatus } from '#/generated/prisma/enums.js';
+import { MailService } from '#/modules/mail/mail.service.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { TenantsService } from '#/modules/tenants/services/tenants.service.js';
 import { UsersService } from '#/modules/users/services/users.service.js';
@@ -26,8 +27,21 @@ describe('AuthenticationService', () => {
   let jwtService: {
     signAsync: ReturnType<typeof vi.fn>;
   };
+  let otpService: {
+    createAndOverwrite: ReturnType<typeof vi.fn>;
+    createAndOverwriteByIdentifier: ReturnType<typeof vi.fn>;
+    validateOtp: ReturnType<typeof vi.fn>;
+    validateOtpByIdentifier: ReturnType<typeof vi.fn>;
+    getConfiguredRetryAfterSeconds: ReturnType<typeof vi.fn>;
+  };
+  let mailService: {
+    sendPhoneOtpMockEmail: ReturnType<typeof vi.fn>;
+    sendEmailOtpMockEmail: ReturnType<typeof vi.fn>;
+  };
+  let appEnv: 'development' | 'production';
 
   beforeEach(async () => {
+    appEnv = 'development';
     userService = {
       findOneByUsername: vi.fn(),
       findOneById: vi.fn(),
@@ -40,6 +54,23 @@ describe('AuthenticationService', () => {
         .mockResolvedValueOnce('access-token')
         .mockResolvedValueOnce('refresh-token'),
     };
+    otpService = {
+      createAndOverwrite: vi.fn().mockResolvedValue({
+        challenge: { id: 'otp-1' },
+        code: '123456',
+      }),
+      createAndOverwriteByIdentifier: vi.fn().mockResolvedValue({
+        challenge: { id: 'otp-2' },
+        code: '654321',
+      }),
+      validateOtp: vi.fn().mockResolvedValue(true),
+      validateOtpByIdentifier: vi.fn().mockResolvedValue(true),
+      getConfiguredRetryAfterSeconds: vi.fn().mockReturnValue(120),
+    };
+    mailService = {
+      sendPhoneOtpMockEmail: vi.fn(),
+      sendEmailOtpMockEmail: vi.fn(),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -51,11 +82,15 @@ describe('AuthenticationService', () => {
           useValue: { ensurePersonalTenantForUser: vi.fn() },
         },
         { provide: JwtService, useValue: jwtService },
-        { provide: OtpService, useValue: {} },
+        { provide: OtpService, useValue: otpService },
+        { provide: MailService, useValue: mailService },
         {
           provide: ConfigService,
           useValue: {
-            get: vi.fn().mockReturnValue({
+            get: vi.fn(() => ({
+              get appEnv() {
+                return appEnv;
+              },
               jwt: {
                 accessSecret: 'access-secret',
                 refreshSecret: 'refresh-secret',
@@ -64,7 +99,7 @@ describe('AuthenticationService', () => {
                 monitoringAccessSecret: 'monitoring-secret',
                 monitoringAccessExpiresIn: '5m',
               },
-            }),
+            })),
           },
         },
       ],
@@ -109,6 +144,37 @@ describe('AuthenticationService', () => {
       ).rejects.toBeInstanceOf(UnauthorizedException);
 
       expect(userService.updateRtHash).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('sendOtp', () => {
+    it('echoes the code while delivery is mocked, keeping the dev flow usable', async () => {
+      const response = await service.sendOtp({ phoneNumber: '+989120000000' });
+
+      expect(response).toEqual({
+        delivered: true,
+        otp: '123456',
+        retryAfterSeconds: 120,
+      });
+    });
+
+    it('withholds the code in production', async () => {
+      appEnv = 'production';
+
+      const response = await service.sendOtp({ phoneNumber: '+989120000000' });
+
+      expect(response).toEqual({ delivered: true, retryAfterSeconds: 120 });
+      expect(response).not.toHaveProperty('otp');
+    });
+
+    it('hands the code to mocked email delivery and never returns it', async () => {
+      const response = await service.sendOtp({ email: 'User@Example.com' });
+
+      expect(mailService.sendEmailOtpMockEmail).toHaveBeenCalledWith({
+        email: 'user@example.com',
+        otp: '654321',
+      });
+      expect(response).toEqual({ delivered: true, retryAfterSeconds: 120 });
     });
   });
 });

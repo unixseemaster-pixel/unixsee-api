@@ -80,4 +80,11 @@ export class AdminPlanRequestsController {
     const data = await this.planRequestsService.decline(id, body.reason);
     return ApiResponseBuilder.ok(data);
   }
+
+  @Post(':id/unlink')
+  @HttpCode(HttpStatus.OK)
+  async unlink(@Param('id') id: string) {
+    const data = await this.planRequestsService.unlink(id);
+    return ApiResponseBuilder.ok(data);
+  }
 }

@@ -241,6 +241,7 @@ export type ServiceQuotationWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"ServiceQuotation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ServiceQuotation"> | Date | string
   request?: Prisma.XOR<Prisma.ComplementaryServiceRequestScalarRelationFilter, Prisma.ComplementaryServiceRequestWhereInput>
+  billingItems?: Prisma.BillingItemListRelationFilter
 }
 
 export type ServiceQuotationOrderByWithRelationInput = {
@@ -253,6 +254,7 @@ export type ServiceQuotationOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   request?: Prisma.ComplementaryServiceRequestOrderByWithRelationInput
+  billingItems?: Prisma.BillingItemOrderByRelationAggregateInput
 }
 
 export type ServiceQuotationWhereUniqueInput = Prisma.AtLeast<{
@@ -268,6 +270,7 @@ export type ServiceQuotationWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"ServiceQuotation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ServiceQuotation"> | Date | string
   request?: Prisma.XOR<Prisma.ComplementaryServiceRequestScalarRelationFilter, Prisma.ComplementaryServiceRequestWhereInput>
+  billingItems?: Prisma.BillingItemListRelationFilter
 }, "id">
 
 export type ServiceQuotationOrderByWithAggregationInput = {
@@ -309,6 +312,7 @@ export type ServiceQuotationCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   request: Prisma.ComplementaryServiceRequestCreateNestedOneWithoutQuotationsInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutSourceQuotationInput
 }
 
 export type ServiceQuotationUncheckedCreateInput = {
@@ -320,6 +324,7 @@ export type ServiceQuotationUncheckedCreateInput = {
   validUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutSourceQuotationInput
 }
 
 export type ServiceQuotationUpdateInput = {
@@ -331,6 +336,7 @@ export type ServiceQuotationUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   request?: Prisma.ComplementaryServiceRequestUpdateOneRequiredWithoutQuotationsNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutSourceQuotationNestedInput
 }
 
 export type ServiceQuotationUncheckedUpdateInput = {
@@ -342,6 +348,7 @@ export type ServiceQuotationUncheckedUpdateInput = {
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutSourceQuotationNestedInput
 }
 
 export type ServiceQuotationCreateManyInput = {
@@ -427,6 +434,11 @@ export type ServiceQuotationSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
 }
 
+export type ServiceQuotationNullableScalarRelationFilter = {
+  is?: Prisma.ServiceQuotationWhereInput | null
+  isNot?: Prisma.ServiceQuotationWhereInput | null
+}
+
 export type ServiceQuotationCreateNestedManyWithoutRequestInput = {
   create?: Prisma.XOR<Prisma.ServiceQuotationCreateWithoutRequestInput, Prisma.ServiceQuotationUncheckedCreateWithoutRequestInput> | Prisma.ServiceQuotationCreateWithoutRequestInput[] | Prisma.ServiceQuotationUncheckedCreateWithoutRequestInput[]
   connectOrCreate?: Prisma.ServiceQuotationCreateOrConnectWithoutRequestInput | Prisma.ServiceQuotationCreateOrConnectWithoutRequestInput[]
@@ -477,6 +489,22 @@ export type DecimalFieldUpdateOperationsInput = {
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
+export type ServiceQuotationCreateNestedOneWithoutBillingItemsInput = {
+  create?: Prisma.XOR<Prisma.ServiceQuotationCreateWithoutBillingItemsInput, Prisma.ServiceQuotationUncheckedCreateWithoutBillingItemsInput>
+  connectOrCreate?: Prisma.ServiceQuotationCreateOrConnectWithoutBillingItemsInput
+  connect?: Prisma.ServiceQuotationWhereUniqueInput
+}
+
+export type ServiceQuotationUpdateOneWithoutBillingItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceQuotationCreateWithoutBillingItemsInput, Prisma.ServiceQuotationUncheckedCreateWithoutBillingItemsInput>
+  connectOrCreate?: Prisma.ServiceQuotationCreateOrConnectWithoutBillingItemsInput
+  upsert?: Prisma.ServiceQuotationUpsertWithoutBillingItemsInput
+  disconnect?: Prisma.ServiceQuotationWhereInput | boolean
+  delete?: Prisma.ServiceQuotationWhereInput | boolean
+  connect?: Prisma.ServiceQuotationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceQuotationUpdateToOneWithWhereWithoutBillingItemsInput, Prisma.ServiceQuotationUpdateWithoutBillingItemsInput>, Prisma.ServiceQuotationUncheckedUpdateWithoutBillingItemsInput>
+}
+
 export type ServiceQuotationCreateWithoutRequestInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -485,6 +513,7 @@ export type ServiceQuotationCreateWithoutRequestInput = {
   validUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutSourceQuotationInput
 }
 
 export type ServiceQuotationUncheckedCreateWithoutRequestInput = {
@@ -495,6 +524,7 @@ export type ServiceQuotationUncheckedCreateWithoutRequestInput = {
   validUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutSourceQuotationInput
 }
 
 export type ServiceQuotationCreateOrConnectWithoutRequestInput = {
@@ -537,6 +567,66 @@ export type ServiceQuotationScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"ServiceQuotation"> | Date | string
 }
 
+export type ServiceQuotationCreateWithoutBillingItemsInput = {
+  id?: string
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: string
+  notes?: string | null
+  validUntil?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  request: Prisma.ComplementaryServiceRequestCreateNestedOneWithoutQuotationsInput
+}
+
+export type ServiceQuotationUncheckedCreateWithoutBillingItemsInput = {
+  id?: string
+  requestId: string
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: string
+  notes?: string | null
+  validUntil?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ServiceQuotationCreateOrConnectWithoutBillingItemsInput = {
+  where: Prisma.ServiceQuotationWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServiceQuotationCreateWithoutBillingItemsInput, Prisma.ServiceQuotationUncheckedCreateWithoutBillingItemsInput>
+}
+
+export type ServiceQuotationUpsertWithoutBillingItemsInput = {
+  update: Prisma.XOR<Prisma.ServiceQuotationUpdateWithoutBillingItemsInput, Prisma.ServiceQuotationUncheckedUpdateWithoutBillingItemsInput>
+  create: Prisma.XOR<Prisma.ServiceQuotationCreateWithoutBillingItemsInput, Prisma.ServiceQuotationUncheckedCreateWithoutBillingItemsInput>
+  where?: Prisma.ServiceQuotationWhereInput
+}
+
+export type ServiceQuotationUpdateToOneWithWhereWithoutBillingItemsInput = {
+  where?: Prisma.ServiceQuotationWhereInput
+  data: Prisma.XOR<Prisma.ServiceQuotationUpdateWithoutBillingItemsInput, Prisma.ServiceQuotationUncheckedUpdateWithoutBillingItemsInput>
+}
+
+export type ServiceQuotationUpdateWithoutBillingItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  request?: Prisma.ComplementaryServiceRequestUpdateOneRequiredWithoutQuotationsNestedInput
+}
+
+export type ServiceQuotationUncheckedUpdateWithoutBillingItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  requestId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type ServiceQuotationCreateManyRequestInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -555,6 +645,7 @@ export type ServiceQuotationUpdateWithoutRequestInput = {
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  billingItems?: Prisma.BillingItemUpdateManyWithoutSourceQuotationNestedInput
 }
 
 export type ServiceQuotationUncheckedUpdateWithoutRequestInput = {
@@ -565,6 +656,7 @@ export type ServiceQuotationUncheckedUpdateWithoutRequestInput = {
   validUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutSourceQuotationNestedInput
 }
 
 export type ServiceQuotationUncheckedUpdateManyWithoutRequestInput = {
@@ -578,6 +670,35 @@ export type ServiceQuotationUncheckedUpdateManyWithoutRequestInput = {
 }
 
 
+/**
+ * Count Type ServiceQuotationCountOutputType
+ */
+
+export type ServiceQuotationCountOutputType = {
+  billingItems: number
+}
+
+export type ServiceQuotationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  billingItems?: boolean | ServiceQuotationCountOutputTypeCountBillingItemsArgs
+}
+
+/**
+ * ServiceQuotationCountOutputType without action
+ */
+export type ServiceQuotationCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ServiceQuotationCountOutputType
+   */
+  select?: Prisma.ServiceQuotationCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ServiceQuotationCountOutputType without action
+ */
+export type ServiceQuotationCountOutputTypeCountBillingItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BillingItemWhereInput
+}
+
 
 export type ServiceQuotationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -589,6 +710,8 @@ export type ServiceQuotationSelect<ExtArgs extends runtime.Types.Extensions.Inte
   createdAt?: boolean
   updatedAt?: boolean
   request?: boolean | Prisma.ComplementaryServiceRequestDefaultArgs<ExtArgs>
+  billingItems?: boolean | Prisma.ServiceQuotation$billingItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.ServiceQuotationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["serviceQuotation"]>
 
 export type ServiceQuotationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -629,6 +752,8 @@ export type ServiceQuotationSelectScalar = {
 export type ServiceQuotationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "requestId" | "amount" | "currency" | "notes" | "validUntil" | "createdAt" | "updatedAt", ExtArgs["result"]["serviceQuotation"]>
 export type ServiceQuotationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   request?: boolean | Prisma.ComplementaryServiceRequestDefaultArgs<ExtArgs>
+  billingItems?: boolean | Prisma.ServiceQuotation$billingItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.ServiceQuotationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServiceQuotationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   request?: boolean | Prisma.ComplementaryServiceRequestDefaultArgs<ExtArgs>
@@ -641,6 +766,7 @@ export type $ServiceQuotationPayload<ExtArgs extends runtime.Types.Extensions.In
   name: "ServiceQuotation"
   objects: {
     request: Prisma.$ComplementaryServiceRequestPayload<ExtArgs>
+    billingItems: Prisma.$BillingItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1046,6 +1172,7 @@ readonly fields: ServiceQuotationFieldRefs;
 export interface Prisma__ServiceQuotationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   request<T extends Prisma.ComplementaryServiceRequestDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ComplementaryServiceRequestDefaultArgs<ExtArgs>>): Prisma.Prisma__ComplementaryServiceRequestClient<runtime.Types.Result.GetResult<Prisma.$ComplementaryServiceRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  billingItems<T extends Prisma.ServiceQuotation$billingItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceQuotation$billingItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BillingItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1481,6 +1608,30 @@ export type ServiceQuotationDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many ServiceQuotations to delete.
    */
   limit?: number
+}
+
+/**
+ * ServiceQuotation.billingItems
+ */
+export type ServiceQuotation$billingItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BillingItem
+   */
+  select?: Prisma.BillingItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BillingItem
+   */
+  omit?: Prisma.BillingItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BillingItemInclude<ExtArgs> | null
+  where?: Prisma.BillingItemWhereInput
+  orderBy?: Prisma.BillingItemOrderByWithRelationInput | Prisma.BillingItemOrderByWithRelationInput[]
+  cursor?: Prisma.BillingItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BillingItemScalarFieldEnum | Prisma.BillingItemScalarFieldEnum[]
 }
 
 /**

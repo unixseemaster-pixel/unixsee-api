@@ -1,15 +1,11 @@
-import { VALIDATE_PHONE_NUMBER_REGEX } from '#/utils/constants.js';
-import { toEnglishDigits } from '#/utils/helpers.js';
+import { toEnglishDigits } from '#/utils/digits.js';
 import { Transform } from 'class-transformer';
+import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+
 import {
-  IsEmail,
-  IsMobilePhone,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Matches,
-  MinLength,
-} from 'class-validator';
+  IsInternationalPhone,
+  TransformToE164Phone,
+} from '#/common/validation/is-international-phone.decorator.js';
 
 export class RegisterDto {
   @IsEmail()
@@ -27,11 +23,11 @@ export class RegisterDto {
   @IsOptional()
   fullName?: string;
 
+  @Transform(({ value }) =>
+    typeof value === 'string' ? toEnglishDigits(value) : value,
+  )
+  @TransformToE164Phone()
   @IsString()
-  @Transform(({ obj }) => {
-    const englishDigits = toEnglishDigits(obj?.phoneNumber);
-    return englishDigits;
-  })
-  @IsMobilePhone()
+  @IsInternationalPhone()
   phoneNumber!: string;
 }

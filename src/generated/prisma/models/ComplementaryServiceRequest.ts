@@ -32,10 +32,18 @@ export type ComplementaryServiceRequestMinAggregateOutputType = {
   contactPhone: string | null
   contactEmail: string | null
   details: string | null
+  title: string | null
+  engagementPreference: $Enums.ComplementaryEngagementPreference | null
   tenantId: string | null
   websiteId: string | null
+  websiteDomain: string | null
+  websiteTargetType: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState: $Enums.ComplementaryAuthorizationState | null
   createdByUserId: string | null
   withdrawnAt: Date | null
+  acceptedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -48,10 +56,18 @@ export type ComplementaryServiceRequestMaxAggregateOutputType = {
   contactPhone: string | null
   contactEmail: string | null
   details: string | null
+  title: string | null
+  engagementPreference: $Enums.ComplementaryEngagementPreference | null
   tenantId: string | null
   websiteId: string | null
+  websiteDomain: string | null
+  websiteTargetType: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState: $Enums.ComplementaryAuthorizationState | null
   createdByUserId: string | null
   withdrawnAt: Date | null
+  acceptedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -64,10 +80,19 @@ export type ComplementaryServiceRequestCountAggregateOutputType = {
   contactPhone: number
   contactEmail: number
   details: number
+  title: number
+  engagementPreference: number
+  scope: number
   tenantId: number
   websiteId: number
+  websiteDomain: number
+  websiteTargetType: number
+  websiteCoverageSnapshot: number
+  websiteResolutionState: number
+  authorizationState: number
   createdByUserId: number
   withdrawnAt: number
+  acceptedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -82,10 +107,18 @@ export type ComplementaryServiceRequestMinAggregateInputType = {
   contactPhone?: true
   contactEmail?: true
   details?: true
+  title?: true
+  engagementPreference?: true
   tenantId?: true
   websiteId?: true
+  websiteDomain?: true
+  websiteTargetType?: true
+  websiteCoverageSnapshot?: true
+  websiteResolutionState?: true
+  authorizationState?: true
   createdByUserId?: true
   withdrawnAt?: true
+  acceptedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -98,10 +131,18 @@ export type ComplementaryServiceRequestMaxAggregateInputType = {
   contactPhone?: true
   contactEmail?: true
   details?: true
+  title?: true
+  engagementPreference?: true
   tenantId?: true
   websiteId?: true
+  websiteDomain?: true
+  websiteTargetType?: true
+  websiteCoverageSnapshot?: true
+  websiteResolutionState?: true
+  authorizationState?: true
   createdByUserId?: true
   withdrawnAt?: true
+  acceptedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -114,10 +155,19 @@ export type ComplementaryServiceRequestCountAggregateInputType = {
   contactPhone?: true
   contactEmail?: true
   details?: true
+  title?: true
+  engagementPreference?: true
+  scope?: true
   tenantId?: true
   websiteId?: true
+  websiteDomain?: true
+  websiteTargetType?: true
+  websiteCoverageSnapshot?: true
+  websiteResolutionState?: true
+  authorizationState?: true
   createdByUserId?: true
   withdrawnAt?: true
+  acceptedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -200,13 +250,22 @@ export type ComplementaryServiceRequestGroupByOutputType = {
   catalogItemId: string
   status: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone: string | null
   contactEmail: string | null
   details: string | null
+  title: string | null
+  engagementPreference: $Enums.ComplementaryEngagementPreference | null
+  scope: runtime.JsonValue | null
   tenantId: string | null
   websiteId: string | null
+  websiteDomain: string | null
+  websiteTargetType: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState: $Enums.ComplementaryAuthorizationState | null
   createdByUserId: string | null
   withdrawnAt: Date | null
+  acceptedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: ComplementaryServiceRequestCountAggregateOutputType | null
@@ -237,13 +296,22 @@ export type ComplementaryServiceRequestWhereInput = {
   catalogItemId?: Prisma.UuidFilter<"ComplementaryServiceRequest"> | string
   status?: Prisma.EnumComplementaryRequestStatusFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFilter<"ComplementaryServiceRequest"> | string
-  contactPhone?: Prisma.StringFilter<"ComplementaryServiceRequest"> | string
+  contactPhone?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
   contactEmail?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
   details?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
+  title?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
+  engagementPreference?: Prisma.EnumComplementaryEngagementPreferenceNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.JsonNullableFilter<"ComplementaryServiceRequest">
   tenantId?: Prisma.UuidNullableFilter<"ComplementaryServiceRequest"> | string | null
   websiteId?: Prisma.UuidNullableFilter<"ComplementaryServiceRequest"> | string | null
+  websiteDomain?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
+  websiteTargetType?: Prisma.EnumComplementaryWebsiteTargetTypeNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.EnumWebsiteManagementCoverageNullableFilter<"ComplementaryServiceRequest"> | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.EnumComplementaryWebsiteResolutionStateNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.EnumComplementaryAuthorizationStateNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.UuidNullableFilter<"ComplementaryServiceRequest"> | string | null
   withdrawnAt?: Prisma.DateTimeNullableFilter<"ComplementaryServiceRequest"> | Date | string | null
+  acceptedAt?: Prisma.DateTimeNullableFilter<"ComplementaryServiceRequest"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ComplementaryServiceRequest"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ComplementaryServiceRequest"> | Date | string
   catalogItem?: Prisma.XOR<Prisma.ServiceCatalogItemScalarRelationFilter, Prisma.ServiceCatalogItemWhereInput>
@@ -259,13 +327,22 @@ export type ComplementaryServiceRequestOrderByWithRelationInput = {
   catalogItemId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   contactName?: Prisma.SortOrder
-  contactPhone?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   contactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   details?: Prisma.SortOrderInput | Prisma.SortOrder
+  title?: Prisma.SortOrderInput | Prisma.SortOrder
+  engagementPreference?: Prisma.SortOrderInput | Prisma.SortOrder
+  scope?: Prisma.SortOrderInput | Prisma.SortOrder
   tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   websiteId?: Prisma.SortOrderInput | Prisma.SortOrder
+  websiteDomain?: Prisma.SortOrderInput | Prisma.SortOrder
+  websiteTargetType?: Prisma.SortOrderInput | Prisma.SortOrder
+  websiteCoverageSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  websiteResolutionState?: Prisma.SortOrderInput | Prisma.SortOrder
+  authorizationState?: Prisma.SortOrderInput | Prisma.SortOrder
   createdByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   withdrawnAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   catalogItem?: Prisma.ServiceCatalogItemOrderByWithRelationInput
@@ -284,13 +361,22 @@ export type ComplementaryServiceRequestWhereUniqueInput = Prisma.AtLeast<{
   catalogItemId?: Prisma.UuidFilter<"ComplementaryServiceRequest"> | string
   status?: Prisma.EnumComplementaryRequestStatusFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFilter<"ComplementaryServiceRequest"> | string
-  contactPhone?: Prisma.StringFilter<"ComplementaryServiceRequest"> | string
+  contactPhone?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
   contactEmail?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
   details?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
+  title?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
+  engagementPreference?: Prisma.EnumComplementaryEngagementPreferenceNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.JsonNullableFilter<"ComplementaryServiceRequest">
   tenantId?: Prisma.UuidNullableFilter<"ComplementaryServiceRequest"> | string | null
   websiteId?: Prisma.UuidNullableFilter<"ComplementaryServiceRequest"> | string | null
+  websiteDomain?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
+  websiteTargetType?: Prisma.EnumComplementaryWebsiteTargetTypeNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.EnumWebsiteManagementCoverageNullableFilter<"ComplementaryServiceRequest"> | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.EnumComplementaryWebsiteResolutionStateNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.EnumComplementaryAuthorizationStateNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.UuidNullableFilter<"ComplementaryServiceRequest"> | string | null
   withdrawnAt?: Prisma.DateTimeNullableFilter<"ComplementaryServiceRequest"> | Date | string | null
+  acceptedAt?: Prisma.DateTimeNullableFilter<"ComplementaryServiceRequest"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ComplementaryServiceRequest"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ComplementaryServiceRequest"> | Date | string
   catalogItem?: Prisma.XOR<Prisma.ServiceCatalogItemScalarRelationFilter, Prisma.ServiceCatalogItemWhereInput>
@@ -306,13 +392,22 @@ export type ComplementaryServiceRequestOrderByWithAggregationInput = {
   catalogItemId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   contactName?: Prisma.SortOrder
-  contactPhone?: Prisma.SortOrder
+  contactPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   contactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
   details?: Prisma.SortOrderInput | Prisma.SortOrder
+  title?: Prisma.SortOrderInput | Prisma.SortOrder
+  engagementPreference?: Prisma.SortOrderInput | Prisma.SortOrder
+  scope?: Prisma.SortOrderInput | Prisma.SortOrder
   tenantId?: Prisma.SortOrderInput | Prisma.SortOrder
   websiteId?: Prisma.SortOrderInput | Prisma.SortOrder
+  websiteDomain?: Prisma.SortOrderInput | Prisma.SortOrder
+  websiteTargetType?: Prisma.SortOrderInput | Prisma.SortOrder
+  websiteCoverageSnapshot?: Prisma.SortOrderInput | Prisma.SortOrder
+  websiteResolutionState?: Prisma.SortOrderInput | Prisma.SortOrder
+  authorizationState?: Prisma.SortOrderInput | Prisma.SortOrder
   createdByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   withdrawnAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ComplementaryServiceRequestCountOrderByAggregateInput
@@ -328,13 +423,22 @@ export type ComplementaryServiceRequestScalarWhereWithAggregatesInput = {
   catalogItemId?: Prisma.UuidWithAggregatesFilter<"ComplementaryServiceRequest"> | string
   status?: Prisma.EnumComplementaryRequestStatusWithAggregatesFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringWithAggregatesFilter<"ComplementaryServiceRequest"> | string
-  contactPhone?: Prisma.StringWithAggregatesFilter<"ComplementaryServiceRequest"> | string
+  contactPhone?: Prisma.StringNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | string | null
   contactEmail?: Prisma.StringNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | string | null
   details?: Prisma.StringNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | string | null
+  title?: Prisma.StringNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | string | null
+  engagementPreference?: Prisma.EnumComplementaryEngagementPreferenceNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.JsonNullableWithAggregatesFilter<"ComplementaryServiceRequest">
   tenantId?: Prisma.UuidNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | string | null
   websiteId?: Prisma.UuidNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | string | null
+  websiteDomain?: Prisma.StringNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | string | null
+  websiteTargetType?: Prisma.EnumComplementaryWebsiteTargetTypeNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.EnumWebsiteManagementCoverageNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.EnumComplementaryWebsiteResolutionStateNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.EnumComplementaryAuthorizationStateNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.UuidNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | string | null
   withdrawnAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | Date | string | null
+  acceptedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ComplementaryServiceRequest"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ComplementaryServiceRequest"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ComplementaryServiceRequest"> | Date | string
 }
@@ -343,10 +447,19 @@ export type ComplementaryServiceRequestCreateInput = {
   id?: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   catalogItem: Prisma.ServiceCatalogItemCreateNestedOneWithoutRequestsInput
@@ -362,13 +475,22 @@ export type ComplementaryServiceRequestUncheckedCreateInput = {
   catalogItemId: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: string | null
   websiteId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: string | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   quotations?: Prisma.ServiceQuotationUncheckedCreateNestedManyWithoutRequestInput
@@ -379,10 +501,19 @@ export type ComplementaryServiceRequestUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catalogItem?: Prisma.ServiceCatalogItemUpdateOneRequiredWithoutRequestsNestedInput
@@ -398,13 +529,22 @@ export type ComplementaryServiceRequestUncheckedUpdateInput = {
   catalogItemId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotations?: Prisma.ServiceQuotationUncheckedUpdateManyWithoutRequestNestedInput
@@ -416,13 +556,22 @@ export type ComplementaryServiceRequestCreateManyInput = {
   catalogItemId: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: string | null
   websiteId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: string | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -431,10 +580,19 @@ export type ComplementaryServiceRequestUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -444,13 +602,22 @@ export type ComplementaryServiceRequestUncheckedUpdateManyInput = {
   catalogItemId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -473,10 +640,19 @@ export type ComplementaryServiceRequestCountOrderByAggregateInput = {
   contactPhone?: Prisma.SortOrder
   contactEmail?: Prisma.SortOrder
   details?: Prisma.SortOrder
+  title?: Prisma.SortOrder
+  engagementPreference?: Prisma.SortOrder
+  scope?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
+  websiteDomain?: Prisma.SortOrder
+  websiteTargetType?: Prisma.SortOrder
+  websiteCoverageSnapshot?: Prisma.SortOrder
+  websiteResolutionState?: Prisma.SortOrder
+  authorizationState?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   withdrawnAt?: Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -489,10 +665,18 @@ export type ComplementaryServiceRequestMaxOrderByAggregateInput = {
   contactPhone?: Prisma.SortOrder
   contactEmail?: Prisma.SortOrder
   details?: Prisma.SortOrder
+  title?: Prisma.SortOrder
+  engagementPreference?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
+  websiteDomain?: Prisma.SortOrder
+  websiteTargetType?: Prisma.SortOrder
+  websiteCoverageSnapshot?: Prisma.SortOrder
+  websiteResolutionState?: Prisma.SortOrder
+  authorizationState?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   withdrawnAt?: Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -505,10 +689,18 @@ export type ComplementaryServiceRequestMinOrderByAggregateInput = {
   contactPhone?: Prisma.SortOrder
   contactEmail?: Prisma.SortOrder
   details?: Prisma.SortOrder
+  title?: Prisma.SortOrder
+  engagementPreference?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
   websiteId?: Prisma.SortOrder
+  websiteDomain?: Prisma.SortOrder
+  websiteTargetType?: Prisma.SortOrder
+  websiteCoverageSnapshot?: Prisma.SortOrder
+  websiteResolutionState?: Prisma.SortOrder
+  authorizationState?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
   withdrawnAt?: Prisma.SortOrder
+  acceptedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -690,6 +882,26 @@ export type EnumComplementaryRequestStatusFieldUpdateOperationsInput = {
   set?: $Enums.ComplementaryRequestStatus
 }
 
+export type NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput = {
+  set?: $Enums.ComplementaryEngagementPreference | null
+}
+
+export type NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput = {
+  set?: $Enums.ComplementaryWebsiteTargetType | null
+}
+
+export type NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput = {
+  set?: $Enums.WebsiteManagementCoverage | null
+}
+
+export type NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput = {
+  set?: $Enums.ComplementaryWebsiteResolutionState | null
+}
+
+export type NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput = {
+  set?: $Enums.ComplementaryAuthorizationState | null
+}
+
 export type ComplementaryServiceRequestCreateNestedOneWithoutQuotationsInput = {
   create?: Prisma.XOR<Prisma.ComplementaryServiceRequestCreateWithoutQuotationsInput, Prisma.ComplementaryServiceRequestUncheckedCreateWithoutQuotationsInput>
   connectOrCreate?: Prisma.ComplementaryServiceRequestCreateOrConnectWithoutQuotationsInput
@@ -722,10 +934,19 @@ export type ComplementaryServiceRequestCreateWithoutCreatedByUserInput = {
   id?: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   catalogItem: Prisma.ServiceCatalogItemCreateNestedOneWithoutRequestsInput
@@ -740,12 +961,21 @@ export type ComplementaryServiceRequestUncheckedCreateWithoutCreatedByUserInput 
   catalogItemId: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: string | null
   websiteId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   quotations?: Prisma.ServiceQuotationUncheckedCreateNestedManyWithoutRequestInput
@@ -786,13 +1016,22 @@ export type ComplementaryServiceRequestScalarWhereInput = {
   catalogItemId?: Prisma.UuidFilter<"ComplementaryServiceRequest"> | string
   status?: Prisma.EnumComplementaryRequestStatusFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFilter<"ComplementaryServiceRequest"> | string
-  contactPhone?: Prisma.StringFilter<"ComplementaryServiceRequest"> | string
+  contactPhone?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
   contactEmail?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
   details?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
+  title?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
+  engagementPreference?: Prisma.EnumComplementaryEngagementPreferenceNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.JsonNullableFilter<"ComplementaryServiceRequest">
   tenantId?: Prisma.UuidNullableFilter<"ComplementaryServiceRequest"> | string | null
   websiteId?: Prisma.UuidNullableFilter<"ComplementaryServiceRequest"> | string | null
+  websiteDomain?: Prisma.StringNullableFilter<"ComplementaryServiceRequest"> | string | null
+  websiteTargetType?: Prisma.EnumComplementaryWebsiteTargetTypeNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.EnumWebsiteManagementCoverageNullableFilter<"ComplementaryServiceRequest"> | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.EnumComplementaryWebsiteResolutionStateNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.EnumComplementaryAuthorizationStateNullableFilter<"ComplementaryServiceRequest"> | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.UuidNullableFilter<"ComplementaryServiceRequest"> | string | null
   withdrawnAt?: Prisma.DateTimeNullableFilter<"ComplementaryServiceRequest"> | Date | string | null
+  acceptedAt?: Prisma.DateTimeNullableFilter<"ComplementaryServiceRequest"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ComplementaryServiceRequest"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ComplementaryServiceRequest"> | Date | string
 }
@@ -801,10 +1040,19 @@ export type ComplementaryServiceRequestCreateWithoutTenantInput = {
   id?: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   catalogItem: Prisma.ServiceCatalogItemCreateNestedOneWithoutRequestsInput
@@ -819,12 +1067,21 @@ export type ComplementaryServiceRequestUncheckedCreateWithoutTenantInput = {
   catalogItemId: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   websiteId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: string | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   quotations?: Prisma.ServiceQuotationUncheckedCreateNestedManyWithoutRequestInput
@@ -861,10 +1118,19 @@ export type ComplementaryServiceRequestCreateWithoutWebsiteInput = {
   id?: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   catalogItem: Prisma.ServiceCatalogItemCreateNestedOneWithoutRequestsInput
@@ -879,12 +1145,21 @@ export type ComplementaryServiceRequestUncheckedCreateWithoutWebsiteInput = {
   catalogItemId: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: string | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   quotations?: Prisma.ServiceQuotationUncheckedCreateNestedManyWithoutRequestInput
@@ -921,10 +1196,19 @@ export type ComplementaryServiceRequestCreateWithoutCatalogItemInput = {
   id?: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant?: Prisma.TenantCreateNestedOneWithoutComplementaryRequestsInput
@@ -938,13 +1222,22 @@ export type ComplementaryServiceRequestUncheckedCreateWithoutCatalogItemInput = 
   id?: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: string | null
   websiteId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: string | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   quotations?: Prisma.ServiceQuotationUncheckedCreateNestedManyWithoutRequestInput
@@ -981,10 +1274,19 @@ export type ComplementaryServiceRequestCreateWithoutQuotationsInput = {
   id?: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   catalogItem: Prisma.ServiceCatalogItemCreateNestedOneWithoutRequestsInput
@@ -999,13 +1301,22 @@ export type ComplementaryServiceRequestUncheckedCreateWithoutQuotationsInput = {
   catalogItemId: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: string | null
   websiteId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: string | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assignments?: Prisma.ServiceAssignmentUncheckedCreateNestedManyWithoutRequestInput
@@ -1031,10 +1342,19 @@ export type ComplementaryServiceRequestUpdateWithoutQuotationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catalogItem?: Prisma.ServiceCatalogItemUpdateOneRequiredWithoutRequestsNestedInput
@@ -1049,13 +1369,22 @@ export type ComplementaryServiceRequestUncheckedUpdateWithoutQuotationsInput = {
   catalogItemId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assignments?: Prisma.ServiceAssignmentUncheckedUpdateManyWithoutRequestNestedInput
@@ -1065,10 +1394,19 @@ export type ComplementaryServiceRequestCreateWithoutAssignmentsInput = {
   id?: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   catalogItem: Prisma.ServiceCatalogItemCreateNestedOneWithoutRequestsInput
@@ -1083,13 +1421,22 @@ export type ComplementaryServiceRequestUncheckedCreateWithoutAssignmentsInput = 
   catalogItemId: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: string | null
   websiteId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: string | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   quotations?: Prisma.ServiceQuotationUncheckedCreateNestedManyWithoutRequestInput
@@ -1115,10 +1462,19 @@ export type ComplementaryServiceRequestUpdateWithoutAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catalogItem?: Prisma.ServiceCatalogItemUpdateOneRequiredWithoutRequestsNestedInput
@@ -1133,13 +1489,22 @@ export type ComplementaryServiceRequestUncheckedUpdateWithoutAssignmentsInput = 
   catalogItemId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotations?: Prisma.ServiceQuotationUncheckedUpdateManyWithoutRequestNestedInput
@@ -1150,12 +1515,21 @@ export type ComplementaryServiceRequestCreateManyCreatedByUserInput = {
   catalogItemId: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: string | null
   websiteId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1164,10 +1538,19 @@ export type ComplementaryServiceRequestUpdateWithoutCreatedByUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catalogItem?: Prisma.ServiceCatalogItemUpdateOneRequiredWithoutRequestsNestedInput
@@ -1182,12 +1565,21 @@ export type ComplementaryServiceRequestUncheckedUpdateWithoutCreatedByUserInput 
   catalogItemId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotations?: Prisma.ServiceQuotationUncheckedUpdateManyWithoutRequestNestedInput
@@ -1199,12 +1591,21 @@ export type ComplementaryServiceRequestUncheckedUpdateManyWithoutCreatedByUserIn
   catalogItemId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1214,12 +1615,21 @@ export type ComplementaryServiceRequestCreateManyTenantInput = {
   catalogItemId: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   websiteId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: string | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1228,10 +1638,19 @@ export type ComplementaryServiceRequestUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catalogItem?: Prisma.ServiceCatalogItemUpdateOneRequiredWithoutRequestsNestedInput
@@ -1246,12 +1665,21 @@ export type ComplementaryServiceRequestUncheckedUpdateWithoutTenantInput = {
   catalogItemId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotations?: Prisma.ServiceQuotationUncheckedUpdateManyWithoutRequestNestedInput
@@ -1263,12 +1691,21 @@ export type ComplementaryServiceRequestUncheckedUpdateManyWithoutTenantInput = {
   catalogItemId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1278,12 +1715,21 @@ export type ComplementaryServiceRequestCreateManyWebsiteInput = {
   catalogItemId: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: string | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1292,10 +1738,19 @@ export type ComplementaryServiceRequestUpdateWithoutWebsiteInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catalogItem?: Prisma.ServiceCatalogItemUpdateOneRequiredWithoutRequestsNestedInput
@@ -1310,12 +1765,21 @@ export type ComplementaryServiceRequestUncheckedUpdateWithoutWebsiteInput = {
   catalogItemId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotations?: Prisma.ServiceQuotationUncheckedUpdateManyWithoutRequestNestedInput
@@ -1327,12 +1791,21 @@ export type ComplementaryServiceRequestUncheckedUpdateManyWithoutWebsiteInput = 
   catalogItemId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1341,13 +1814,22 @@ export type ComplementaryServiceRequestCreateManyCatalogItemInput = {
   id?: string
   status?: $Enums.ComplementaryRequestStatus
   contactName: string
-  contactPhone: string
+  contactPhone?: string | null
   contactEmail?: string | null
   details?: string | null
+  title?: string | null
+  engagementPreference?: $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: string | null
   websiteId?: string | null
+  websiteDomain?: string | null
+  websiteTargetType?: $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: string | null
   withdrawnAt?: Date | string | null
+  acceptedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1356,10 +1838,19 @@ export type ComplementaryServiceRequestUpdateWithoutCatalogItemInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneWithoutComplementaryRequestsNestedInput
@@ -1373,13 +1864,22 @@ export type ComplementaryServiceRequestUncheckedUpdateWithoutCatalogItemInput = 
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   quotations?: Prisma.ServiceQuotationUncheckedUpdateManyWithoutRequestNestedInput
@@ -1390,13 +1890,22 @@ export type ComplementaryServiceRequestUncheckedUpdateManyWithoutCatalogItemInpu
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumComplementaryRequestStatusFieldUpdateOperationsInput | $Enums.ComplementaryRequestStatus
   contactName?: Prisma.StringFieldUpdateOperationsInput | string
-  contactPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   details?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  engagementPreference?: Prisma.NullableEnumComplementaryEngagementPreferenceFieldUpdateOperationsInput | $Enums.ComplementaryEngagementPreference | null
+  scope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteTargetType?: Prisma.NullableEnumComplementaryWebsiteTargetTypeFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteTargetType | null
+  websiteCoverageSnapshot?: Prisma.NullableEnumWebsiteManagementCoverageFieldUpdateOperationsInput | $Enums.WebsiteManagementCoverage | null
+  websiteResolutionState?: Prisma.NullableEnumComplementaryWebsiteResolutionStateFieldUpdateOperationsInput | $Enums.ComplementaryWebsiteResolutionState | null
+  authorizationState?: Prisma.NullableEnumComplementaryAuthorizationStateFieldUpdateOperationsInput | $Enums.ComplementaryAuthorizationState | null
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   withdrawnAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  acceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1449,10 +1958,19 @@ export type ComplementaryServiceRequestSelect<ExtArgs extends runtime.Types.Exte
   contactPhone?: boolean
   contactEmail?: boolean
   details?: boolean
+  title?: boolean
+  engagementPreference?: boolean
+  scope?: boolean
   tenantId?: boolean
   websiteId?: boolean
+  websiteDomain?: boolean
+  websiteTargetType?: boolean
+  websiteCoverageSnapshot?: boolean
+  websiteResolutionState?: boolean
+  authorizationState?: boolean
   createdByUserId?: boolean
   withdrawnAt?: boolean
+  acceptedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   catalogItem?: boolean | Prisma.ServiceCatalogItemDefaultArgs<ExtArgs>
@@ -1472,10 +1990,19 @@ export type ComplementaryServiceRequestSelectCreateManyAndReturn<ExtArgs extends
   contactPhone?: boolean
   contactEmail?: boolean
   details?: boolean
+  title?: boolean
+  engagementPreference?: boolean
+  scope?: boolean
   tenantId?: boolean
   websiteId?: boolean
+  websiteDomain?: boolean
+  websiteTargetType?: boolean
+  websiteCoverageSnapshot?: boolean
+  websiteResolutionState?: boolean
+  authorizationState?: boolean
   createdByUserId?: boolean
   withdrawnAt?: boolean
+  acceptedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   catalogItem?: boolean | Prisma.ServiceCatalogItemDefaultArgs<ExtArgs>
@@ -1492,10 +2019,19 @@ export type ComplementaryServiceRequestSelectUpdateManyAndReturn<ExtArgs extends
   contactPhone?: boolean
   contactEmail?: boolean
   details?: boolean
+  title?: boolean
+  engagementPreference?: boolean
+  scope?: boolean
   tenantId?: boolean
   websiteId?: boolean
+  websiteDomain?: boolean
+  websiteTargetType?: boolean
+  websiteCoverageSnapshot?: boolean
+  websiteResolutionState?: boolean
+  authorizationState?: boolean
   createdByUserId?: boolean
   withdrawnAt?: boolean
+  acceptedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   catalogItem?: boolean | Prisma.ServiceCatalogItemDefaultArgs<ExtArgs>
@@ -1512,15 +2048,24 @@ export type ComplementaryServiceRequestSelectScalar = {
   contactPhone?: boolean
   contactEmail?: boolean
   details?: boolean
+  title?: boolean
+  engagementPreference?: boolean
+  scope?: boolean
   tenantId?: boolean
   websiteId?: boolean
+  websiteDomain?: boolean
+  websiteTargetType?: boolean
+  websiteCoverageSnapshot?: boolean
+  websiteResolutionState?: boolean
+  authorizationState?: boolean
   createdByUserId?: boolean
   withdrawnAt?: boolean
+  acceptedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ComplementaryServiceRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "catalogItemId" | "status" | "contactName" | "contactPhone" | "contactEmail" | "details" | "tenantId" | "websiteId" | "createdByUserId" | "withdrawnAt" | "createdAt" | "updatedAt", ExtArgs["result"]["complementaryServiceRequest"]>
+export type ComplementaryServiceRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "catalogItemId" | "status" | "contactName" | "contactPhone" | "contactEmail" | "details" | "title" | "engagementPreference" | "scope" | "tenantId" | "websiteId" | "websiteDomain" | "websiteTargetType" | "websiteCoverageSnapshot" | "websiteResolutionState" | "authorizationState" | "createdByUserId" | "withdrawnAt" | "acceptedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["complementaryServiceRequest"]>
 export type ComplementaryServiceRequestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   catalogItem?: boolean | Prisma.ServiceCatalogItemDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.ComplementaryServiceRequest$tenantArgs<ExtArgs>
@@ -1558,13 +2103,22 @@ export type $ComplementaryServiceRequestPayload<ExtArgs extends runtime.Types.Ex
     catalogItemId: string
     status: $Enums.ComplementaryRequestStatus
     contactName: string
-    contactPhone: string
+    contactPhone: string | null
     contactEmail: string | null
     details: string | null
+    title: string | null
+    engagementPreference: $Enums.ComplementaryEngagementPreference | null
+    scope: runtime.JsonValue | null
     tenantId: string | null
     websiteId: string | null
+    websiteDomain: string | null
+    websiteTargetType: $Enums.ComplementaryWebsiteTargetType | null
+    websiteCoverageSnapshot: $Enums.WebsiteManagementCoverage | null
+    websiteResolutionState: $Enums.ComplementaryWebsiteResolutionState | null
+    authorizationState: $Enums.ComplementaryAuthorizationState | null
     createdByUserId: string | null
     withdrawnAt: Date | null
+    acceptedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["complementaryServiceRequest"]>
@@ -2003,10 +2557,19 @@ export interface ComplementaryServiceRequestFieldRefs {
   readonly contactPhone: Prisma.FieldRef<"ComplementaryServiceRequest", 'String'>
   readonly contactEmail: Prisma.FieldRef<"ComplementaryServiceRequest", 'String'>
   readonly details: Prisma.FieldRef<"ComplementaryServiceRequest", 'String'>
+  readonly title: Prisma.FieldRef<"ComplementaryServiceRequest", 'String'>
+  readonly engagementPreference: Prisma.FieldRef<"ComplementaryServiceRequest", 'ComplementaryEngagementPreference'>
+  readonly scope: Prisma.FieldRef<"ComplementaryServiceRequest", 'Json'>
   readonly tenantId: Prisma.FieldRef<"ComplementaryServiceRequest", 'String'>
   readonly websiteId: Prisma.FieldRef<"ComplementaryServiceRequest", 'String'>
+  readonly websiteDomain: Prisma.FieldRef<"ComplementaryServiceRequest", 'String'>
+  readonly websiteTargetType: Prisma.FieldRef<"ComplementaryServiceRequest", 'ComplementaryWebsiteTargetType'>
+  readonly websiteCoverageSnapshot: Prisma.FieldRef<"ComplementaryServiceRequest", 'WebsiteManagementCoverage'>
+  readonly websiteResolutionState: Prisma.FieldRef<"ComplementaryServiceRequest", 'ComplementaryWebsiteResolutionState'>
+  readonly authorizationState: Prisma.FieldRef<"ComplementaryServiceRequest", 'ComplementaryAuthorizationState'>
   readonly createdByUserId: Prisma.FieldRef<"ComplementaryServiceRequest", 'String'>
   readonly withdrawnAt: Prisma.FieldRef<"ComplementaryServiceRequest", 'DateTime'>
+  readonly acceptedAt: Prisma.FieldRef<"ComplementaryServiceRequest", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"ComplementaryServiceRequest", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ComplementaryServiceRequest", 'DateTime'>
 }

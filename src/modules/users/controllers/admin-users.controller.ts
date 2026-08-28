@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsOptional,
@@ -24,6 +25,7 @@ import { ApiResponseBuilder } from '#/common/http/api-response.builder.js';
 import { Roles } from '#/modules/auth/decorators/roles.decorator.js';
 import { RolesGuard } from '#/modules/auth/guards/roles.guard.js';
 import { UsersService } from '../services/users.service.js';
+import { TenantsService } from '#/modules/tenants/services/tenants.service.js';
 
 class AdminCreateUserDto {
   @IsString()
@@ -49,6 +51,10 @@ class AdminCreateUserDto {
   @IsOptional()
   @IsString()
   locale?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  authorized?: boolean;
 }
 
 class AdminUpdateUserDto {
@@ -72,6 +78,10 @@ class AdminUpdateUserDto {
   @IsOptional()
   @IsString()
   locale?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  authorized?: boolean;
 }
 
 class AccountSecurityActionDto {
@@ -85,7 +95,10 @@ class AccountSecurityActionDto {
 @UseGuards(RolesGuard)
 @Roles(Role.ADMIN, Role.OPERATOR)
 export class AdminUsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly tenantsService: TenantsService,
+  ) {}
 
   @Get()
   async list(
@@ -107,11 +120,22 @@ export class AdminUsersController {
     return ApiResponseBuilder.ok(data);
   }
 
+  @Get(':id/tenant')
+  async getTenant(@Param('id') id: string) {
+    const tenant = await this.tenantsService.ensurePersonalTenantForUser(id);
+    return ApiResponseBuilder.ok(tenant);
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() body: AdminCreateUserDto) {
     const data = await this.usersService.createAdmin(body);
-    return ApiResponseBuilder.created(data);
+    await this.tenantsService.ensurePersonalTenantForUser(
+      data.id,
+      data.fullName ?? data.phoneNumber ?? undefined,
+    );
+    const withMemberships = await this.usersService.getAdmin(data.id);
+    return ApiResponseBuilder.created(withMemberships);
   }
 
   @Patch(':id')

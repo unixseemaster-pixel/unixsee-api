@@ -5,7 +5,11 @@ import {
 } from '@nestjs/common';
 
 import { createAppLogger } from '#/common/logging/app-logger.js';
-import { DiscoveryStatus } from '#/generated/prisma/enums.js';
+import { CommercialAuthorizationService } from '#/common/tenancy/commercial-authorization.service.js';
+import {
+  DiscoveryStatus,
+  WebsiteManagementCoverage,
+} from '#/generated/prisma/enums.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { ERROR_MESSAGES } from '#/utils/error-messages.js';
 
@@ -13,7 +17,10 @@ import { ERROR_MESSAGES } from '#/utils/error-messages.js';
 export class DiscoveriesService {
   private readonly logger = createAppLogger(DiscoveriesService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly commercialAuth: CommercialAuthorizationService,
+  ) {}
 
   async list(params?: {
     status?: DiscoveryStatus;
@@ -47,7 +54,13 @@ export class DiscoveriesService {
 
   async assign(
     id: string,
-    input: { tenantId: string; userId?: string; planId?: string },
+    input: {
+      tenantId: string;
+      userId?: string;
+      planId?: string;
+      confirmUnauthorized?: boolean;
+      actorId: string;
+    },
   ) {
     const discovery = await this.get(id);
     if (!input.tenantId) {
@@ -60,6 +73,16 @@ export class DiscoveriesService {
     if (!tenant) {
       throw new NotFoundException(ERROR_MESSAGES.fa.notFound);
     }
+
+    await this.commercialAuth.assertAuthorizedOrConfirmed({
+      tenantId: input.tenantId,
+      preferredUserId: input.userId,
+      confirmUnauthorized: input.confirmUnauthorized,
+      actorId: input.actorId,
+      action: 'discovery.assign.unauthorized_override',
+      entityType: 'WebsiteDiscovery',
+      entityId: id,
+    });
 
     let vpsNodeId = discovery.vpsNodeId;
     if (!vpsNodeId) {
@@ -85,7 +108,10 @@ export class DiscoveriesService {
               tenantId: input.tenantId,
               userId: input.userId ?? existingWebsite.userId,
               vpsNodeId,
-              ...(input.planId !== undefined ? { planId: input.planId } : {}),
+              managementCoverage: WebsiteManagementCoverage.UNIXSEE_MANAGED,
+              ...(input.planId !== undefined
+                ? { planId: input.planId, planActivatedAt: null }
+                : {}),
               displayName: discovery.displayName ?? existingWebsite.displayName,
               directAdminUser:
                 discovery.directAdminUser ?? existingWebsite.directAdminUser,
@@ -102,7 +128,9 @@ export class DiscoveriesService {
               tenantId: input.tenantId,
               userId: input.userId,
               vpsNodeId,
+              managementCoverage: WebsiteManagementCoverage.UNIXSEE_MANAGED,
               planId: input.planId,
+              planActivatedAt: null,
               displayName: discovery.displayName,
               directAdminUser: discovery.directAdminUser,
               homeDirectory: discovery.homeDirectory,

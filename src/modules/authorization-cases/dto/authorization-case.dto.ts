@@ -9,6 +9,10 @@ import {
   MinLength,
 } from 'class-validator';
 
+import {
+  IsInternationalPhone,
+  TransformToE164Phone,
+} from '#/common/validation/is-international-phone.decorator.js';
 import { ContactChallengeState } from '#/generated/prisma/enums.js';
 
 export const CONTACT_CHALLENGE_API = [
@@ -44,9 +48,9 @@ export class AuthorizationPackageDto {
   @MaxLength(32)
   birthDate!: string;
 
+  @TransformToE164Phone()
   @IsString()
-  @MinLength(1)
-  @MaxLength(32)
+  @IsInternationalPhone()
   mobile!: string;
 
   @IsIn(CONTACT_CHALLENGE_API)

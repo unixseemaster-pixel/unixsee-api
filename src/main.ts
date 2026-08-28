@@ -17,11 +17,23 @@ async function bootstrap() {
   const allowedOrigins = configService.getOrThrow('app.corsAllowedOrigins', {
     infer: true,
   });
+  const trustProxyHops = configService.getOrThrow('app.trustProxyHops', {
+    infer: true,
+  });
 
   app.use(requestContextMiddleware);
 
-  // Ensure NestJS correctly reads the forwarded headers (X-Forwarded-For) to read VPS IPs
-  app.getHttpAdapter().getInstance().set('trust proxy', true);
+  // Read the real client IP from X-Forwarded-For behind the VPS proxy, but only
+  // as far back as the proxies we actually run. `trust proxy: true` resolves
+  // request.ip to the LEFTMOST forwarded entry, which the client writes itself,
+  // so any caller could mint a fresh per-IP rate-limit bucket on every request
+  // with one header. A hop count makes Express walk the chain right-to-left
+  // instead, landing on the address our own proxy observed and appended, which
+  // the client cannot forge. 0 disables forwarded-header trust entirely.
+  app
+    .getHttpAdapter()
+    .getInstance()
+    .set('trust proxy', trustProxyHops === 0 ? false : trustProxyHops);
 
   app.enableCors({
     origin: (origin, callback) => {

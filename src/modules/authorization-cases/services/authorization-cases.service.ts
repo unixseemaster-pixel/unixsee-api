@@ -11,6 +11,7 @@ import {
   ContactChallengeState,
 } from '#/generated/prisma/enums.js';
 import type { Prisma } from '#/generated/prisma/client.js';
+import { ComplementaryServicesService } from '#/modules/complementary-services/services/complementary-services.service.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { StorageService } from '#/modules/storage/storage.service.js';
 import { TenantsService } from '#/modules/tenants/services/tenants.service.js';
@@ -66,8 +67,8 @@ export class AuthorizationCasesService {
     private readonly prisma: PrismaService,
     private readonly tenantsService: TenantsService,
     private readonly storageService: StorageService,
+    private readonly complementaryServices: ComplementaryServicesService,
   ) {}
-
 
   async getMine(userId: string) {
     return this.prisma.authorizationCase.findFirst({
@@ -240,6 +241,11 @@ export class AuthorizationCasesService {
       tenantName,
     );
 
+    await this.prisma.user.update({
+      where: { id: authCase.userId },
+      data: { authorized: true },
+    });
+
     const updated = await this.prisma.authorizationCase.update({
       where: { id },
       data: {
@@ -253,11 +259,16 @@ export class AuthorizationCasesService {
       include: adminInclude,
     });
 
+    await this.complementaryServices.reconcileDeferredForUser(
+      authCase.userId,
+      tenant.id,
+    );
     this.logger.log('authorization_case.approved', {
       caseId: id,
       userId: authCase.userId,
       tenantId: tenant.id,
       staffUserId,
+      authorized: true,
     });
     return updated;
   }
@@ -294,11 +305,7 @@ export class AuthorizationCasesService {
     return updated;
   }
 
-  async reject(
-    id: string,
-    staffUserId: string,
-    input: { reason: string },
-  ) {
+  async reject(id: string, staffUserId: string, input: { reason: string }) {
     const authCase = await this.getAdmin(id);
     if (authCase.status !== AuthorizationCaseStatus.PENDING_REVIEW) {
       throw new BadRequestException({
@@ -352,7 +359,8 @@ export class AuthorizationCasesService {
       input.emailChallenge === ContactChallengeState.VERIFIED ||
       input.emailChallenge === ContactChallengeState.SKIPPED_ALREADY_VERIFIED;
     const mobileBelongsOk =
-      input.mobileChallenge !== ContactChallengeState.SKIPPED_ALREADY_VERIFIED ||
+      input.mobileChallenge !==
+        ContactChallengeState.SKIPPED_ALREADY_VERIFIED ||
       input.mobileBelongsToNationalId;
 
     if (
@@ -378,8 +386,14 @@ export class AuthorizationCasesService {
   }
 
   async uploadDocument(userId: string, file: Express.Multer.File) {
-    if (!file.mimetype.startsWith('image/') && file.mimetype !== 'application/pdf') {
-      throw new BadRequestException({ code: 'INVALID_FILE_TYPE', message: 'Only image files and PDF are allowed' });
+    if (
+      !file.mimetype.startsWith('image/') &&
+      file.mimetype !== 'application/pdf'
+    ) {
+      throw new BadRequestException({
+        code: 'INVALID_FILE_TYPE',
+        message: 'Only image files and PDF are allowed',
+      });
     }
 
     const existing = await this.getMine(userId);
@@ -391,11 +405,17 @@ export class AuthorizationCasesService {
     }
 
     const ext = file.originalname.split('.').pop() || 'jpg';
-    const storageKey = 'authorization/' + userId + '/' + crypto.randomUUID() + '.' + ext;
+    const storageKey =
+      'authorization/' + userId + '/' + crypto.randomUUID() + '.' + ext;
 
-    await this.storageService.upload(storageKey, file.buffer, { contentType: file.mimetype });
+    await this.storageService.upload(storageKey, file.buffer, {
+      contentType: file.mimetype,
+    });
 
-    const { signedUrl } = await this.storageService.createSignedUrl(storageKey, 30 * 24 * 60 * 60);
+    const { signedUrl } = await this.storageService.createSignedUrl(
+      storageKey,
+      30 * 24 * 60 * 60,
+    );
 
     // Update or create the authorization case with the document
     if (existing) {

@@ -1,12 +1,26 @@
 import {
+  IsBoolean,
   IsEmail,
+  IsEnum,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
   MaxLength,
+  Min,
   MinLength,
   ValidateIf,
 } from 'class-validator';
+
+import {
+  IsInternationalPhone,
+  TransformToE164Phone,
+} from '#/common/validation/is-international-phone.decorator.js';
+import {
+  BillingCommercialModel,
+  BillingCommercialState,
+  BillingInterval,
+} from '#/generated/prisma/enums.js';
 
 export class CreatePublicPlanRequestDto {
   @IsUUID()
@@ -18,9 +32,9 @@ export class CreatePublicPlanRequestDto {
   contactName!: string;
 
   @ValidateIf((o: CreatePublicPlanRequestDto) => !o.contactEmail)
+  @TransformToE164Phone()
   @IsString()
-  @MinLength(1)
-  @MaxLength(32)
+  @IsInternationalPhone()
   contactPhone?: string;
 
   @ValidateIf((o: CreatePublicPlanRequestDto) => !o.contactPhone)
@@ -61,6 +75,34 @@ export class EnablePlanRequestDto {
   @IsOptional()
   @IsUUID()
   tenantId?: string;
+
+  @IsNumber()
+  @Min(0)
+  amount!: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(8)
+  currency?: string;
+
+  @IsEnum(BillingInterval)
+  interval!: BillingInterval;
+
+  @IsOptional()
+  @IsString()
+  periodStartsAt?: string;
+
+  @IsOptional()
+  @IsEnum(BillingCommercialModel)
+  commercialModel?: BillingCommercialModel;
+
+  @IsOptional()
+  @IsEnum(BillingCommercialState)
+  commercialState?: BillingCommercialState;
+
+  @IsOptional()
+  @IsBoolean()
+  confirmUnauthorized?: boolean;
 }
 
 export class DeclinePlanRequestDto {
@@ -72,8 +114,9 @@ export class DeclinePlanRequestDto {
 
 export class CheckPublicPlanRequestAccountDto {
   @IsOptional()
+  @TransformToE164Phone()
   @IsString()
-  @MaxLength(32)
+  @IsInternationalPhone()
   contactPhone?: string;
 
   @IsOptional()

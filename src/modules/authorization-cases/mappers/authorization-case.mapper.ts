@@ -39,7 +39,7 @@ type AdminCaseRow = CaseRow & {
     phoneVerifiedAt: Date | null;
     emailVerifiedAt: Date | null;
   };
-  tenant: { id: string; name: string; displayName: string | null } | null;
+  tenant: { id: string; name: string | null; displayName: string | null } | null;
   decidedBy: { id: string; fullName: string | null; username: string | null } | null;
 };
 

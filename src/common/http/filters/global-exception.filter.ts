@@ -44,6 +44,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       normalized.details,
     );
 
+    const retryAfterSeconds = this.readRetryAfterSeconds(normalized.details);
+    if (retryAfterSeconds != null && !response.getHeader('Retry-After')) {
+      response.setHeader('Retry-After', String(retryAfterSeconds));
+    }
+
     if (statusCode >= HttpStatus.INTERNAL_SERVER_ERROR) {
       logger.error('http.exception.unhandled', exception as Error, {
         method: request.method,
@@ -53,6 +58,20 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     }
 
     return response.status(statusCode).json(body);
+  }
+
+  private readRetryAfterSeconds(details: unknown): number | null {
+    if (!details || typeof details !== 'object') {
+      return null;
+    }
+
+    const value = (details as { retryAfterSeconds?: unknown })
+      .retryAfterSeconds;
+    if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
+      return null;
+    }
+
+    return Math.ceil(value);
   }
 
   private getStatusCode(exception: unknown): number {

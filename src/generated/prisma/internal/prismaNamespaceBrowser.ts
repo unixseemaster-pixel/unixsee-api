@@ -79,6 +79,8 @@ export const ModelName = {
   ComplementaryServiceRequest: 'ComplementaryServiceRequest',
   ServiceQuotation: 'ServiceQuotation',
   ServiceAssignment: 'ServiceAssignment',
+  BillingItem: 'BillingItem',
+  BillingPeriodRow: 'BillingPeriodRow',
   ServiceUsage: 'ServiceUsage',
   ServiceDeliverable: 'ServiceDeliverable',
   Ticket: 'Ticket',
@@ -92,7 +94,9 @@ export const ModelName = {
   IdempotencyRecord: 'IdempotencyRecord',
   UnixseeMessage: 'UnixseeMessage',
   UnixseeMessageAttachment: 'UnixseeMessageAttachment',
-  UnixseeMessageRead: 'UnixseeMessageRead'
+  UnixseeMessageRead: 'UnixseeMessageRead',
+  NewsletterSubscription: 'NewsletterSubscription',
+  ContactMessage: 'ContactMessage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -119,6 +123,7 @@ export const UserScalarFieldEnum = {
   password: 'password',
   fullName: 'fullName',
   role: 'role',
+  authorized: 'authorized',
   status: 'status',
   locale: 'locale',
   hashedRt: 'hashedRt',
@@ -248,12 +253,19 @@ export const WebsiteScalarFieldEnum = {
   tenantId: 'tenantId',
   vpsNodeId: 'vpsNodeId',
   planId: 'planId',
+  planActivatedAt: 'planActivatedAt',
+  managementCoverage: 'managementCoverage',
   domain: 'domain',
   displayName: 'displayName',
   directAdminUser: 'directAdminUser',
   homeDirectory: 'homeDirectory',
   documentRoot: 'documentRoot',
   wordpressAdminUrl: 'wordpressAdminUrl',
+  wordpressAdminUsername: 'wordpressAdminUsername',
+  wordpressAdminPassword: 'wordpressAdminPassword',
+  directAdminUrl: 'directAdminUrl',
+  directAdminUsername: 'directAdminUsername',
+  directAdminPassword: 'directAdminPassword',
   isActive: 'isActive',
   status: 'status',
   lastIsUp: 'lastIsUp',
@@ -532,12 +544,16 @@ export type AlertScalarFieldEnum = (typeof AlertScalarFieldEnum)[keyof typeof Al
 
 export const OtpScalarFieldEnum = {
   id: 'id',
-  otp: 'otp',
+  otpHash: 'otpHash',
   phoneNumber: 'phoneNumber',
   expiredTime: 'expiredTime',
   identifier: 'identifier',
   lastRequestedTime: 'lastRequestedTime',
   context: 'context',
+  attemptCount: 'attemptCount',
+  consumedAt: 'consumedAt',
+  requestCount: 'requestCount',
+  requestWindowStartedAt: 'requestWindowStartedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -610,10 +626,19 @@ export const ComplementaryServiceRequestScalarFieldEnum = {
   contactPhone: 'contactPhone',
   contactEmail: 'contactEmail',
   details: 'details',
+  title: 'title',
+  engagementPreference: 'engagementPreference',
+  scope: 'scope',
   tenantId: 'tenantId',
   websiteId: 'websiteId',
+  websiteDomain: 'websiteDomain',
+  websiteTargetType: 'websiteTargetType',
+  websiteCoverageSnapshot: 'websiteCoverageSnapshot',
+  websiteResolutionState: 'websiteResolutionState',
+  authorizationState: 'authorizationState',
   createdByUserId: 'createdByUserId',
   withdrawnAt: 'withdrawnAt',
+  acceptedAt: 'acceptedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -641,11 +666,57 @@ export const ServiceAssignmentScalarFieldEnum = {
   assigneeNote: 'assigneeNote',
   startedAt: 'startedAt',
   completedAt: 'completedAt',
+  authorizationState: 'authorizationState',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ServiceAssignmentScalarFieldEnum = (typeof ServiceAssignmentScalarFieldEnum)[keyof typeof ServiceAssignmentScalarFieldEnum]
+
+
+export const BillingItemScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  websiteId: 'websiteId',
+  kind: 'kind',
+  planId: 'planId',
+  serviceAssignmentId: 'serviceAssignmentId',
+  sourcePlanRequestId: 'sourcePlanRequestId',
+  sourceQuotationId: 'sourceQuotationId',
+  labelSnapshot: 'labelSnapshot',
+  commercialModel: 'commercialModel',
+  amount: 'amount',
+  currency: 'currency',
+  interval: 'interval',
+  status: 'status',
+  commercialState: 'commercialState',
+  periodStartsAt: 'periodStartsAt',
+  periodEndsAt: 'periodEndsAt',
+  renewsAt: 'renewsAt',
+  cancelledAt: 'cancelledAt',
+  cancellationReason: 'cancellationReason',
+  nonRenewalReason: 'nonRenewalReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BillingItemScalarFieldEnum = (typeof BillingItemScalarFieldEnum)[keyof typeof BillingItemScalarFieldEnum]
+
+
+export const BillingPeriodRowScalarFieldEnum = {
+  id: 'id',
+  billingItemId: 'billingItemId',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  amount: 'amount',
+  currency: 'currency',
+  interval: 'interval',
+  reason: 'reason',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type BillingPeriodRowScalarFieldEnum = (typeof BillingPeriodRowScalarFieldEnum)[keyof typeof BillingPeriodRowScalarFieldEnum]
 
 
 export const ServiceUsageScalarFieldEnum = {
@@ -849,6 +920,41 @@ export const UnixseeMessageReadScalarFieldEnum = {
 } as const
 
 export type UnixseeMessageReadScalarFieldEnum = (typeof UnixseeMessageReadScalarFieldEnum)[keyof typeof UnixseeMessageReadScalarFieldEnum]
+
+
+export const NewsletterSubscriptionScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  locale: 'locale',
+  source: 'source',
+  status: 'status',
+  consentedAt: 'consentedAt',
+  unsubscribedAt: 'unsubscribedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NewsletterSubscriptionScalarFieldEnum = (typeof NewsletterSubscriptionScalarFieldEnum)[keyof typeof NewsletterSubscriptionScalarFieldEnum]
+
+
+export const ContactMessageScalarFieldEnum = {
+  id: 'id',
+  subject: 'subject',
+  fullName: 'fullName',
+  email: 'email',
+  phone: 'phone',
+  website: 'website',
+  activityBasin: 'activityBasin',
+  message: 'message',
+  attachmentKeys: 'attachmentKeys',
+  locale: 'locale',
+  source: 'source',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContactMessageScalarFieldEnum = (typeof ContactMessageScalarFieldEnum)[keyof typeof ContactMessageScalarFieldEnum]
 
 
 export const SortOrder = {

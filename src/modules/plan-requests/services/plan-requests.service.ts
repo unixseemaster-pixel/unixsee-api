@@ -7,8 +7,15 @@ import {
 
 import { IdempotencyService } from '#/common/idempotency/idempotency.service.js';
 import { createAppLogger } from '#/common/logging/app-logger.js';
+import { CommercialAuthorizationService } from '#/common/tenancy/commercial-authorization.service.js';
 import { TenantAccessService } from '#/common/tenancy/tenant-access.service.js';
-import { PlanRequestStatus } from '#/generated/prisma/enums.js';
+import {
+  BillingCommercialModel,
+  BillingCommercialState,
+  BillingInterval,
+  PlanRequestStatus,
+} from '#/generated/prisma/enums.js';
+import { BillingService } from '#/modules/billing/services/billing.service.js';
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import { UsersService } from '#/modules/users/services/users.service.js';
 import { ERROR_MESSAGES } from '#/utils/error-messages.js';
@@ -27,8 +34,10 @@ export class PlanRequestsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly tenantAccess: TenantAccessService,
+    private readonly commercialAuth: CommercialAuthorizationService,
     private readonly idempotency: IdempotencyService,
     private readonly usersService: UsersService,
+    private readonly billing: BillingService,
   ) {}
 
   async createPublic(input: {
@@ -133,9 +142,8 @@ export class PlanRequestsService {
     }
 
     if (domain) {
-      const website = await this.usersService.findCustomerOwningWebsiteDomain(
-        domain,
-      );
+      const website =
+        await this.usersService.findCustomerOwningWebsiteDomain(domain);
       if (website) {
         return { exists: true, matchedBy: 'website' };
       }
@@ -290,7 +298,17 @@ export class PlanRequestsService {
   async enable(
     id: string,
     actorId: string,
-    input: { websiteId: string; tenantId?: string },
+    input: {
+      websiteId: string;
+      tenantId?: string;
+      amount: number;
+      currency?: string;
+      interval: BillingInterval;
+      periodStartsAt?: string;
+      commercialModel?: BillingCommercialModel;
+      commercialState?: BillingCommercialState;
+      confirmUnauthorized?: boolean;
+    },
     idempotencyKey?: string,
   ) {
     const execute = async () => {
@@ -314,15 +332,65 @@ export class PlanRequestsService {
         throw new BadRequestException(ERROR_MESSAGES.fa.validation);
       }
 
-      if (website.planId && website.planId !== request.planId) {
+      await this.commercialAuth.assertAuthorizedOrConfirmed({
+        tenantId,
+        preferredUserId: request.linkedUserId,
+        confirmUnauthorized: input.confirmUnauthorized,
+        actorId,
+        action: 'plan_request.enable.unauthorized_override',
+        entityType: 'PlanRequest',
+        entityId: id,
+      });
+
+      if (
+        website.planActivatedAt &&
+        website.planId &&
+        website.planId !== request.planId
+      ) {
         throw new ConflictException(ERROR_MESSAGES.fa.conflict);
       }
 
+      const plan = request.plan;
+      const labelSnapshot =
+        plan?.nameFa || plan?.nameEn || plan?.code || request.planId;
+
       const enabled = await this.prisma.$transaction(async (tx) => {
-        await tx.website.update({
-          where: { id: website.id },
-          data: { planId: request.planId },
-        });
+        const activatedAt = input.periodStartsAt
+          ? new Date(input.periodStartsAt)
+          : new Date();
+        if (Number.isNaN(activatedAt.getTime())) {
+          throw new BadRequestException(ERROR_MESSAGES.fa.validation);
+        }
+
+        const alreadyActiveSamePlan =
+          Boolean(website.planActivatedAt) && website.planId === request.planId;
+
+        if (!alreadyActiveSamePlan) {
+          await tx.website.update({
+            where: { id: website.id },
+            data: {
+              planId: request.planId,
+              planActivatedAt: activatedAt,
+            },
+          });
+
+          await this.billing.createManagedPlanItem(tx, {
+            tenantId,
+            websiteId: website.id,
+            planId: request.planId,
+            labelSnapshot,
+            sourcePlanRequestId: id,
+            actorId,
+            terms: {
+              amount: input.amount,
+              currency: input.currency,
+              interval: input.interval,
+              periodStartsAt: activatedAt,
+              commercialModel: input.commercialModel,
+              commercialState: input.commercialState,
+            },
+          });
+        }
 
         return tx.planRequest.update({
           where: { id },
@@ -330,10 +398,17 @@ export class PlanRequestsService {
             status: PlanRequestStatus.ENABLED,
             tenantId,
             websiteId: website.id,
-            enabledAt: new Date(),
+            enabledAt: alreadyActiveSamePlan
+              ? (website.planActivatedAt ?? activatedAt)
+              : activatedAt,
             ...(idempotencyKey ? { idempotencyKey } : {}),
           },
-          include: { plan: true, tenant: true, website: true, linkedUser: true },
+          include: {
+            plan: true,
+            tenant: true,
+            website: true,
+            linkedUser: true,
+          },
         });
       });
 
@@ -383,6 +458,32 @@ export class PlanRequestsService {
     });
 
     this.logger.log('plan_request.declined', { planRequestId: id });
+    return updated;
+  }
+  async unlink(id: string) {
+    const request = await this.getAdmin(id);
+    if (
+      request.status === PlanRequestStatus.ENABLED ||
+      request.status === PlanRequestStatus.DECLINED
+    ) {
+      throw new ConflictException(ERROR_MESSAGES.fa.conflict);
+    }
+
+    const updated = await this.prisma.planRequest.update({
+      where: { id },
+      data: {
+        websiteId: null,
+        status: PlanRequestStatus.SUBMITTED,
+      },
+      include: {
+        plan: true,
+        tenant: true,
+        website: true,
+        linkedUser: true,
+      },
+    });
+
+    this.logger.log('plan_request.unlinked', { planRequestId: id });
     return updated;
   }
 }

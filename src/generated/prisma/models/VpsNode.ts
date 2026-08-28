@@ -690,14 +690,14 @@ export type VpsNodeMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type VpsNodeScalarRelationFilter = {
-  is?: Prisma.VpsNodeWhereInput
-  isNot?: Prisma.VpsNodeWhereInput
-}
-
 export type VpsNodeNullableScalarRelationFilter = {
   is?: Prisma.VpsNodeWhereInput | null
   isNot?: Prisma.VpsNodeWhereInput | null
+}
+
+export type VpsNodeScalarRelationFilter = {
+  is?: Prisma.VpsNodeWhereInput
+  isNot?: Prisma.VpsNodeWhereInput
 }
 
 export type VpsNodeCreateNestedManyWithoutUserInput = {
@@ -794,10 +794,12 @@ export type VpsNodeCreateNestedOneWithoutWebsitesInput = {
   connect?: Prisma.VpsNodeWhereUniqueInput
 }
 
-export type VpsNodeUpdateOneRequiredWithoutWebsitesNestedInput = {
+export type VpsNodeUpdateOneWithoutWebsitesNestedInput = {
   create?: Prisma.XOR<Prisma.VpsNodeCreateWithoutWebsitesInput, Prisma.VpsNodeUncheckedCreateWithoutWebsitesInput>
   connectOrCreate?: Prisma.VpsNodeCreateOrConnectWithoutWebsitesInput
   upsert?: Prisma.VpsNodeUpsertWithoutWebsitesInput
+  disconnect?: Prisma.VpsNodeWhereInput | boolean
+  delete?: Prisma.VpsNodeWhereInput | boolean
   connect?: Prisma.VpsNodeWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.VpsNodeUpdateToOneWithWhereWithoutWebsitesInput, Prisma.VpsNodeUpdateWithoutWebsitesInput>, Prisma.VpsNodeUncheckedUpdateWithoutWebsitesInput>
 }

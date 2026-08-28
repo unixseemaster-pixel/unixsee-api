@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   HttpCode,
   HttpStatus,
   Param,
@@ -11,11 +12,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import type { CurrentUserType } from '#/@types/express/index.js';
 import { ApiResponseBuilder } from '#/common/http/api-response.builder.js';
-import {
-  ComplementaryRequestStatus,
-  Role,
-} from '#/generated/prisma/enums.js';
+import { ComplementaryRequestStatus, Role } from '#/generated/prisma/enums.js';
+import { CurrentUser } from '#/modules/auth/decorators/current-user.decorator.js';
 import { Roles } from '#/modules/auth/decorators/roles.decorator.js';
 import { RolesGuard } from '#/modules/auth/guards/roles.guard.js';
 import {
@@ -51,6 +51,11 @@ export class AdminComplementaryServicesController {
     return ApiResponseBuilder.ok(data);
   }
 
+  @Get('complementary-service-requests/:id')
+  async getRequest(@Param('id') id: string) {
+    const data = await this.complementaryServices.getAdmin(id);
+    return ApiResponseBuilder.ok(data);
+  }
   @Patch('complementary-service-requests/:id')
   async patchRequest(
     @Param('id') id: string,
@@ -60,6 +65,20 @@ export class AdminComplementaryServicesController {
     return ApiResponseBuilder.ok(data);
   }
 
+  @Post('complementary-service-requests/:id/accept')
+  @HttpCode(HttpStatus.OK)
+  async acceptRequest(
+    @CurrentUser() user: CurrentUserType,
+    @Param('id') id: string,
+    @Headers('idempotency-key') idempotencyKey?: string,
+  ) {
+    const data = await this.complementaryServices.acceptRequest(
+      id,
+      user.id,
+      idempotencyKey,
+    );
+    return ApiResponseBuilder.ok(data);
+  }
   @Post('complementary-service-requests/:id/quotations')
   @HttpCode(HttpStatus.CREATED)
   async addQuotation(
@@ -72,8 +91,14 @@ export class AdminComplementaryServicesController {
 
   @Post('service-assignments')
   @HttpCode(HttpStatus.CREATED)
-  async createAssignment(@Body() body: CreateServiceAssignmentDto) {
-    const data = await this.complementaryServices.createAssignment(body);
+  async createAssignment(
+    @Body() body: CreateServiceAssignmentDto,
+    @CurrentUser() user: CurrentUserType,
+  ) {
+    const data = await this.complementaryServices.createAssignment({
+      ...body,
+      actorId: user.id,
+    });
     return ApiResponseBuilder.created(data);
   }
 

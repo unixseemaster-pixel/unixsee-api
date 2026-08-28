@@ -2,25 +2,29 @@ import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsEnum,
-  IsMobilePhone,
   IsOptional,
   IsString,
   ValidateIf,
 } from 'class-validator';
 
-import { toEnglishDigits } from '#/utils/helpers.js';
+import {
+  IsInternationalPhone,
+  TransformToE164Phone,
+} from '#/common/validation/is-international-phone.decorator.js';
 import { OtpContext } from '#/generated/prisma/enums.js';
+import { toEnglishDigits } from '#/utils/digits.js';
 
 export class SendOtpDto {
   @ValidateIf((o: SendOtpDto) => !o.email)
-  @IsString()
   @Transform(({ obj }) => {
     if (obj?.phoneNumber == null || obj.phoneNumber === '') {
       return obj?.phoneNumber;
     }
     return toEnglishDigits(obj.phoneNumber);
   })
-  @IsMobilePhone()
+  @TransformToE164Phone()
+  @IsString()
+  @IsInternationalPhone()
   phoneNumber?: string;
 
   @ValidateIf((o: SendOtpDto) => !o.phoneNumber)

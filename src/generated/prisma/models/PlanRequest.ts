@@ -291,6 +291,7 @@ export type PlanRequestWhereInput = {
   linkedUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   website?: Prisma.XOR<Prisma.WebsiteNullableScalarRelationFilter, Prisma.WebsiteWhereInput> | null
   createdByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  billingItems?: Prisma.BillingItemListRelationFilter
 }
 
 export type PlanRequestOrderByWithRelationInput = {
@@ -317,6 +318,7 @@ export type PlanRequestOrderByWithRelationInput = {
   linkedUser?: Prisma.UserOrderByWithRelationInput
   website?: Prisma.WebsiteOrderByWithRelationInput
   createdByUser?: Prisma.UserOrderByWithRelationInput
+  billingItems?: Prisma.BillingItemOrderByRelationAggregateInput
 }
 
 export type PlanRequestWhereUniqueInput = Prisma.AtLeast<{
@@ -346,6 +348,7 @@ export type PlanRequestWhereUniqueInput = Prisma.AtLeast<{
   linkedUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   website?: Prisma.XOR<Prisma.WebsiteNullableScalarRelationFilter, Prisma.WebsiteWhereInput> | null
   createdByUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  billingItems?: Prisma.BillingItemListRelationFilter
 }, "id" | "idempotencyKey">
 
 export type PlanRequestOrderByWithAggregationInput = {
@@ -415,6 +418,7 @@ export type PlanRequestCreateInput = {
   linkedUser?: Prisma.UserCreateNestedOneWithoutLinkedPlanRequestsInput
   website?: Prisma.WebsiteCreateNestedOneWithoutPlanRequestsInput
   createdByUser?: Prisma.UserCreateNestedOneWithoutCreatedPlanRequestsInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestUncheckedCreateInput = {
@@ -436,6 +440,7 @@ export type PlanRequestUncheckedCreateInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestUpdateInput = {
@@ -457,6 +462,7 @@ export type PlanRequestUpdateInput = {
   linkedUser?: Prisma.UserUpdateOneWithoutLinkedPlanRequestsNestedInput
   website?: Prisma.WebsiteUpdateOneWithoutPlanRequestsNestedInput
   createdByUser?: Prisma.UserUpdateOneWithoutCreatedPlanRequestsNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateInput = {
@@ -478,6 +484,7 @@ export type PlanRequestUncheckedUpdateInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestCreateManyInput = {
@@ -609,6 +616,11 @@ export type PlanRequestMinOrderByAggregateInput = {
   idempotencyKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type PlanRequestNullableScalarRelationFilter = {
+  is?: Prisma.PlanRequestWhereInput | null
+  isNot?: Prisma.PlanRequestWhereInput | null
 }
 
 export type PlanRequestCreateNestedManyWithoutCreatedByUserInput = {
@@ -825,6 +837,22 @@ export type EnumPlanRequestStatusFieldUpdateOperationsInput = {
   set?: $Enums.PlanRequestStatus
 }
 
+export type PlanRequestCreateNestedOneWithoutBillingItemsInput = {
+  create?: Prisma.XOR<Prisma.PlanRequestCreateWithoutBillingItemsInput, Prisma.PlanRequestUncheckedCreateWithoutBillingItemsInput>
+  connectOrCreate?: Prisma.PlanRequestCreateOrConnectWithoutBillingItemsInput
+  connect?: Prisma.PlanRequestWhereUniqueInput
+}
+
+export type PlanRequestUpdateOneWithoutBillingItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.PlanRequestCreateWithoutBillingItemsInput, Prisma.PlanRequestUncheckedCreateWithoutBillingItemsInput>
+  connectOrCreate?: Prisma.PlanRequestCreateOrConnectWithoutBillingItemsInput
+  upsert?: Prisma.PlanRequestUpsertWithoutBillingItemsInput
+  disconnect?: Prisma.PlanRequestWhereInput | boolean
+  delete?: Prisma.PlanRequestWhereInput | boolean
+  connect?: Prisma.PlanRequestWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlanRequestUpdateToOneWithWhereWithoutBillingItemsInput, Prisma.PlanRequestUpdateWithoutBillingItemsInput>, Prisma.PlanRequestUncheckedUpdateWithoutBillingItemsInput>
+}
+
 export type PlanRequestCreateWithoutCreatedByUserInput = {
   id?: string
   status?: $Enums.PlanRequestStatus
@@ -843,6 +871,7 @@ export type PlanRequestCreateWithoutCreatedByUserInput = {
   tenant?: Prisma.TenantCreateNestedOneWithoutPlanRequestsInput
   linkedUser?: Prisma.UserCreateNestedOneWithoutLinkedPlanRequestsInput
   website?: Prisma.WebsiteCreateNestedOneWithoutPlanRequestsInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestUncheckedCreateWithoutCreatedByUserInput = {
@@ -863,6 +892,7 @@ export type PlanRequestUncheckedCreateWithoutCreatedByUserInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestCreateOrConnectWithoutCreatedByUserInput = {
@@ -893,6 +923,7 @@ export type PlanRequestCreateWithoutLinkedUserInput = {
   tenant?: Prisma.TenantCreateNestedOneWithoutPlanRequestsInput
   website?: Prisma.WebsiteCreateNestedOneWithoutPlanRequestsInput
   createdByUser?: Prisma.UserCreateNestedOneWithoutCreatedPlanRequestsInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestUncheckedCreateWithoutLinkedUserInput = {
@@ -913,6 +944,7 @@ export type PlanRequestUncheckedCreateWithoutLinkedUserInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestCreateOrConnectWithoutLinkedUserInput = {
@@ -999,6 +1031,7 @@ export type PlanRequestCreateWithoutTenantInput = {
   linkedUser?: Prisma.UserCreateNestedOneWithoutLinkedPlanRequestsInput
   website?: Prisma.WebsiteCreateNestedOneWithoutPlanRequestsInput
   createdByUser?: Prisma.UserCreateNestedOneWithoutCreatedPlanRequestsInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestUncheckedCreateWithoutTenantInput = {
@@ -1019,6 +1052,7 @@ export type PlanRequestUncheckedCreateWithoutTenantInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestCreateOrConnectWithoutTenantInput = {
@@ -1065,6 +1099,7 @@ export type PlanRequestCreateWithoutWebsiteInput = {
   tenant?: Prisma.TenantCreateNestedOneWithoutPlanRequestsInput
   linkedUser?: Prisma.UserCreateNestedOneWithoutLinkedPlanRequestsInput
   createdByUser?: Prisma.UserCreateNestedOneWithoutCreatedPlanRequestsInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestUncheckedCreateWithoutWebsiteInput = {
@@ -1085,6 +1120,7 @@ export type PlanRequestUncheckedCreateWithoutWebsiteInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestCreateOrConnectWithoutWebsiteInput = {
@@ -1131,6 +1167,7 @@ export type PlanRequestCreateWithoutPlanInput = {
   linkedUser?: Prisma.UserCreateNestedOneWithoutLinkedPlanRequestsInput
   website?: Prisma.WebsiteCreateNestedOneWithoutPlanRequestsInput
   createdByUser?: Prisma.UserCreateNestedOneWithoutCreatedPlanRequestsInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestUncheckedCreateWithoutPlanInput = {
@@ -1151,6 +1188,7 @@ export type PlanRequestUncheckedCreateWithoutPlanInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutSourcePlanRequestInput
 }
 
 export type PlanRequestCreateOrConnectWithoutPlanInput = {
@@ -1177,6 +1215,106 @@ export type PlanRequestUpdateWithWhereUniqueWithoutPlanInput = {
 export type PlanRequestUpdateManyWithWhereWithoutPlanInput = {
   where: Prisma.PlanRequestScalarWhereInput
   data: Prisma.XOR<Prisma.PlanRequestUpdateManyMutationInput, Prisma.PlanRequestUncheckedUpdateManyWithoutPlanInput>
+}
+
+export type PlanRequestCreateWithoutBillingItemsInput = {
+  id?: string
+  status?: $Enums.PlanRequestStatus
+  contactName: string
+  contactPhone?: string | null
+  contactEmail?: string | null
+  websiteDomain?: string | null
+  notes?: string | null
+  enabledAt?: Date | string | null
+  declinedAt?: Date | string | null
+  declineReason?: string | null
+  idempotencyKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  plan: Prisma.PlanCreateNestedOneWithoutPlanRequestsInput
+  tenant?: Prisma.TenantCreateNestedOneWithoutPlanRequestsInput
+  linkedUser?: Prisma.UserCreateNestedOneWithoutLinkedPlanRequestsInput
+  website?: Prisma.WebsiteCreateNestedOneWithoutPlanRequestsInput
+  createdByUser?: Prisma.UserCreateNestedOneWithoutCreatedPlanRequestsInput
+}
+
+export type PlanRequestUncheckedCreateWithoutBillingItemsInput = {
+  id?: string
+  planId: string
+  status?: $Enums.PlanRequestStatus
+  contactName: string
+  contactPhone?: string | null
+  contactEmail?: string | null
+  websiteDomain?: string | null
+  notes?: string | null
+  tenantId?: string | null
+  linkedUserId?: string | null
+  websiteId?: string | null
+  createdByUserId?: string | null
+  enabledAt?: Date | string | null
+  declinedAt?: Date | string | null
+  declineReason?: string | null
+  idempotencyKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PlanRequestCreateOrConnectWithoutBillingItemsInput = {
+  where: Prisma.PlanRequestWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlanRequestCreateWithoutBillingItemsInput, Prisma.PlanRequestUncheckedCreateWithoutBillingItemsInput>
+}
+
+export type PlanRequestUpsertWithoutBillingItemsInput = {
+  update: Prisma.XOR<Prisma.PlanRequestUpdateWithoutBillingItemsInput, Prisma.PlanRequestUncheckedUpdateWithoutBillingItemsInput>
+  create: Prisma.XOR<Prisma.PlanRequestCreateWithoutBillingItemsInput, Prisma.PlanRequestUncheckedCreateWithoutBillingItemsInput>
+  where?: Prisma.PlanRequestWhereInput
+}
+
+export type PlanRequestUpdateToOneWithWhereWithoutBillingItemsInput = {
+  where?: Prisma.PlanRequestWhereInput
+  data: Prisma.XOR<Prisma.PlanRequestUpdateWithoutBillingItemsInput, Prisma.PlanRequestUncheckedUpdateWithoutBillingItemsInput>
+}
+
+export type PlanRequestUpdateWithoutBillingItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPlanRequestStatusFieldUpdateOperationsInput | $Enums.PlanRequestStatus
+  contactName?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  enabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declineReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  plan?: Prisma.PlanUpdateOneRequiredWithoutPlanRequestsNestedInput
+  tenant?: Prisma.TenantUpdateOneWithoutPlanRequestsNestedInput
+  linkedUser?: Prisma.UserUpdateOneWithoutLinkedPlanRequestsNestedInput
+  website?: Prisma.WebsiteUpdateOneWithoutPlanRequestsNestedInput
+  createdByUser?: Prisma.UserUpdateOneWithoutCreatedPlanRequestsNestedInput
+}
+
+export type PlanRequestUncheckedUpdateWithoutBillingItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  planId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPlanRequestStatusFieldUpdateOperationsInput | $Enums.PlanRequestStatus
+  contactName?: Prisma.StringFieldUpdateOperationsInput | string
+  contactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteDomain?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkedUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  websiteId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  enabledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declinedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  declineReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PlanRequestCreateManyCreatedByUserInput = {
@@ -1237,6 +1375,7 @@ export type PlanRequestUpdateWithoutCreatedByUserInput = {
   tenant?: Prisma.TenantUpdateOneWithoutPlanRequestsNestedInput
   linkedUser?: Prisma.UserUpdateOneWithoutLinkedPlanRequestsNestedInput
   website?: Prisma.WebsiteUpdateOneWithoutPlanRequestsNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateWithoutCreatedByUserInput = {
@@ -1257,6 +1396,7 @@ export type PlanRequestUncheckedUpdateWithoutCreatedByUserInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateManyWithoutCreatedByUserInput = {
@@ -1297,6 +1437,7 @@ export type PlanRequestUpdateWithoutLinkedUserInput = {
   tenant?: Prisma.TenantUpdateOneWithoutPlanRequestsNestedInput
   website?: Prisma.WebsiteUpdateOneWithoutPlanRequestsNestedInput
   createdByUser?: Prisma.UserUpdateOneWithoutCreatedPlanRequestsNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateWithoutLinkedUserInput = {
@@ -1317,6 +1458,7 @@ export type PlanRequestUncheckedUpdateWithoutLinkedUserInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateManyWithoutLinkedUserInput = {
@@ -1377,6 +1519,7 @@ export type PlanRequestUpdateWithoutTenantInput = {
   linkedUser?: Prisma.UserUpdateOneWithoutLinkedPlanRequestsNestedInput
   website?: Prisma.WebsiteUpdateOneWithoutPlanRequestsNestedInput
   createdByUser?: Prisma.UserUpdateOneWithoutCreatedPlanRequestsNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateWithoutTenantInput = {
@@ -1397,6 +1540,7 @@ export type PlanRequestUncheckedUpdateWithoutTenantInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateManyWithoutTenantInput = {
@@ -1457,6 +1601,7 @@ export type PlanRequestUpdateWithoutWebsiteInput = {
   tenant?: Prisma.TenantUpdateOneWithoutPlanRequestsNestedInput
   linkedUser?: Prisma.UserUpdateOneWithoutLinkedPlanRequestsNestedInput
   createdByUser?: Prisma.UserUpdateOneWithoutCreatedPlanRequestsNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateWithoutWebsiteInput = {
@@ -1477,6 +1622,7 @@ export type PlanRequestUncheckedUpdateWithoutWebsiteInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateManyWithoutWebsiteInput = {
@@ -1537,6 +1683,7 @@ export type PlanRequestUpdateWithoutPlanInput = {
   linkedUser?: Prisma.UserUpdateOneWithoutLinkedPlanRequestsNestedInput
   website?: Prisma.WebsiteUpdateOneWithoutPlanRequestsNestedInput
   createdByUser?: Prisma.UserUpdateOneWithoutCreatedPlanRequestsNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateWithoutPlanInput = {
@@ -1557,6 +1704,7 @@ export type PlanRequestUncheckedUpdateWithoutPlanInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutSourcePlanRequestNestedInput
 }
 
 export type PlanRequestUncheckedUpdateManyWithoutPlanInput = {
@@ -1579,6 +1727,35 @@ export type PlanRequestUncheckedUpdateManyWithoutPlanInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type PlanRequestCountOutputType
+ */
+
+export type PlanRequestCountOutputType = {
+  billingItems: number
+}
+
+export type PlanRequestCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  billingItems?: boolean | PlanRequestCountOutputTypeCountBillingItemsArgs
+}
+
+/**
+ * PlanRequestCountOutputType without action
+ */
+export type PlanRequestCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlanRequestCountOutputType
+   */
+  select?: Prisma.PlanRequestCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * PlanRequestCountOutputType without action
+ */
+export type PlanRequestCountOutputTypeCountBillingItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BillingItemWhereInput
+}
 
 
 export type PlanRequestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1605,6 +1782,8 @@ export type PlanRequestSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   linkedUser?: boolean | Prisma.PlanRequest$linkedUserArgs<ExtArgs>
   website?: boolean | Prisma.PlanRequest$websiteArgs<ExtArgs>
   createdByUser?: boolean | Prisma.PlanRequest$createdByUserArgs<ExtArgs>
+  billingItems?: boolean | Prisma.PlanRequest$billingItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.PlanRequestCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["planRequest"]>
 
 export type PlanRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1687,6 +1866,8 @@ export type PlanRequestInclude<ExtArgs extends runtime.Types.Extensions.Internal
   linkedUser?: boolean | Prisma.PlanRequest$linkedUserArgs<ExtArgs>
   website?: boolean | Prisma.PlanRequest$websiteArgs<ExtArgs>
   createdByUser?: boolean | Prisma.PlanRequest$createdByUserArgs<ExtArgs>
+  billingItems?: boolean | Prisma.PlanRequest$billingItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.PlanRequestCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PlanRequestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   plan?: boolean | Prisma.PlanDefaultArgs<ExtArgs>
@@ -1711,6 +1892,7 @@ export type $PlanRequestPayload<ExtArgs extends runtime.Types.Extensions.Interna
     linkedUser: Prisma.$UserPayload<ExtArgs> | null
     website: Prisma.$WebsitePayload<ExtArgs> | null
     createdByUser: Prisma.$UserPayload<ExtArgs> | null
+    billingItems: Prisma.$BillingItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2130,6 +2312,7 @@ export interface Prisma__PlanRequestClient<T, Null = never, ExtArgs extends runt
   linkedUser<T extends Prisma.PlanRequest$linkedUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PlanRequest$linkedUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   website<T extends Prisma.PlanRequest$websiteArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PlanRequest$websiteArgs<ExtArgs>>): Prisma.Prisma__WebsiteClient<runtime.Types.Result.GetResult<Prisma.$WebsitePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   createdByUser<T extends Prisma.PlanRequest$createdByUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PlanRequest$createdByUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  billingItems<T extends Prisma.PlanRequest$billingItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PlanRequest$billingItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BillingItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2651,6 +2834,30 @@ export type PlanRequest$createdByUserArgs<ExtArgs extends runtime.Types.Extensio
    */
   include?: Prisma.UserInclude<ExtArgs> | null
   where?: Prisma.UserWhereInput
+}
+
+/**
+ * PlanRequest.billingItems
+ */
+export type PlanRequest$billingItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BillingItem
+   */
+  select?: Prisma.BillingItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BillingItem
+   */
+  omit?: Prisma.BillingItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BillingItemInclude<ExtArgs> | null
+  where?: Prisma.BillingItemWhereInput
+  orderBy?: Prisma.BillingItemOrderByWithRelationInput | Prisma.BillingItemOrderByWithRelationInput[]
+  cursor?: Prisma.BillingItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BillingItemScalarFieldEnum | Prisma.BillingItemScalarFieldEnum[]
 }
 
 /**

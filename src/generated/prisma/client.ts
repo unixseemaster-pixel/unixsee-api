@@ -150,7 +150,9 @@ export type SSLCertificate = Prisma.SSLCertificateModel
 export type Alert = Prisma.AlertModel
 /**
  * Model Otp
- * 
+ * One outstanding OTP challenge per delivery target. The plaintext code is
+ * never persisted: only its bcrypt digest is stored, so a database read
+ * cannot recover a usable code.
  */
 export type Otp = Prisma.OtpModel
 /**
@@ -183,6 +185,16 @@ export type ServiceQuotation = Prisma.ServiceQuotationModel
  * 
  */
 export type ServiceAssignment = Prisma.ServiceAssignmentModel
+/**
+ * Model BillingItem
+ * 
+ */
+export type BillingItem = Prisma.BillingItemModel
+/**
+ * Model BillingPeriodRow
+ * 
+ */
+export type BillingPeriodRow = Prisma.BillingPeriodRowModel
 /**
  * Model ServiceUsage
  * 
@@ -254,3 +266,15 @@ export type UnixseeMessageAttachment = Prisma.UnixseeMessageAttachmentModel
  * 
  */
 export type UnixseeMessageRead = Prisma.UnixseeMessageReadModel
+/**
+ * Model NewsletterSubscription
+ * Public newsletter intake. Nest owns persistence for Phase 1; mailing-provider
+ * / WordPress sync remains deferred.
+ */
+export type NewsletterSubscription = Prisma.NewsletterSubscriptionModel
+/**
+ * Model ContactMessage
+ * Public contact-us intake. Nest owns persistence for Phase 1; staff inbox
+ * and notification email remain deferred.
+ */
+export type ContactMessage = Prisma.ContactMessageModel

@@ -7,10 +7,7 @@ import {
 
 import { PrismaService } from '#/modules/prisma/services/prisma.service.js';
 import type { Prisma } from '#/generated/prisma/client.js';
-import {
-  Role,
-  UserAccountStatus,
-} from '#/generated/prisma/enums.js';
+import { Role, UserAccountStatus } from '#/generated/prisma/enums.js';
 import bcrypt from 'bcryptjs';
 import { createAppLogger } from '#/common/logging/app-logger.js';
 import { ERROR_MESSAGES } from '#/utils/error-messages.js';
@@ -34,7 +31,6 @@ export class UsersService {
     private readonly mailService: MailService,
     private readonly storageService: StorageService,
   ) {}
-
 
   /** Never expose hashedRt/password; surface session presence only. */
   private toAdminUserView<T extends { hashedRt: string | null }>(user: T) {
@@ -91,10 +87,7 @@ export class UsersService {
   async findCustomerOwningWebsiteDomain(domain: string) {
     const website = await this.prisma.website.findFirst({
       where: {
-        OR: [
-          { domain },
-          { domain: `www.${domain}` },
-        ],
+        OR: [{ domain }, { domain: `www.${domain}` }],
         user: {
           role: { in: [Role.USER, Role.TENANT] },
         },
@@ -134,6 +127,7 @@ export class UsersService {
     locale?: string;
     phoneVerifiedAt?: Date | null;
     emailVerifiedAt?: Date | null;
+    authorized?: boolean;
   }) {
     const phoneNumber = input.phoneNumber?.trim() || null;
     const email = input.email?.trim().toLowerCase() || null;
@@ -146,10 +140,11 @@ export class UsersService {
       data: {
         phoneNumber,
         email,
+        role: input.role ?? Role.TENANT,
+        authorized: input.authorized ?? false,
         ...(input.password && { password: input.password }),
         ...(input.fullName && { fullName: input.fullName }),
         ...(input.username && { username: input.username }),
-        ...(input.role && { role: input.role }),
         ...(input.locale && { locale: input.locale }),
         ...(input.phoneVerifiedAt !== undefined && {
           phoneVerifiedAt: input.phoneVerifiedAt,
@@ -167,6 +162,7 @@ export class UsersService {
       email: user.email,
       phoneNumber: user.phoneNumber,
       role: user.role,
+      authorized: user.authorized,
     });
 
     return user;
@@ -252,14 +248,17 @@ export class UsersService {
 
     await this.mailService.sendPhoneOtpMockEmail({
       phoneNumber,
-      otp: otp.otp,
+      otp: otp.code,
     });
 
     this.logger.log('user.phone_verify.otp_created', {
       userId,
-      otpId: otp.id,
+      otpId: otp.challenge.id,
     });
-    return { delivered: true as const };
+    return {
+      delivered: true as const,
+      retryAfterSeconds: this.otpService.getConfiguredRetryAfterSeconds(),
+    };
   }
 
   async verifyPhoneOtp(
@@ -311,8 +310,6 @@ export class UsersService {
       omit: userPublicOmit,
     });
 
-    await this.otpService.remove(input.otp);
-
     this.logger.log('user.phone_verify.completed', { userId });
     return updated;
   }
@@ -357,20 +354,20 @@ export class UsersService {
 
     await this.mailService.sendEmailOtpMockEmail({
       email: normalized,
-      otp: otp.otp,
+      otp: otp.code,
     });
 
     this.logger.log('user.email_verify.otp_created', {
       userId,
-      otpId: otp.id,
+      otpId: otp.challenge.id,
     });
-    return { delivered: true as const };
+    return {
+      delivered: true as const,
+      retryAfterSeconds: this.otpService.getConfiguredRetryAfterSeconds(),
+    };
   }
 
-  async verifyEmailOtp(
-    userId: string,
-    input: { email: string; otp: string },
-  ) {
+  async verifyEmailOtp(userId: string, input: { email: string; otp: string }) {
     RequestContext.setUserId(userId);
     const normalized = input.email.trim().toLowerCase();
     this.logger.log('user.email_verify.attempt', {
@@ -416,8 +413,6 @@ export class UsersService {
       },
       omit: userPublicOmit,
     });
-
-    await this.otpService.remove(input.otp);
 
     this.logger.log('user.email_verify.completed', { userId });
     return updated;
@@ -500,10 +495,12 @@ export class UsersService {
     username?: string;
     role?: Role;
     locale?: string;
+    authorized?: boolean;
   }) {
     return this.create({
       ...input,
-      role: input.role ?? Role.USER,
+      role: input.role ?? Role.TENANT,
+      authorized: input.authorized ?? false,
     });
   }
 
@@ -515,9 +512,14 @@ export class UsersService {
       username?: string | null;
       role?: Role;
       locale?: string;
+      authorized?: boolean;
     },
   ) {
     await this.getAdmin(userId);
+    const previous = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { authorized: true },
+    });
     const updated = await this.prisma.user.update({
       where: { id: userId },
       data,
@@ -526,6 +528,17 @@ export class UsersService {
         memberships: { include: { tenant: true } },
       },
     });
+    if (
+      data.authorized !== undefined &&
+      previous &&
+      previous.authorized !== data.authorized
+    ) {
+      this.logger.log('user.authorized_toggled', {
+        userId,
+        previous: previous.authorized,
+        next: data.authorized,
+      });
+    }
     return this.toAdminUserView(updated);
   }
 
@@ -623,7 +636,7 @@ export class UsersService {
       });
       await this.mailService.sendPhoneOtpMockEmail({
         phoneNumber: phone,
-        otp: otp.otp,
+        otp: otp.code,
       });
     } else {
       channel = 'email';
@@ -634,7 +647,7 @@ export class UsersService {
       });
       await this.mailService.sendEmailOtpMockEmail({
         email: email!,
-        otp: otp.otp,
+        otp: otp.code,
       });
     }
 
@@ -662,7 +675,10 @@ export class UsersService {
 
   async uploadAvatar(userId: string, file: Express.Multer.File) {
     if (!file.mimetype.startsWith('image/')) {
-      throw new BadRequestException({ code: 'INVALID_FILE_TYPE', message: 'Only image files are allowed' });
+      throw new BadRequestException({
+        code: 'INVALID_FILE_TYPE',
+        message: 'Only image files are allowed',
+      });
     }
 
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
@@ -671,11 +687,17 @@ export class UsersService {
     }
 
     const ext = file.originalname.split('.').pop() || 'jpg';
-    const storageKey = 'avatars/' + userId + '/' + crypto.randomUUID() + '.' + ext;
+    const storageKey =
+      'avatars/' + userId + '/' + crypto.randomUUID() + '.' + ext;
 
-    await this.storageService.upload(storageKey, file.buffer, { contentType: file.mimetype });
+    await this.storageService.upload(storageKey, file.buffer, {
+      contentType: file.mimetype,
+    });
 
-    const { signedUrl } = await this.storageService.createSignedUrl(storageKey, 30 * 24 * 60 * 60);
+    const { signedUrl } = await this.storageService.createSignedUrl(
+      storageKey,
+      30 * 24 * 60 * 60,
+    );
 
     const updated = await this.prisma.user.update({
       where: { id: userId },
@@ -686,5 +708,4 @@ export class UsersService {
     this.logger.log('user.avatar_uploaded', { userId });
     return updated;
   }
-
 }

@@ -1,15 +1,28 @@
 import {
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 
-import { ComplementaryRequestStatus } from '#/generated/prisma/enums.js';
+import {
+  IsInternationalPhone,
+  TransformToE164Phone,
+} from '#/common/validation/is-international-phone.decorator.js';
+import {
+  BillingCommercialModel,
+  BillingCommercialState,
+  BillingInterval,
+  ComplementaryEngagementPreference,
+  ComplementaryRequestStatus,
+} from '#/generated/prisma/enums.js';
 
 export class CreatePublicComplementaryRequestDto {
   @IsUUID()
@@ -20,9 +33,9 @@ export class CreatePublicComplementaryRequestDto {
   @MaxLength(200)
   contactName!: string;
 
+  @TransformToE164Phone()
   @IsString()
-  @MinLength(1)
-  @MaxLength(32)
+  @IsInternationalPhone()
   contactPhone!: string;
 
   @IsOptional()
@@ -33,6 +46,37 @@ export class CreatePublicComplementaryRequestDto {
   @IsString()
   @MaxLength(4000)
   details?: string;
+}
+
+export class CreateComplementaryRequestDto {
+  @IsUUID()
+  catalogItemId!: string;
+
+  @IsOptional()
+  @IsUUID()
+  websiteId?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(253)
+  websiteDomain?: string;
+
+  @IsEnum(ComplementaryEngagementPreference)
+  engagementPreference!: ComplementaryEngagementPreference;
+
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
+  title!: string;
+
+  @IsString()
+  @MinLength(20)
+  @MaxLength(800)
+  description!: string;
+
+  @IsOptional()
+  @IsObject()
+  scope?: Record<string, unknown>;
 }
 
 export class PatchComplementaryRequestDto {
@@ -85,6 +129,34 @@ export class CreateServiceAssignmentDto {
   @IsOptional()
   @IsString()
   startedAt?: string;
+
+  @IsNumber()
+  @Min(0)
+  amount!: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(8)
+  currency?: string;
+
+  @IsEnum(BillingInterval)
+  interval!: BillingInterval;
+
+  @IsOptional()
+  @IsString()
+  periodStartsAt?: string;
+
+  @IsOptional()
+  @IsEnum(BillingCommercialModel)
+  commercialModel?: BillingCommercialModel;
+
+  @IsOptional()
+  @IsEnum(BillingCommercialState)
+  commercialState?: BillingCommercialState;
+
+  @IsOptional()
+  @IsBoolean()
+  confirmUnauthorized?: boolean;
 }
 
 export class PatchUsageDto {

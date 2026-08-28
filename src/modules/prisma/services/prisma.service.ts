@@ -1,10 +1,18 @@
 import { PrismaClient } from '#/generated/prisma/client.js';
-import { Injectable, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  type OnModuleDestroy,
+  type OnModuleInit,
+} from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { createAppLogger } from '#/common/logging/app-logger.js';
 
+/** Nest Prisma adapter; regenerate client after schema changes so delegates stay typed. */
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   private readonly logger = createAppLogger(PrismaService.name);
   constructor() {
     const adapter = new PrismaPg({

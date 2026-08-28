@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
+  Headers,
   Param,
   Post,
   Query,
@@ -11,6 +13,7 @@ import {
 import type { CurrentUserType } from '#/@types/express/index.js';
 import { ApiResponseBuilder } from '#/common/http/api-response.builder.js';
 import { CurrentUser } from '#/modules/auth/decorators/current-user.decorator.js';
+import { CreateComplementaryRequestDto } from '../dto/complementary-services.dto.js';
 import { ComplementaryServicesService } from '../services/complementary-services.service.js';
 
 @Controller('v1/complementary-service-requests')
@@ -18,6 +21,21 @@ export class ComplementaryServicesController {
   constructor(
     private readonly complementaryServices: ComplementaryServicesService,
   ) {}
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @CurrentUser() user: CurrentUserType,
+    @Body() body: CreateComplementaryRequestDto,
+    @Headers('idempotency-key') idempotencyKey?: string,
+  ) {
+    const data = await this.complementaryServices.createForUser(
+      user,
+      body,
+      idempotencyKey,
+    );
+    return ApiResponseBuilder.created(data);
+  }
 
   @Get()
   async list(

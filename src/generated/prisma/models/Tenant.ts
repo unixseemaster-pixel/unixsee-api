@@ -155,7 +155,7 @@ export type TenantGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type TenantGroupByOutputType = {
   id: string
-  name: string
+  name: string | null
   displayName: string | null
   status: $Enums.UserAccountStatus
   createdAt: Date
@@ -185,7 +185,7 @@ export type TenantWhereInput = {
   OR?: Prisma.TenantWhereInput[]
   NOT?: Prisma.TenantWhereInput | Prisma.TenantWhereInput[]
   id?: Prisma.UuidFilter<"Tenant"> | string
-  name?: Prisma.StringFilter<"Tenant"> | string
+  name?: Prisma.StringNullableFilter<"Tenant"> | string | null
   displayName?: Prisma.StringNullableFilter<"Tenant"> | string | null
   status?: Prisma.EnumUserAccountStatusFilter<"Tenant"> | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
@@ -199,11 +199,12 @@ export type TenantWhereInput = {
   notifications?: Prisma.NotificationListRelationFilter
   unixseeMessages?: Prisma.UnixseeMessageListRelationFilter
   authorizationCases?: Prisma.AuthorizationCaseListRelationFilter
+  billingItems?: Prisma.BillingItemListRelationFilter
 }
 
 export type TenantOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  name?: Prisma.SortOrderInput | Prisma.SortOrder
   displayName?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -217,6 +218,7 @@ export type TenantOrderByWithRelationInput = {
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   unixseeMessages?: Prisma.UnixseeMessageOrderByRelationAggregateInput
   authorizationCases?: Prisma.AuthorizationCaseOrderByRelationAggregateInput
+  billingItems?: Prisma.BillingItemOrderByRelationAggregateInput
 }
 
 export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -224,7 +226,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.TenantWhereInput | Prisma.TenantWhereInput[]
   OR?: Prisma.TenantWhereInput[]
   NOT?: Prisma.TenantWhereInput | Prisma.TenantWhereInput[]
-  name?: Prisma.StringFilter<"Tenant"> | string
+  name?: Prisma.StringNullableFilter<"Tenant"> | string | null
   displayName?: Prisma.StringNullableFilter<"Tenant"> | string | null
   status?: Prisma.EnumUserAccountStatusFilter<"Tenant"> | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
@@ -238,11 +240,12 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   notifications?: Prisma.NotificationListRelationFilter
   unixseeMessages?: Prisma.UnixseeMessageListRelationFilter
   authorizationCases?: Prisma.AuthorizationCaseListRelationFilter
+  billingItems?: Prisma.BillingItemListRelationFilter
 }, "id">
 
 export type TenantOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  name?: Prisma.SortOrder
+  name?: Prisma.SortOrderInput | Prisma.SortOrder
   displayName?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -257,7 +260,7 @@ export type TenantScalarWhereWithAggregatesInput = {
   OR?: Prisma.TenantScalarWhereWithAggregatesInput[]
   NOT?: Prisma.TenantScalarWhereWithAggregatesInput | Prisma.TenantScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Tenant"> | string
-  name?: Prisma.StringWithAggregatesFilter<"Tenant"> | string
+  name?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   displayName?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   status?: Prisma.EnumUserAccountStatusWithAggregatesFilter<"Tenant"> | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
@@ -266,7 +269,7 @@ export type TenantScalarWhereWithAggregatesInput = {
 
 export type TenantCreateInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -280,11 +283,12 @@ export type TenantCreateInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -298,11 +302,12 @@ export type TenantUncheckedCreateInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -316,11 +321,12 @@ export type TenantUpdateInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -334,11 +340,12 @@ export type TenantUncheckedUpdateInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateManyInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -347,7 +354,7 @@ export type TenantCreateManyInput = {
 
 export type TenantUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -356,7 +363,7 @@ export type TenantUpdateManyMutationInput = {
 
 export type TenantUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -476,6 +483,20 @@ export type TenantUpdateOneWithoutComplementaryRequestsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutComplementaryRequestsInput, Prisma.TenantUpdateWithoutComplementaryRequestsInput>, Prisma.TenantUncheckedUpdateWithoutComplementaryRequestsInput>
 }
 
+export type TenantCreateNestedOneWithoutBillingItemsInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutBillingItemsInput, Prisma.TenantUncheckedCreateWithoutBillingItemsInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutBillingItemsInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutBillingItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutBillingItemsInput, Prisma.TenantUncheckedCreateWithoutBillingItemsInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutBillingItemsInput
+  upsert?: Prisma.TenantUpsertWithoutBillingItemsInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutBillingItemsInput, Prisma.TenantUpdateWithoutBillingItemsInput>, Prisma.TenantUncheckedUpdateWithoutBillingItemsInput>
+}
+
 export type TenantCreateNestedOneWithoutTicketsInput = {
   create?: Prisma.XOR<Prisma.TenantCreateWithoutTicketsInput, Prisma.TenantUncheckedCreateWithoutTicketsInput>
   connectOrCreate?: Prisma.TenantCreateOrConnectWithoutTicketsInput
@@ -536,7 +557,7 @@ export type TenantUpdateOneRequiredWithoutUnixseeMessagesNestedInput = {
 
 export type TenantCreateWithoutMembershipsInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -549,11 +570,12 @@ export type TenantCreateWithoutMembershipsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutMembershipsInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -566,6 +588,7 @@ export type TenantUncheckedCreateWithoutMembershipsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutMembershipsInput = {
@@ -586,7 +609,7 @@ export type TenantUpdateToOneWithWhereWithoutMembershipsInput = {
 
 export type TenantUpdateWithoutMembershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -599,11 +622,12 @@ export type TenantUpdateWithoutMembershipsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutMembershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -616,11 +640,12 @@ export type TenantUncheckedUpdateWithoutMembershipsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutAuthorizationCasesInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -633,11 +658,12 @@ export type TenantCreateWithoutAuthorizationCasesInput = {
   activities?: Prisma.ActivityCreateNestedManyWithoutTenantInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutAuthorizationCasesInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -650,6 +676,7 @@ export type TenantUncheckedCreateWithoutAuthorizationCasesInput = {
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutTenantInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutAuthorizationCasesInput = {
@@ -670,7 +697,7 @@ export type TenantUpdateToOneWithWhereWithoutAuthorizationCasesInput = {
 
 export type TenantUpdateWithoutAuthorizationCasesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -683,11 +710,12 @@ export type TenantUpdateWithoutAuthorizationCasesInput = {
   activities?: Prisma.ActivityUpdateManyWithoutTenantNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutAuthorizationCasesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -700,11 +728,12 @@ export type TenantUncheckedUpdateWithoutAuthorizationCasesInput = {
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutTenantNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutWebsitesInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -717,11 +746,12 @@ export type TenantCreateWithoutWebsitesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutWebsitesInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -734,6 +764,7 @@ export type TenantUncheckedCreateWithoutWebsitesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutWebsitesInput = {
@@ -754,7 +785,7 @@ export type TenantUpdateToOneWithWhereWithoutWebsitesInput = {
 
 export type TenantUpdateWithoutWebsitesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -767,11 +798,12 @@ export type TenantUpdateWithoutWebsitesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutWebsitesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -784,11 +816,12 @@ export type TenantUncheckedUpdateWithoutWebsitesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutPlanRequestsInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -801,11 +834,12 @@ export type TenantCreateWithoutPlanRequestsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutPlanRequestsInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -818,6 +852,7 @@ export type TenantUncheckedCreateWithoutPlanRequestsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutPlanRequestsInput = {
@@ -838,7 +873,7 @@ export type TenantUpdateToOneWithWhereWithoutPlanRequestsInput = {
 
 export type TenantUpdateWithoutPlanRequestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -851,11 +886,12 @@ export type TenantUpdateWithoutPlanRequestsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutPlanRequestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -868,11 +904,12 @@ export type TenantUncheckedUpdateWithoutPlanRequestsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutComplementaryRequestsInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -885,11 +922,12 @@ export type TenantCreateWithoutComplementaryRequestsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutComplementaryRequestsInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -902,6 +940,7 @@ export type TenantUncheckedCreateWithoutComplementaryRequestsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutComplementaryRequestsInput = {
@@ -922,7 +961,7 @@ export type TenantUpdateToOneWithWhereWithoutComplementaryRequestsInput = {
 
 export type TenantUpdateWithoutComplementaryRequestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -935,11 +974,12 @@ export type TenantUpdateWithoutComplementaryRequestsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutComplementaryRequestsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -952,11 +992,100 @@ export type TenantUncheckedUpdateWithoutComplementaryRequestsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutBillingItemsInput = {
+  id?: string
+  name?: string | null
+  displayName?: string | null
+  status?: $Enums.UserAccountStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  websites?: Prisma.WebsiteCreateNestedManyWithoutTenantInput
+  planRequests?: Prisma.PlanRequestCreateNestedManyWithoutTenantInput
+  complementaryRequests?: Prisma.ComplementaryServiceRequestCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketCreateNestedManyWithoutTenantInput
+  activities?: Prisma.ActivityCreateNestedManyWithoutTenantInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput
+  unixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutTenantInput
+  authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutBillingItemsInput = {
+  id?: string
+  name?: string | null
+  displayName?: string | null
+  status?: $Enums.UserAccountStatus
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  websites?: Prisma.WebsiteUncheckedCreateNestedManyWithoutTenantInput
+  planRequests?: Prisma.PlanRequestUncheckedCreateNestedManyWithoutTenantInput
+  complementaryRequests?: Prisma.ComplementaryServiceRequestUncheckedCreateNestedManyWithoutTenantInput
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutTenantInput
+  activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutTenantInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput
+  unixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutTenantInput
+  authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutBillingItemsInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutBillingItemsInput, Prisma.TenantUncheckedCreateWithoutBillingItemsInput>
+}
+
+export type TenantUpsertWithoutBillingItemsInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutBillingItemsInput, Prisma.TenantUncheckedUpdateWithoutBillingItemsInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutBillingItemsInput, Prisma.TenantUncheckedCreateWithoutBillingItemsInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutBillingItemsInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutBillingItemsInput, Prisma.TenantUncheckedUpdateWithoutBillingItemsInput>
+}
+
+export type TenantUpdateWithoutBillingItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  websites?: Prisma.WebsiteUpdateManyWithoutTenantNestedInput
+  planRequests?: Prisma.PlanRequestUpdateManyWithoutTenantNestedInput
+  complementaryRequests?: Prisma.ComplementaryServiceRequestUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUpdateManyWithoutTenantNestedInput
+  activities?: Prisma.ActivityUpdateManyWithoutTenantNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput
+  unixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutTenantNestedInput
+  authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutBillingItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  websites?: Prisma.WebsiteUncheckedUpdateManyWithoutTenantNestedInput
+  planRequests?: Prisma.PlanRequestUncheckedUpdateManyWithoutTenantNestedInput
+  complementaryRequests?: Prisma.ComplementaryServiceRequestUncheckedUpdateManyWithoutTenantNestedInput
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutTenantNestedInput
+  activities?: Prisma.ActivityUncheckedUpdateManyWithoutTenantNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput
+  unixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutTenantNestedInput
+  authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutTicketsInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -969,11 +1098,12 @@ export type TenantCreateWithoutTicketsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutTicketsInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -986,6 +1116,7 @@ export type TenantUncheckedCreateWithoutTicketsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutTicketsInput = {
@@ -1006,7 +1137,7 @@ export type TenantUpdateToOneWithWhereWithoutTicketsInput = {
 
 export type TenantUpdateWithoutTicketsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1019,11 +1150,12 @@ export type TenantUpdateWithoutTicketsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutTicketsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1036,11 +1168,12 @@ export type TenantUncheckedUpdateWithoutTicketsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutNotificationsInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -1053,11 +1186,12 @@ export type TenantCreateWithoutNotificationsInput = {
   activities?: Prisma.ActivityCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutNotificationsInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -1070,6 +1204,7 @@ export type TenantUncheckedCreateWithoutNotificationsInput = {
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutNotificationsInput = {
@@ -1090,7 +1225,7 @@ export type TenantUpdateToOneWithWhereWithoutNotificationsInput = {
 
 export type TenantUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1103,11 +1238,12 @@ export type TenantUpdateWithoutNotificationsInput = {
   activities?: Prisma.ActivityUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutNotificationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1120,11 +1256,12 @@ export type TenantUncheckedUpdateWithoutNotificationsInput = {
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutActivitiesInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -1137,11 +1274,12 @@ export type TenantCreateWithoutActivitiesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutActivitiesInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -1154,6 +1292,7 @@ export type TenantUncheckedCreateWithoutActivitiesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutActivitiesInput = {
@@ -1174,7 +1313,7 @@ export type TenantUpdateToOneWithWhereWithoutActivitiesInput = {
 
 export type TenantUpdateWithoutActivitiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1187,11 +1326,12 @@ export type TenantUpdateWithoutActivitiesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutActivitiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1204,11 +1344,12 @@ export type TenantUncheckedUpdateWithoutActivitiesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput
   unixseeMessages?: Prisma.UnixseeMessageUncheckedUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutUnixseeMessagesInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -1221,11 +1362,12 @@ export type TenantCreateWithoutUnixseeMessagesInput = {
   activities?: Prisma.ActivityCreateNestedManyWithoutTenantInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutUnixseeMessagesInput = {
   id?: string
-  name: string
+  name?: string | null
   displayName?: string | null
   status?: $Enums.UserAccountStatus
   createdAt?: Date | string
@@ -1238,6 +1380,7 @@ export type TenantUncheckedCreateWithoutUnixseeMessagesInput = {
   activities?: Prisma.ActivityUncheckedCreateNestedManyWithoutTenantInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedCreateNestedManyWithoutTenantInput
+  billingItems?: Prisma.BillingItemUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutUnixseeMessagesInput = {
@@ -1258,7 +1401,7 @@ export type TenantUpdateToOneWithWhereWithoutUnixseeMessagesInput = {
 
 export type TenantUpdateWithoutUnixseeMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1271,11 +1414,12 @@ export type TenantUpdateWithoutUnixseeMessagesInput = {
   activities?: Prisma.ActivityUpdateManyWithoutTenantNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutUnixseeMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   displayName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumUserAccountStatusFieldUpdateOperationsInput | $Enums.UserAccountStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1288,6 +1432,7 @@ export type TenantUncheckedUpdateWithoutUnixseeMessagesInput = {
   activities?: Prisma.ActivityUncheckedUpdateManyWithoutTenantNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput
   authorizationCases?: Prisma.AuthorizationCaseUncheckedUpdateManyWithoutTenantNestedInput
+  billingItems?: Prisma.BillingItemUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 
@@ -1305,6 +1450,7 @@ export type TenantCountOutputType = {
   notifications: number
   unixseeMessages: number
   authorizationCases: number
+  billingItems: number
 }
 
 export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1317,6 +1463,7 @@ export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   notifications?: boolean | TenantCountOutputTypeCountNotificationsArgs
   unixseeMessages?: boolean | TenantCountOutputTypeCountUnixseeMessagesArgs
   authorizationCases?: boolean | TenantCountOutputTypeCountAuthorizationCasesArgs
+  billingItems?: boolean | TenantCountOutputTypeCountBillingItemsArgs
 }
 
 /**
@@ -1392,6 +1539,13 @@ export type TenantCountOutputTypeCountAuthorizationCasesArgs<ExtArgs extends run
   where?: Prisma.AuthorizationCaseWhereInput
 }
 
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountBillingItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BillingItemWhereInput
+}
+
 
 export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1409,6 +1563,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   notifications?: boolean | Prisma.Tenant$notificationsArgs<ExtArgs>
   unixseeMessages?: boolean | Prisma.Tenant$unixseeMessagesArgs<ExtArgs>
   authorizationCases?: boolean | Prisma.Tenant$authorizationCasesArgs<ExtArgs>
+  billingItems?: boolean | Prisma.Tenant$billingItemsArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tenant"]>
 
@@ -1450,6 +1605,7 @@ export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   notifications?: boolean | Prisma.Tenant$notificationsArgs<ExtArgs>
   unixseeMessages?: boolean | Prisma.Tenant$unixseeMessagesArgs<ExtArgs>
   authorizationCases?: boolean | Prisma.Tenant$authorizationCasesArgs<ExtArgs>
+  billingItems?: boolean | Prisma.Tenant$billingItemsArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TenantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1467,10 +1623,11 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     unixseeMessages: Prisma.$UnixseeMessagePayload<ExtArgs>[]
     authorizationCases: Prisma.$AuthorizationCasePayload<ExtArgs>[]
+    billingItems: Prisma.$BillingItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    name: string
+    name: string | null
     displayName: string | null
     status: $Enums.UserAccountStatus
     createdAt: Date
@@ -1878,6 +2035,7 @@ export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.T
   notifications<T extends Prisma.Tenant$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   unixseeMessages<T extends Prisma.Tenant$unixseeMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$unixseeMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UnixseeMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   authorizationCases<T extends Prisma.Tenant$authorizationCasesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$authorizationCasesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuthorizationCasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  billingItems<T extends Prisma.Tenant$billingItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$billingItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BillingItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2519,6 +2677,30 @@ export type Tenant$authorizationCasesArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   distinct?: Prisma.AuthorizationCaseScalarFieldEnum | Prisma.AuthorizationCaseScalarFieldEnum[]
+}
+
+/**
+ * Tenant.billingItems
+ */
+export type Tenant$billingItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BillingItem
+   */
+  select?: Prisma.BillingItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BillingItem
+   */
+  omit?: Prisma.BillingItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BillingItemInclude<ExtArgs> | null
+  where?: Prisma.BillingItemWhereInput
+  orderBy?: Prisma.BillingItemOrderByWithRelationInput | Prisma.BillingItemOrderByWithRelationInput[]
+  cursor?: Prisma.BillingItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BillingItemScalarFieldEnum | Prisma.BillingItemScalarFieldEnum[]
 }
 
 /**

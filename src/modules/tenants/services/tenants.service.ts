@@ -84,6 +84,18 @@ export class TenantsService {
         where,
         include: {
           _count: { select: { memberships: true, websites: true } },
+          memberships: {
+            where: { role: 'OWNER' },
+            include: {
+              user: {
+                select: {
+                  fullName: true,
+                  phoneNumber: true,
+                },
+              },
+            },
+            take: 1,
+          },
         },
         orderBy: { createdAt: 'desc' },
         skip: params?.skip ?? 0,
@@ -127,14 +139,14 @@ export class TenantsService {
   }
 
   async createTenant(input: {
-    name: string;
+    name?: string;
     displayName?: string;
     ownerUserId: string;
   }) {
     const tenant = await this.prisma.$transaction(async (tx) => {
       const created = await tx.tenant.create({
         data: {
-          name: input.name,
+          ...(input.name ? { name: input.name } : {}),
           displayName: input.displayName ?? input.name,
         },
       });
@@ -189,13 +201,8 @@ export class TenantsService {
     }
 
     return this.createTenant({
-      name:
-        nameHint ??
-        user.fullName ??
-        user.username ??
-        user.phoneNumber ??
-        user.id,
-      displayName: user.fullName ?? user.username ?? user.phoneNumber ?? undefined,
+      name: nameHint ?? user.fullName ?? user.username ?? undefined,
+      displayName: user.fullName ?? user.username ?? undefined,
       ownerUserId: userId,
     });
   }
